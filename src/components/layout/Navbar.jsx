@@ -1,6 +1,7 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import logo from "../../assets/images/logo.png";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -58,9 +59,12 @@ const links = [
 
         </nav>
 
-        <button className="hidden lg:block bg-blue-600 px-5 py-3 rounded-xl hover:bg-blue-700">
+        <Link
+          to="/book-demo"
+          className="bg-blue-600 hover:bg-blue-700 px-5 py-3 rounded-xl transition"
+        >
           Book Free Demo
-        </button>
+        </Link>
 
         <button
           onClick={() => setOpen(!open)}

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import {
   Cloud,
   BrainCircuit,
@@ -75,11 +76,12 @@ export default function Hero() {
 
             </button>
 
-            <button className="px-8 py-4 rounded-xl border border-slate-700 hover:border-blue-500 duration-300">
-
+            <Link
+              to="/book-demo"
+              className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-4 rounded-xl font-semibold hover:scale-105 transition duration-300"
+            >
               Book Free Demo
-
-            </button>
+            </Link>
 
           </div>
 
