@@ -1,19 +1,20 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import logo from "../../assets/images/logo.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const location = useLocation();
 
 const links = [
-  { name: "Home", href: "#" },
-  { name: "Courses", href: "#courses" },
-  { name: "Roadmaps", href: "#roadmaps" },
-  { name: "Projects", href: "#projects" },
-  { name: "Resources", href: "#resources" },
-  { name: "About", href: "#about" },
-  { name: "Contact", href: "#contact" },
+  { name: "Home", href: "/" },
+  { name: "Courses", href: "/courses" },
+  { name: "Roadmaps", href: "/roadmaps" },
+  { name: "Projects", href: "/projects" },
+  { name: "Resources", href: "/resources" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
 ];
 
   return (
@@ -44,17 +45,18 @@ const links = [
         <nav className="hidden lg:flex gap-8">
 
           {links.map((link) => (
-            <a
+            <Link
               key={link.name}
-              href={link.href}
+              to={link.href}
               className={`transition ${
-                link.name === "Home"
+                location.pathname === link.href
                   ? "text-blue-400 font-semibold"
                   : "text-slate-300 hover:text-blue-400"
               }`}
             >
               {link.name}
-            </a>
+            </Link>
+
           ))}
 
         </nav>
