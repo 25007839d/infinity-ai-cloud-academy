@@ -7,6 +7,7 @@ import Home from "../pages/Home";
 import BookDemo from "../pages/BookDemo";
 import ThankYou from "../pages/ThankYou";
 import NotFound from "../pages/NotFound";
+import Projects from "../pages/Projects";
 
 export default function AppRoutes() {
   return (
@@ -19,6 +20,7 @@ export default function AppRoutes() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/courses/:slug" element={<CourseDetails />} />
         <Route path="/roadmaps" element={<Roadmaps />} />
+        <Route path="/projects" element={<Projects />} />
       </Routes>
     </BrowserRouter>
   );
