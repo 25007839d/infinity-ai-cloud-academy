@@ -63,7 +63,7 @@ const links = [
 
         <Link
           to="/book-demo"
-          className="bg-blue-600 hover:bg-blue-700 px-5 py-3 rounded-xl transition"
+          className="hidden lg:block bg-blue-600 hover:bg-blue-700 px-5 py-3 rounded-xl transition"
         >
           Book Free Demo
         </Link>
@@ -78,11 +78,30 @@ const links = [
       </div>
 
       {open && (
-        <div className="lg:hidden bg-slate-900 px-6 py-6 flex flex-col gap-5">
+        <div className="lg:hidden bg-slate-900 border-t border-slate-800 px-6 py-6 flex flex-col gap-5">
 
           {links.map((item) => (
-            <a key={item}>{item}</a>
+            <Link
+              key={item.href}
+              to={item.href}
+              onClick={() => setOpen(false)}
+              className={`transition ${
+                location.pathname === item.href
+                  ? "text-blue-400 font-semibold"
+                  : "text-slate-300 hover:text-blue-400"
+              }`}
+            >
+              {item.name}
+            </Link>
           ))}
+
+          <Link
+            to="/book-demo"
+            onClick={() => setOpen(false)}
+            className="mt-2 bg-blue-600 hover:bg-blue-700 text-center py-3 rounded-xl font-semibold transition"
+          >
+            Book Free Demo
+          </Link>
 
         </div>
       )}
