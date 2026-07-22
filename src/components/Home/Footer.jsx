@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { ArrowUp } from "lucide-react";
 
 import {
@@ -8,6 +9,7 @@ import {
 } from "react-icons/fa";
 
 import { FaXTwitter } from "react-icons/fa6";
+
 import logo from "../../assets/images/logo.png";
 
 export default function Footer() {
@@ -20,7 +22,7 @@ export default function Footer() {
 
         <div className="grid lg:grid-cols-4 gap-12">
 
-          {/* Brand */}
+          {/* ================= Brand ================= */}
 
           <div>
 
@@ -48,8 +50,8 @@ export default function Footer() {
 
             <p className="text-slate-400 mt-6 leading-8">
 
-              Learn AI, Data Engineering and Cloud Computing
-              through real-world projects with industry mentors.
+              Learn AI, Data Engineering and Cloud Computing through
+              real-world projects with industry mentors.
 
             </p>
 
@@ -104,7 +106,7 @@ export default function Footer() {
 
           </div>
 
-          {/* Quick Links */}
+          {/* ================= Quick Links ================= */}
 
           <div>
 
@@ -114,17 +116,52 @@ export default function Footer() {
 
             <ul className="space-y-4 text-slate-400">
 
-              <li><a href="#">Home</a></li>
-              <li><a href="#courses">Courses</a></li>
-              <li><a href="#roadmaps">Roadmaps</a></li>
-              <li><a href="#projects">Projects</a></li>
-              <li><a href="#about">About</a></li>
+              <li>
+                <Link to="/" className="hover:text-white transition">
+                  Home
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/courses" className="hover:text-white transition">
+                  Courses
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/roadmaps" className="hover:text-white transition">
+                  Roadmaps
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/projects" className="hover:text-white transition">
+                  Projects
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/resources" className="hover:text-white transition">
+                  Resources
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/about" className="hover:text-white transition">
+                  About
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/contact" className="hover:text-white transition">
+                  Contact
+                </Link>
+              </li>
 
             </ul>
 
           </div>
-
-          {/* Courses */}
+                {/* ================= Popular Courses ================= */}
 
           <div>
 
@@ -134,17 +171,56 @@ export default function Footer() {
 
             <ul className="space-y-4 text-slate-400">
 
-              <li>Data Engineering</li>
-              <li>Generative AI</li>
-              <li>Google Cloud</li>
-              <li>Apache Spark</li>
-              <li>Terraform</li>
+              <li>
+                <Link
+                  to="/courses/data-engineering"
+                  className="hover:text-white transition"
+                >
+                  Data Engineering
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  to="/courses/generative-ai"
+                  className="hover:text-white transition"
+                >
+                  Generative AI
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  to="/courses/google-cloud"
+                  className="hover:text-white transition"
+                >
+                  Google Cloud
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  to="/courses/apache-spark"
+                  className="hover:text-white transition"
+                >
+                  Apache Spark
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  to="/courses/terraform"
+                  className="hover:text-white transition"
+                >
+                  Terraform
+                </Link>
+              </li>
 
             </ul>
 
           </div>
 
-          {/* Contact */}
+          {/* ================= Contact ================= */}
 
           <div>
 
@@ -158,32 +234,80 @@ export default function Footer() {
                 📍 India
               </p>
 
-              <p>
+              <a
+                href="mailto:infinityaicloudacademy@gmail.com"
+                className="block hover:text-white transition"
+              >
                 📧 infinityaicloudacademy@gmail.com
-              </p>
+              </a>
 
-              <p>
+              <a
+                href="https://www.infinityaicloudacademy.com"
+                target="_blank"
+                rel="noreferrer"
+                className="block hover:text-white transition"
+              >
                 🌐 www.infinityaicloudacademy.com
-              </p>
+              </a>
 
-              <button
-                className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl text-white font-semibold mt-4"
+              <Link
+                to="/book-demo"
+                className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl text-white font-semibold transition"
               >
                 Book Free Demo
-              </button>
+              </Link>
 
             </div>
 
           </div>
 
         </div>
+              {/* ================= Bottom Links ================= */}
 
-        <div className="border-t border-slate-800 mt-16 pt-8 flex flex-col lg:flex-row justify-between items-center">
+        <div className="border-t border-slate-800 mt-16 pt-8">
 
-          <p className="text-slate-500">
+          <div className="flex flex-wrap justify-center items-center gap-3 text-sm">
 
-            © 2026 Infinity AI Cloud Academy.
-            All Rights Reserved.
+            <Link
+              to="/privacy-policy"
+              className="text-slate-400 hover:text-white transition"
+            >
+              Privacy Policy
+            </Link>
+
+            <span className="text-slate-600">•</span>
+
+            <Link
+              to="/terms"
+              className="text-slate-400 hover:text-white transition"
+            >
+              Terms & Conditions
+            </Link>
+
+            <span className="text-slate-600">•</span>
+
+            <Link
+              to="/admin/login"
+              className="text-blue-400 hover:text-blue-300 font-medium transition"
+            >
+              Admin Login
+            </Link>
+
+          </div>
+
+        </div>
+
+        {/* ================= Copyright ================= */}
+
+        <div className="border-t border-slate-800 mt-8 pt-8 flex flex-col lg:flex-row justify-between items-center gap-6">
+
+          <p className="text-slate-500 text-center">
+
+            © {new Date().getFullYear()}{" "}
+            <span className="text-white font-medium">
+              Infinity AI Cloud Academy
+            </span>
+            . All Rights Reserved.
 
           </p>
 
@@ -194,7 +318,7 @@ export default function Footer() {
                 behavior: "smooth",
               })
             }
-            className="mt-6 lg:mt-0 w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center"
+            className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 transition flex items-center justify-center"
           >
             <ArrowUp size={20} />
           </button>
@@ -202,6 +326,7 @@ export default function Footer() {
         </div>
 
       </div>
+
     </footer>
   );
 }

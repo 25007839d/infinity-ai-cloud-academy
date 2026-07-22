@@ -6,6 +6,7 @@ export async function registerDemo(formData) {
     .insert([
       {
         full_name: formData.fullName,
+        email: formData.email,
         phone: formData.phone,
         course: formData.course,
         experience: formData.experience,
@@ -14,6 +15,4 @@ export async function registerDemo(formData) {
     ]);
 
   if (error) throw error;
-
-  return true;
 }

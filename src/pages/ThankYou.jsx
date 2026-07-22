@@ -1,119 +1,185 @@
-import { Link } from "react-router-dom";
-import { CheckCircle2, MessageCircle, ArrowRight } from "lucide-react";
-import qrCode from "../assets/images/whatsapp-channel.png";
+import { Link, useLocation } from "react-router-dom";
+import {
+  CheckCircle,
+  ArrowRight,
+  BookOpen,
+  MessageCircle,
+  PlayCircle,
+} from "lucide-react";
+
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
+import siteConfig from "../config/siteConfig";
 
 export default function ThankYou() {
+  const { state } = useLocation();
+
+  const name = state?.name || "Student";
+  const course = state?.course || "our programs";
+
   return (
-    <div className="min-h-screen bg-[#030712] flex items-center justify-center px-6 py-16">
+    <>
+      <Navbar />
 
-      <div className="max-w-4xl w-full bg-white rounded-3xl shadow-2xl p-10">
+      <main className="min-h-screen bg-[#030712] text-white">
+        <section className="max-w-6xl mx-auto px-6 py-20">
 
-        {/* Success */}
+          {/* Success Card */}
 
-        <div className="text-center">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-10 text-center">
 
-          <CheckCircle2
-            size={90}
-            className="mx-auto text-green-500"
-          />
-
-          <h1 className="text-5xl font-bold mt-6">
-            Thank You!
-          </h1>
-
-          <p className="text-gray-600 mt-4 text-lg">
-            Your demo has been booked successfully.
-          </p>
-
-          <p className="text-gray-500 mt-2">
-            Our team will contact you within 24 hours.
-          </p>
-
-        </div>
-
-        {/* What's Next */}
-
-        <div className="mt-12 grid lg:grid-cols-2 gap-8">
-
-          {/* WhatsApp Group */}
-
-          <div className="border rounded-2xl p-8">
-
-            <MessageCircle
-              className="text-green-600"
-              size={48}
+            <CheckCircle
+              size={90}
+              className="mx-auto text-green-500"
             />
 
-            <h2 className="text-2xl font-bold mt-4">
-              Join Demo WhatsApp Group
-            </h2>
+            <h1 className="text-5xl font-bold mt-8">
+              Thank You, {name}! 🎉
+            </h1>
 
-            <p className="text-gray-500 mt-3">
-              Get demo reminders, Teams meeting links,
-              and direct support.
+            <p className="text-xl text-slate-300 mt-6">
+              Your demo request has been successfully received.
             </p>
 
-            <a
-              href="https://chat.whatsapp.com/BlpwxVxSVec2CznnliXyEm?s=sh&p=a&mlu=0&amv=2"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl transition"
-            >
-              Join WhatsApp Group
+            <div className="inline-block mt-5 rounded-full bg-blue-600 px-6 py-3 text-lg font-semibold">
+              {course}
+            </div>
 
-              <ArrowRight size={18} />
-
-            </a>
+            <p className="text-slate-400 mt-8 leading-8">
+              Our team will contact you within the next 24 hours.
+              <br />
+              Meanwhile, explore our free learning resources.
+            </p>
 
           </div>
 
-          {/* WhatsApp Channel */}
+          {/* Next Steps */}
 
-          <div className="border rounded-2xl p-8 text-center">
+          <div className="grid md:grid-cols-3 gap-8 mt-16">
 
-            <h2 className="text-2xl font-bold">
-              Follow Our Channel
-            </h2>
+            {/* WhatsApp */}
 
-            <p className="text-gray-500 mt-3">
-              Stay updated with new batches,
-              placement updates and free resources.
-            </p>
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
 
-            <img
-              src={qrCode}
-              alt="WhatsApp Channel QR"
-              className="w-48 mx-auto mt-6 rounded-xl"
-            />
+              <MessageCircle
+                size={42}
+                className="text-green-500"
+              />
 
-            <a
-              href="https://whatsapp.com/channel/0029Vb84LuMAojZ1hBcNgw3t"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition"
-            >
-              Follow WhatsApp Channel
-            </a>
+              <h3 className="text-2xl font-semibold mt-5">
+                Join WhatsApp
+              </h3>
+
+              <p className="text-slate-400 mt-4">
+                Get notes, announcements, projects and batch updates.
+              </p>
+
+              <a
+                href={siteConfig.community.whatsappGroup}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 mt-6 text-green-400 hover:text-green-300"
+              >
+                Join Group
+                <ArrowRight size={18} />
+              </a>
+
+            </div>
+
+            {/* YouTube */}
+
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
+
+              <PlayCircle
+                size={42}
+                className="text-red-500"
+              />
+
+              <h3 className="text-2xl font-semibold mt-5">
+                Watch Free Classes
+              </h3>
+
+              <p className="text-slate-400 mt-4">
+                Learn from our free YouTube tutorials before your demo.
+              </p>
+
+              <a
+                href={siteConfig.social.youtube}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 mt-6 text-red-400 hover:text-red-300"
+              >
+                Visit YouTube
+                <ArrowRight size={18} />
+              </a>
+
+            </div>
+
+            {/* Courses */}
+
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
+
+              <BookOpen
+                size={42}
+                className="text-blue-500"
+              />
+
+              <h3 className="text-2xl font-semibold mt-5">
+                Explore Courses
+              </h3>
+
+              <p className="text-slate-400 mt-4">
+                Browse complete learning roadmaps and projects.
+              </p>
+
+              <Link
+                to="/courses"
+                className="inline-flex items-center gap-2 mt-6 text-blue-400 hover:text-blue-300"
+              >
+                View Courses
+                <ArrowRight size={18} />
+              </Link>
+
+            </div>
 
           </div>
 
-        </div>
+          {/* CTA */}
 
-        {/* Bottom */}
+          <div className="mt-16 bg-gradient-to-r from-blue-700 to-cyan-600 rounded-3xl p-10 text-center">
 
-        <div className="text-center mt-12">
+            <h2 className="text-4xl font-bold">
+              Need Immediate Assistance?
+            </h2>
 
-          <Link
-            to="/"
-            className="inline-block bg-gray-900 text-white px-8 py-4 rounded-xl hover:bg-black transition"
-          >
-            Return to Home
-          </Link>
+            <p className="mt-4 text-lg">
+              Our team is happy to help you.
+            </p>
 
-        </div>
+            <div className="flex flex-wrap justify-center gap-5 mt-8">
 
-      </div>
+              <a
+                href={`tel:${siteConfig.contact.phone}`}
+                className="bg-white text-blue-700 px-8 py-4 rounded-xl font-semibold"
+              >
+                📞 Call Now
+              </a>
 
-    </div>
+              <a
+                href={`mailto:${siteConfig.contact.email}`}
+                className="bg-slate-900 px-8 py-4 rounded-xl font-semibold border border-white"
+              >
+                📧 Email Us
+              </a>
+
+            </div>
+
+          </div>
+
+        </section>
+      </main>
+
+      <Footer />
+    </>
   );
 }

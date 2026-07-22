@@ -17,8 +17,6 @@ export default function Contact() {
 
         <ContactHero />
 
-        <ContactForm />
-
         <ContactInfo />
 
         <SocialLinks />
