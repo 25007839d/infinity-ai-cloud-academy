@@ -8,6 +8,9 @@ import BookDemo from "../pages/BookDemo";
 import ThankYou from "../pages/ThankYou";
 import NotFound from "../pages/NotFound";
 import Projects from "../pages/Projects";
+import Resources from "../pages/Resources";
+import About from "../pages/About";
+import Contact from "../pages/Contact";
 
 export default function AppRoutes() {
   return (
@@ -21,6 +24,9 @@ export default function AppRoutes() {
         <Route path="/courses/:slug" element={<CourseDetails />} />
         <Route path="/roadmaps" element={<Roadmaps />} />
         <Route path="/projects" element={<Projects />} />
+        <Route path="/resources" element={<Resources />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </BrowserRouter>
   );
