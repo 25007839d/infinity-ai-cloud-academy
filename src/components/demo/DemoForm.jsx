@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerDemo } from "../../services/demoService";
 
+
 export default function DemoForm() {
   const navigate = useNavigate();
 
@@ -46,8 +47,9 @@ export default function DemoForm() {
 
       navigate("/thank-you");
     } catch (error) {
-      console.error(error);
-      alert("Something went wrong. Please try again.");
+      console.error("Demo Booking Error:", error);
+      console.error("Supabase Error:", error.message);
+      alert(error.message);
     } finally {
       setLoading(false);
     }

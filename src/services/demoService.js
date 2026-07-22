@@ -1,20 +1,19 @@
-import { supabase } from "../lib/supabase";
+import { supabase } from "./supabase";
 
-export async function registerDemo(data) {
+export async function registerDemo(formData) {
   const { error } = await supabase
     .from("demo_registrations")
     .insert([
       {
-        full_name: data.fullName,
-        phone: data.phone,
-        course: data.course,
-        experience: data.experience,
+        full_name: formData.fullName,
+        phone: formData.phone,
+        course: formData.course,
+        experience: formData.experience,
+        status: "New",
       },
     ]);
 
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
 
   return true;
 }
