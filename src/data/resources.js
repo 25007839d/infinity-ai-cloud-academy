@@ -14,9 +14,9 @@ export const resources = [
 
     featured: true,
 
-    view: "/public/resources/pdf/sqlNotes.pdf",
+    view: "/resources/pdf/sqlNotes.pdf",
 
-    download: "/public/resources/pdf/sqlNotes.pdf",
+    download: "/resources/pdf/sqlNotes.pdf",
   },
 
   {
