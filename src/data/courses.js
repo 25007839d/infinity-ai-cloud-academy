@@ -3,7 +3,7 @@ export const courses = [
     id: 1,
     slug: "data-engineering",
 
-    title: "Data Engineering Bootcamp",
+    title: "Cloud Data Engineering",
 
     shortDescription:
       "Master SQL, Python, PySpark, Google Cloud and build production-ready data pipelines.",
@@ -18,72 +18,256 @@ export const courses = [
 
     rating: 4.9,
 
-    projects: 15,
+    projects: 10,
 
     featured: true,
 
-    technologies: [
-      "SQL",
-      "Python",
-      "PySpark",
-      "Airflow",
-      "BigQuery",
-      "GCP",
-      "Terraform",
-    ],
+    technologies:[
+  "SQL",
+  "Basic Python",
+  "Advanced Python",
+  "PySpark",
+  "Google Cloud (GCP)",
+  "Docker",
+  "Cloud Build",
+  "Terraform",
+  "Logging & Monitoring",
+  "Looker",
+  "Databricks",
+  "Jira",
+  "CI/CD (GitHub Actions)",
+  "Agile",
+  "DBT",
+  "SCD",
+  "Capstone Project"
+],
 
     overview:
       "This bootcamp prepares you for real-world Data Engineering roles through live classes, hands-on projects, assignments, and interview preparation.",
 
-    curriculum: [
-      {
-        module: "SQL",
-        topics: [
-          "Introduction to SQL",
-          "DDL & DML",
-          "Constraints",
-          "Functions",
-          "Joins",
-          "Window Functions",
-          "CTE",
-          "Views",
-          "Indexes",
-        ],
-      },
-      {
-        module: "Python",
-        topics: [
-          "Variables",
-          "Loops",
-          "Functions",
-          "OOP",
-          "NumPy",
-          "Pandas",
-        ],
-      },
-      {
-        module: "PySpark",
-        topics: [
-          "RDD",
-          "DataFrame",
-          "Transformations",
-          "Actions",
-          "Joins",
-          "Window Functions",
-        ],
-      },
-      {
-        module: "Google Cloud",
-        topics: [
-          "IAM",
-          "Cloud Storage",
-          "BigQuery",
-          "Dataproc",
-          "Pub/Sub",
-          "Composer",
-        ],
-      },
+    curriculum:[
+  {
+    module: "SQL",
+    topics: [
+      "Database Fundamentals",
+      "SELECT Queries",
+      "Joins",
+      "Subqueries",
+      "CTE",
+      "Window Functions",
+      "Stored Procedures",
+      "Performance Tuning",
     ],
+  },
+
+  {
+    module: "Python Fundamentals",
+    topics: [
+      "Variables",
+      "Data Types",
+      "Operators",
+      "Loops",
+      "Functions",
+      "Modules",
+      "File Handling",
+      "Exception Handling",
+    ],
+  },
+
+  {
+    module: "Advanced Python",
+    topics: [
+      "OOP",
+      "Decorators",
+      "Generators",
+      "Iterators",
+      "Lambda",
+      "Comprehensions",
+      "Multithreading",
+      "API Integration",
+    ],
+  },
+
+  {
+    module: "PySpark",
+    topics: [
+      "RDD",
+      "DataFrame",
+      "Spark SQL",
+      "Transformations",
+      "Actions",
+      "Joins",
+      "Window Functions",
+      "Performance Optimization",
+    ],
+  },
+
+  {
+    module: "Google Cloud Platform",
+    topics: [
+      "IAM",
+      "Cloud Storage",
+      "BigQuery",
+      "Dataproc",
+      "Pub/Sub",
+      "Cloud Functions",
+      "Cloud Composer",
+      "Cloud Scheduler",
+    ],
+  },
+
+  {
+    module: "Docker",
+    topics: [
+      "Containers",
+      "Docker Images",
+      "Dockerfile",
+      "Docker Compose",
+      "Volumes",
+      "Networking",
+      "Docker Hub",
+    ],
+  },
+
+  {
+    module: "Cloud Build",
+    topics: [
+      "Build Triggers",
+      "Cloud Build YAML",
+      "Artifact Registry",
+      "Image Deployment",
+      "CI Pipeline",
+    ],
+  },
+
+  {
+    module: "Terraform",
+    topics: [
+      "Infrastructure as Code",
+      "Providers",
+      "Variables",
+      "Resources",
+      "Modules",
+      "State File",
+      "Remote Backend",
+      "Terraform on GCP",
+    ],
+  },
+
+  {
+    module: "Logging & Monitoring",
+    topics: [
+      "Cloud Logging",
+      "Cloud Monitoring",
+      "Log Explorer",
+      "Metrics",
+      "Alerts",
+      "Dashboards",
+      "Error Reporting",
+    ],
+  },
+
+  {
+    module: "Looker Studio",
+    topics: [
+      "Data Sources",
+      "Charts",
+      "Filters",
+      "Calculated Fields",
+      "Dashboards",
+      "Reports",
+    ],
+  },
+
+  {
+    module: "Databricks",
+    topics: [
+      "Workspace",
+      "Notebooks",
+      "Clusters",
+      "Delta Lake",
+      "Unity Catalog",
+      "Jobs",
+    ],
+  },
+
+  {
+    module: "Jira",
+    topics: [
+      "Projects",
+      "Boards",
+      "Sprint Planning",
+      "Epics",
+      "Stories",
+      "Tasks",
+      "Bug Tracking",
+    ],
+  },
+
+  {
+    module: "CI/CD with GitHub Actions",
+    topics: [
+      "Git Basics",
+      "GitHub",
+      "Branches",
+      "Pull Requests",
+      "GitHub Actions",
+      "Workflow YAML",
+      "Deployments",
+    ],
+  },
+
+  {
+    module: "Agile Methodology",
+    topics: [
+      "Scrum",
+      "Sprint",
+      "Stand-up",
+      "Product Backlog",
+      "Sprint Planning",
+      "Retrospective",
+    ],
+  },
+
+  {
+    module: "dbt (Data Build Tool)",
+    topics: [
+      "Models",
+      "Seeds",
+      "Snapshots",
+      "Tests",
+      "Sources",
+      "Macros",
+      "Documentation",
+    ],
+  },
+
+  {
+    module: "Slowly Changing Dimensions (SCD)",
+    topics: [
+      "Dimension Tables",
+      "SCD Type 0",
+      "SCD Type 1",
+      "SCD Type 2",
+      "SCD Type 3",
+      "Real-world Implementation",
+    ],
+  },
+
+  {
+    module: "Industry Capstone Project",
+    topics: [
+      "Requirement Analysis",
+      "Data Ingestion",
+      "ETL Pipeline",
+      "Data Warehouse",
+      "Dashboard",
+      "CI/CD Deployment",
+      "Monitoring",
+      "Production Demo",
+    ],
+  },
+],
   },
 
   {

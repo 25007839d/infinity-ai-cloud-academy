@@ -1,5 +1,13 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import sqlLogo from "../../assets/technologies/mysql.jpg";
+import pythonLogo from "../../assets/technologies/python.png";
+import sparkLogo from "../../assets/technologies/spark.png";
+import bigQueryLogo from "../../assets/technologies/bigquery.jpg";
+import airflowLogo from "../../assets/technologies/airflow.png";
+import terraformLogo from "../../assets/technologies/terraform.png";
+import gcpLogo from "../../assets/technologies/google.png";
+import aiLogo from "../../assets/technologies/ai.jpg";
 import {
   Cloud,
   BrainCircuit,
@@ -10,12 +18,30 @@ import {
 } from "lucide-react";
 
 const skills = [
-  { title: "Python", color: "from-yellow-400 to-orange-500" },
-  { title: "Apache Spark", color: "from-orange-500 to-red-500" },
-  { title: "Google Cloud", color: "from-blue-500 to-cyan-500" },
-  { title: "Airflow", color: "from-cyan-500 to-blue-700" },
-  { title: "Terraform", color: "from-purple-500 to-indigo-600" },
-  { title: "Generative AI", color: "from-pink-500 to-violet-600" },
+  {
+    title: "Python",
+    image: pythonLogo,
+  },
+  {
+    title: "Apache Spark",
+    image: sparkLogo,
+  },
+  {
+    title: "Google Cloud",
+    image: gcpLogo,
+  },
+  {
+    title: "Apache Airflow",
+    image: airflowLogo,
+  },
+  {
+    title: "Terraform",
+    image: terraformLogo,
+  },
+  {
+    title: "Generative AI",
+    image: aiLogo,
+  },
 ];
 
 export default function Hero() {
@@ -68,13 +94,14 @@ export default function Hero() {
 
           <div className="flex flex-wrap gap-5 mt-10">
 
-            <button className="flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:scale-105 duration-300">
-
+            <Link
+              to="/courses"
+              className="flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:scale-105 duration-300"
+            >
               Explore Courses
 
               <ArrowRight size={18} />
-
-            </button>
+            </Link>
 
             <Link
               to="/book-demo"
@@ -164,9 +191,15 @@ export default function Hero() {
                   className="rounded-2xl bg-[#111827] border border-slate-800 p-5 hover:-translate-y-2 transition duration-300"
                 >
 
-                  <div
-                    className={`w-12 h-12 rounded-xl bg-gradient-to-r ${item.color}`}
-                  />
+                  <div className="w-14 h-14 rounded-xl bg-white shadow-lg flex items-center justify-center">
+
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-10 h-10 object-contain"
+                    />
+
+                  </div>
 
                   <h4 className="mt-5 font-bold text-lg">
 
@@ -186,21 +219,31 @@ export default function Hero() {
 
             </div>
 
-            <div className="mt-8 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 p-6">
+            <Link
+              to="/courses"
+              className="block mt-8 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 p-6 hover:scale-[1.02] hover:shadow-xl hover:shadow-cyan-500/20 transition-all duration-300"
+            >
+              <div className="flex items-center justify-between">
 
-              <h3 className="text-2xl font-bold">
+                <div>
 
-                Learn • Build • Deploy
+                  <h3 className="text-2xl font-bold">
+                    Start Your Learning Journey
+                  </h3>
 
-              </h3>
+                  <p className="mt-2 text-blue-100">
+                    Explore industry-ready courses and become job-ready with real projects.
+                  </p>
 
-              <p className="mt-2 text-blue-100">
+                </div>
 
-                Become Job Ready with Real Projects
+                <ArrowRight
+                  size={28}
+                  className="text-white group-hover:translate-x-2 transition"
+                />
 
-              </p>
-
-            </div>
+              </div>
+            </Link>
 
           </div>
 

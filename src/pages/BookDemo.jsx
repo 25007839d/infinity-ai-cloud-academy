@@ -1,5 +1,6 @@
 import DemoForm from "../components/demo/DemoForm";
-
+import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 export default function BookDemo() {
   return (
     <div className="min-h-screen bg-[#030712] text-white py-20 px-6">
@@ -26,6 +27,17 @@ export default function BookDemo() {
             <Feature text="Placement Assistance" />
             <Feature text="Resume & Interview Preparation" />
             <Feature text="Live Q&A Session" />
+            <div className="max-w-7xl mx-auto px-6 pt-8">
+
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 text-slate-400 hover:text-blue-400 transition"
+              >
+                <ArrowLeft size={18} />
+                Back to Home
+              </Link>
+
+            </div>
           </div>
         </div>
 
