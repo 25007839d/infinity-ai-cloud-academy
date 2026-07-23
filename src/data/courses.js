@@ -304,7 +304,170 @@ export const courses = [
     overview:
       "Master modern Generative AI technologies with hands-on projects and production-ready AI applications.",
 
-    curriculum: [],
+   curriculum: [
+  {
+    module: "Generative AI Fundamentals",
+    topics: [
+      "What is Generative AI?",
+      "AI vs ML vs Deep Learning",
+      "Large Language Models (LLMs)",
+      "Transformers",
+      "Tokenization",
+      "Embeddings",
+      "Open Source vs Closed Models",
+    ],
+  },
+
+  {
+    module: "Prompt Engineering",
+    topics: [
+      "Prompt Basics",
+      "Prompt Patterns",
+      "Zero-shot Prompting",
+      "One-shot Prompting",
+      "Few-shot Prompting",
+      "Chain of Thought",
+      "Role Prompting",
+      "Prompt Optimization",
+    ],
+  },
+
+  {
+    module: "Python for AI",
+    topics: [
+      "Virtual Environment",
+      "OpenAI SDK",
+      "Requests",
+      "JSON",
+      "Async Programming",
+      "Environment Variables",
+      "API Integration",
+    ],
+  },
+
+  {
+    module: "OpenAI API",
+    topics: [
+      "Chat Completions",
+      "Responses API",
+      "Streaming Responses",
+      "Function Calling",
+      "Structured Outputs",
+      "Image Generation",
+      "Audio Models",
+      "Embeddings API",
+    ],
+  },
+
+  {
+    module: "LangChain",
+    topics: [
+      "LLMs",
+      "Chat Models",
+      "Prompt Templates",
+      "Chains",
+      "LCEL",
+      "Output Parsers",
+      "Memory",
+      "Callbacks",
+    ],
+  },
+
+  {
+    module: "LangGraph",
+    topics: [
+      "Nodes",
+      "Edges",
+      "State Management",
+      "Conditional Routing",
+      "Human in the Loop",
+      "Multi-step Workflows",
+      "Agent Graphs",
+    ],
+  },
+
+  {
+    module: "Vector Databases",
+    topics: [
+      "Embeddings",
+      "Similarity Search",
+      "ChromaDB",
+      "Pinecone",
+      "FAISS",
+      "Weaviate",
+      "Indexing",
+    ],
+  },
+
+  {
+    module: "Retrieval Augmented Generation (RAG)",
+    topics: [
+      "Document Loading",
+      "Chunking",
+      "Embedding Documents",
+      "Retrievers",
+      "Hybrid Search",
+      "Context Injection",
+      "RAG Pipeline",
+    ],
+  },
+
+  {
+    module: "AI Agents",
+    topics: [
+      "What are AI Agents?",
+      "Tool Calling",
+      "Agent Memory",
+      "Planning",
+      "Reasoning",
+      "Multi-Agent Systems",
+      "Agent Workflows",
+    ],
+  },
+
+  {
+    module: "Model Deployment",
+    topics: [
+      "FastAPI",
+      "Docker",
+      "Cloud Run",
+      "Render",
+      "Vercel",
+      "API Deployment",
+      "Monitoring",
+    ],
+  },
+
+  {
+    module: "LLM Evaluation & Guardrails",
+    topics: [
+      "Hallucinations",
+      "Prompt Injection",
+      "Guardrails",
+      "Evaluation Metrics",
+      "Observability",
+      "Testing AI Applications",
+    ],
+  },
+
+  {
+    module: "Industry Projects",
+    topics: [
+      "PDF Chatbot",
+      "AI Resume Analyzer",
+      "AI Email Assistant",
+      "AI Code Generator",
+      "Customer Support Bot",
+      "Knowledge Base Chatbot",
+      "AI Research Assistant",
+      "Multi-Agent System",
+      "Voice AI Assistant",
+      "SQL AI Assistant",
+      "Document Search Engine",
+      "Enterprise RAG Application",
+    ],
+  },
+],
   },
 
   {
@@ -341,7 +504,158 @@ export const courses = [
     overview:
       "Master Google Cloud Platform with practical labs and production use cases.",
 
-    curriculum: [],
+   curriculum: [
+  {
+    module: "Google Cloud Fundamentals",
+    topics: [
+      "Cloud Computing Basics",
+      "Google Cloud Overview",
+      "Projects & Organization",
+      "Billing",
+      "Cloud Console",
+      "Cloud Shell",
+      "Cloud SDK (gcloud CLI)",
+    ],
+  },
+
+  {
+    module: "Identity & Access Management (IAM)",
+    topics: [
+      "IAM Fundamentals",
+      "Users & Groups",
+      "Roles",
+      "Permissions",
+      "Service Accounts",
+      "IAM Policies",
+      "Best Practices",
+    ],
+  },
+
+  {
+    module: "Google Cloud Storage (GCS)",
+    topics: [
+      "Buckets",
+      "Objects",
+      "Storage Classes",
+      "Lifecycle Management",
+      "Versioning",
+      "Signed URLs",
+      "Access Control",
+    ],
+  },
+
+  {
+    module: "BigQuery",
+    topics: [
+      "Datasets",
+      "Tables",
+      "Loading Data",
+      "Partitioning",
+      "Clustering",
+      "SQL Queries",
+      "Views",
+      "Performance Optimization",
+    ],
+  },
+
+  {
+    module: "Dataproc & PySpark",
+    topics: [
+      "Dataproc Clusters",
+      "PySpark Jobs",
+      "Job Submission",
+      "Cluster Scaling",
+      "Workflow Templates",
+      "Optimization",
+    ],
+  },
+
+  {
+    module: "Pub/Sub & Streaming",
+    topics: [
+      "Topics",
+      "Subscriptions",
+      "Publishers",
+      "Consumers",
+      "Dead Letter Queue",
+      "Real-time Pipelines",
+    ],
+  },
+
+  {
+    module: "Cloud Composer (Apache Airflow)",
+    topics: [
+      "Airflow Basics",
+      "DAGs",
+      "Operators",
+      "Sensors",
+      "Scheduling",
+      "Monitoring",
+      "Production Pipelines",
+    ],
+  },
+
+  {
+    module: "Cloud Functions & Cloud Run",
+    topics: [
+      "Serverless Computing",
+      "Cloud Functions",
+      "Cloud Run",
+      "HTTP Triggers",
+      "Event-driven Architecture",
+      "Deployment",
+    ],
+  },
+
+  {
+    module: "Infrastructure as Code",
+    topics: [
+      "Terraform Basics",
+      "Providers",
+      "Resources",
+      "Variables",
+      "Modules",
+      "Deploy GCP Infrastructure",
+    ],
+  },
+
+  {
+    module: "Monitoring & Logging",
+    topics: [
+      "Cloud Logging",
+      "Cloud Monitoring",
+      "Log Explorer",
+      "Metrics",
+      "Alerts",
+      "Dashboards",
+    ],
+  },
+
+  {
+    module: "CI/CD on Google Cloud",
+    topics: [
+      "Cloud Build",
+      "Artifact Registry",
+      "GitHub Actions",
+      "Build Triggers",
+      "Deployment Pipeline",
+    ],
+  },
+
+  {
+    module: "Industry Projects",
+    topics: [
+      "GCS to BigQuery Pipeline",
+      "PySpark ETL Pipeline",
+      "Streaming Pipeline with Pub/Sub",
+      "Cloud Composer Workflow",
+      "Terraform Infrastructure",
+      "Cloud Run API Deployment",
+      "Production Monitoring",
+      "End-to-End Data Engineering Project",
+    ],
+  },
+],
   },
 
   {
@@ -372,7 +686,142 @@ export const courses = [
     overview:
       "Complete Python programming course from beginner to advanced.",
 
-    curriculum: [],
+    curriculum: [
+  {
+    module: "Python Fundamentals",
+    topics: [
+      "Introduction to Python",
+      "Variables & Data Types",
+      "Input & Output",
+      "Operators",
+      "Conditional Statements",
+      "Loops",
+      "Functions",
+      "Modules & Packages",
+    ],
+  },
+
+  {
+    module: "Advanced Python",
+    topics: [
+      "Object-Oriented Programming (OOP)",
+      "Inheritance",
+      "Polymorphism",
+      "Encapsulation",
+      "Exception Handling",
+      "File Handling",
+      "Lambda Functions",
+      "Decorators",
+      "Generators",
+      "Iterators",
+    ],
+  },
+
+  {
+    module: "Python Data Structures",
+    topics: [
+      "Lists",
+      "Tuples",
+      "Sets",
+      "Dictionaries",
+      "Comprehensions",
+      "Collections Module",
+      "String Manipulation",
+      "Regular Expressions",
+    ],
+  },
+
+  {
+    module: "NumPy",
+    topics: [
+      "NumPy Arrays",
+      "Indexing & Slicing",
+      "Array Operations",
+      "Broadcasting",
+      "Mathematical Functions",
+      "Statistics",
+      "Linear Algebra Basics",
+    ],
+  },
+
+  {
+    module: "Pandas",
+    topics: [
+      "Series",
+      "DataFrames",
+      "Reading CSV/Excel/JSON",
+      "Filtering",
+      "Grouping",
+      "Merging",
+      "Pivot Tables",
+      "Data Cleaning",
+    ],
+  },
+
+  {
+    module: "Working with APIs",
+    topics: [
+      "REST APIs",
+      "Requests Library",
+      "JSON Handling",
+      "Authentication",
+      "API Pagination",
+      "Error Handling",
+    ],
+  },
+
+  {
+    module: "Database Programming",
+    topics: [
+      "SQLite",
+      "MySQL",
+      "PostgreSQL",
+      "Connecting with Python",
+      "CRUD Operations",
+      "Executing SQL Queries",
+    ],
+  },
+
+  {
+    module: "Automation & Scripting",
+    topics: [
+      "OS Module",
+      "Pathlib",
+      "Logging",
+      "Scheduling",
+      "Email Automation",
+      "File Automation",
+    ],
+  },
+
+  {
+    module: "Python for Data Engineering",
+    topics: [
+      "ETL Pipeline",
+      "CSV Processing",
+      "JSON Processing",
+      "Data Validation",
+      "Data Transformation",
+      "Pipeline Automation",
+    ],
+  },
+
+  {
+    module: "Industry Projects",
+    topics: [
+      "Employee Management System",
+      "REST API Integration",
+      "CSV to Database ETL",
+      "Web Scraper",
+      "Weather Data Pipeline",
+      "Email Automation",
+      "Sales Data Analysis",
+      "Log File Analyzer",
+      "Database CRUD Application",
+      "Mini Data Engineering Project",
+    ],
+  },
+],
   },
 
   {
@@ -408,7 +857,92 @@ export const courses = [
     overview:
       "Become proficient in SQL from fundamentals to advanced queries.",
 
-    curriculum: [],
+   curriculum: [
+  {
+    module: "SQL Fundamentals",
+    topics: [
+      "Introduction to Databases",
+      "SQL Syntax",
+      "Database Objects",
+      "Creating Databases",
+      "Data Types",
+      "Constraints",
+      "Primary & Foreign Keys",
+    ],
+  },
+
+  {
+    module: "DDL & DML",
+    topics: [
+      "CREATE",
+      "ALTER",
+      "DROP",
+      "TRUNCATE",
+      "INSERT",
+      "UPDATE",
+      "DELETE",
+      "MERGE",
+    ],
+  },
+
+  {
+    module: "Data Retrieval",
+    topics: [
+      "SELECT",
+      "WHERE",
+      "ORDER BY",
+      "GROUP BY",
+      "HAVING",
+      "DISTINCT",
+      "LIMIT",
+      "Aliases",
+    ],
+  },
+
+  {
+    module: "Joins & Set Operators",
+    topics: [
+      "INNER JOIN",
+      "LEFT JOIN",
+      "RIGHT JOIN",
+      "FULL OUTER JOIN",
+      "SELF JOIN",
+      "CROSS JOIN",
+      "UNION",
+      "UNION ALL",
+      "INTERSECT",
+      "EXCEPT",
+    ],
+  },
+
+  {
+    module: "Advanced SQL",
+    topics: [
+      "Subqueries",
+      "Correlated Subqueries",
+      "Common Table Expressions (CTE)",
+      "Recursive CTE",
+      "Window Functions",
+      "CASE Statements",
+      "NULL Handling",
+      "Conditional Expressions",
+    ],
+  },
+
+  {
+    module: "Performance & Industry Projects",
+    topics: [
+      "Indexes",
+      "Views",
+      "Stored Procedures",
+      "Functions",
+      "Query Optimization",
+      "Execution Plan",
+      "SQL Interview Questions",
+      "Real-world SQL Projects",
+    ],
+  },
+],
   },
 
   {
@@ -444,6 +978,112 @@ export const courses = [
     overview:
       "Learn distributed data processing using Apache Spark and PySpark.",
 
-    curriculum: [],
+   curriculum: [
+  {
+    module: "Apache Spark Fundamentals",
+    topics: [
+      "Introduction to Big Data",
+      "Apache Spark Architecture",
+      "Spark Components",
+      "Spark Cluster",
+      "Driver & Executors",
+      "SparkSession",
+      "Spark Context",
+    ],
+  },
+
+  {
+    module: "RDD Programming",
+    topics: [
+      "Creating RDDs",
+      "RDD Transformations",
+      "RDD Actions",
+      "Pair RDD",
+      "Caching & Persistence",
+      "Broadcast Variables",
+      "Accumulators",
+    ],
+  },
+
+  {
+    module: "DataFrames & Spark SQL",
+    topics: [
+      "Creating DataFrames",
+      "Schema Definition",
+      "Reading CSV/JSON/Parquet",
+      "Writing Data",
+      "Spark SQL",
+      "Temporary Views",
+      "DataFrame Operations",
+    ],
+  },
+
+  {
+    module: "Data Transformation",
+    topics: [
+      "Select",
+      "Filter",
+      "withColumn",
+      "Drop",
+      "Rename Columns",
+      "Sorting",
+      "Distinct",
+      "Duplicates Handling",
+    ],
+  },
+
+  {
+    module: "Joins & Aggregations",
+    topics: [
+      "Inner Join",
+      "Left Join",
+      "Right Join",
+      "Full Join",
+      "Cross Join",
+      "Group By",
+      "Aggregations",
+      "Pivot",
+    ],
+  },
+
+  {
+    module: "Advanced PySpark",
+    topics: [
+      "User Defined Functions (UDF)",
+      "Window Functions",
+      "Partitions",
+      "Repartition vs Coalesce",
+      "Broadcast Join",
+      "Performance Optimization",
+      "Lazy Evaluation",
+    ],
+  },
+
+  {
+    module: "File Formats & Data Lake",
+    topics: [
+      "CSV",
+      "JSON",
+      "Parquet",
+      "ORC",
+      "Partitioned Data",
+      "Data Lake Concepts",
+    ],
+  },
+
+  {
+    module: "Industry Projects",
+    topics: [
+      "CSV to Parquet ETL",
+      "Customer Sales Analytics",
+      "Log File Processing",
+      "IoT Sensor Data Pipeline",
+      "BigQuery Data Pipeline",
+      "Data Cleaning Pipeline",
+      "Performance Optimization Project",
+      "End-to-End Data Engineering Project",
+    ],
+  },
+],
   },
 ];

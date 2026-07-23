@@ -36,7 +36,7 @@ export default function CourseDetails() {
       <main className="bg-[#030712] text-white">
 
         {/* Hero */}
-        <section className="max-w-7xl mx-auto px-6 py-24">
+        <section className="max-w-7xl mx-auto px-6 pt-20 pb-12">
 
           <span className="rounded-full bg-cyan-500/10 px-4 py-2 text-cyan-400">
             ⭐ Most Popular
@@ -89,7 +89,7 @@ export default function CourseDetails() {
 
         {/* Overview */}
 
-        <section className="max-w-7xl mx-auto px-6 py-16">
+        <section className="max-w-7xl mx-auto px-6 py-10">
 
           <h2 className="text-3xl font-bold">
             Course Overview
@@ -103,7 +103,7 @@ export default function CourseDetails() {
 
         {/* Skills */}
 
-        <section className="max-w-7xl mx-auto px-6 py-16">
+        <section className="max-w-7xl mx-auto px-6 py-10">
 
           <h2 className="text-3xl font-bold">
             Skills You'll Learn
@@ -126,7 +126,7 @@ export default function CourseDetails() {
 
         {/* Curriculum */}
 
-        <section className="max-w-7xl mx-auto px-6 py-16">
+        <section className="max-w-7xl mx-auto px-6 pt-10 pb-20">
 
           <h2 className="text-3xl font-bold mb-8">
             Curriculum

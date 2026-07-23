@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   ArrowRight,
   Database,
@@ -91,9 +92,10 @@ export default function Roadmaps() {
 
             return (
 
-              <div
+              <Link
                 key={roadmap.title}
-                className="rounded-3xl border border-slate-800 bg-slate-900 p-8 hover:border-blue-500 hover:-translate-y-2 transition-all duration-300"
+                to="/roadmaps"
+                className="group block rounded-3xl border border-slate-800 bg-slate-900 p-8 hover:border-blue-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-900/20 transition-all duration-300"
               >
 
                 <div
@@ -102,7 +104,7 @@ export default function Roadmaps() {
                   <Icon size={34} color="white" />
                 </div>
 
-                <h3 className="text-3xl font-bold mt-8">
+                <h3 className="text-3xl font-bold mt-8 group-hover:text-blue-400 transition">
                   {roadmap.title}
                 </h3>
 
@@ -133,15 +135,18 @@ export default function Roadmaps() {
 
                 </div>
 
-                <button className="mt-10 flex items-center gap-2 text-blue-400 font-semibold hover:gap-4 transition-all">
+                <div className="mt-10 flex items-center gap-2 text-blue-400 font-semibold">
 
                   View Complete Roadmap
 
-                  <ArrowRight size={18} />
+                  <ArrowRight
+                    size={18}
+                    className="group-hover:translate-x-2 transition-transform duration-300"
+                  />
 
-                </button>
+                </div>
 
-              </div>
+              </Link>
 
             );
 

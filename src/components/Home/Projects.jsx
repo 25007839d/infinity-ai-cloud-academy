@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   Database,
   Cloud,
@@ -54,10 +55,14 @@ const projects = [
 
 export default function Projects() {
   return (
-    <section id="projects" className="py-24 bg-[#08111F]">
+    <section
+      id="projects"
+      className="py-24 bg-[#08111F]"
+    >
       <div className="max-w-7xl mx-auto px-6">
 
         <div className="text-center">
+
           <p className="uppercase tracking-[5px] text-blue-400 font-semibold">
             Real Industry Projects
           </p>
@@ -70,6 +75,7 @@ export default function Projects() {
             Every student works on production-style projects that mirror
             real-world enterprise data engineering and AI systems.
           </p>
+
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8 mt-20">
@@ -80,9 +86,10 @@ export default function Projects() {
 
             return (
 
-              <div
+              <Link
                 key={project.title}
-                className="group rounded-3xl bg-slate-900 border border-slate-800 p-8 hover:border-blue-500 hover:-translate-y-2 transition-all duration-300"
+                to="/projects"
+                className="group block rounded-3xl bg-slate-900 border border-slate-800 p-8 hover:border-blue-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-900/20 transition-all duration-300"
               >
 
                 <div
@@ -91,7 +98,7 @@ export default function Projects() {
                   <Icon size={34} color="white" />
                 </div>
 
-                <h3 className="text-2xl font-bold mt-8">
+                <h3 className="text-2xl font-bold mt-8 group-hover:text-blue-400 transition">
                   {project.title}
                 </h3>
 
@@ -103,12 +110,18 @@ export default function Projects() {
                   {project.desc}
                 </p>
 
-                <button className="mt-8 flex items-center gap-2 text-blue-400 group-hover:gap-3 transition-all">
-                  View Project
-                  <ArrowRight size={18}/>
-                </button>
+                <div className="mt-8 flex items-center gap-2 text-blue-400 font-semibold">
 
-              </div>
+                  View Project
+
+                  <ArrowRight
+                    size={18}
+                    className="group-hover:translate-x-2 transition-transform duration-300"
+                  />
+
+                </div>
+
+              </Link>
 
             );
 

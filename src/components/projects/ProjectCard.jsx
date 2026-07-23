@@ -2,11 +2,18 @@ import TechBadge from "./TechBadge";
 
 export default function ProjectCard({ project }) {
   return (
-    <div className="rounded-3xl overflow-hidden border border-slate-800 bg-slate-900 hover:border-cyan-500 transition">
+    <div className="group rounded-3xl overflow-hidden border border-slate-800 bg-slate-900 hover:border-cyan-500 hover:-translate-y-2 transition-all duration-300">
+      <div className="relative h-52 overflow-hidden">
 
-      <div className="h-52 bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-6xl">
-        🚀
-      </div>
+            <img
+                src={project.image}
+                alt={project.title}
+                className="w-full h-full object-cover transition duration-500 group-hover:scale-110"
+            />
+
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+
+        </div>
 
       <div className="p-6">
 

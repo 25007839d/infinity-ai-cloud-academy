@@ -47,12 +47,7 @@ export default function ResourceCard({ resource }) {
           View
         </a>
 
-        <a
-          href={resource.download}
-          className="rounded-xl border border-blue-500 px-5 py-3"
-        >
-          Download
-        </a>
+        
 
       </div>
 

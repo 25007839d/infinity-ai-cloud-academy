@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   Database,
   BrainCircuit,
@@ -139,13 +140,14 @@ export default function FeaturedCourses() {
 
                 <div className="mt-8 flex items-center justify-between">
 
-                  <button className="flex items-center gap-2 text-blue-400 font-semibold group-hover:gap-3 transition-all">
-
+                  <Link
+                    to="/courses"
+                    className="flex items-center gap-2 text-blue-400 font-semibold group-hover:gap-3 transition-all"
+                  >
                     View Details
 
                     <ArrowRight size={18} />
-
-                  </button>
+                  </Link>
 
                   <span className="text-xs text-slate-500">
                     {course.duration}

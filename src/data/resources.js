@@ -4,7 +4,7 @@ export const resources = [
     title: "SQL Cheat Sheet",
 
     description:
-      "50 Most Frequently Used SQL Commands",
+      "Most Frequently Used SQL Commands",
 
     category: "SQL",
 
@@ -14,9 +14,9 @@ export const resources = [
 
     featured: true,
 
-    view: "#",
+    view: "/resources/pdf/sqlNotes.pdf",
 
-    download: "#",
+    download: "/resources/pdf/sqlNotes.pdf",
   },
 
   {

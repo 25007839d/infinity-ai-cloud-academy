@@ -25,7 +25,6 @@ export default function Resources() {
 
           <ResourceGrid />
           <StatsSection />
-          <FeaturedResources />
 
           <YoutubeSection />
 

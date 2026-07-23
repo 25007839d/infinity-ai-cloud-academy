@@ -1,3 +1,6 @@
+import iotBanner from "../assets/technologies/iotArc.png";
+import gcpBanner from "../assets/technologies/gcpArc.png";
+import sparkBanner from "../assets/technologies/sparkArc.png";
 export const projects = [
   {
   id: 1,
@@ -5,7 +8,7 @@ export const projects = [
   category: "Data Engineering",
   level: "Advanced",
   duration: "4 Weeks",
-
+  image: iotBanner,
   description:
     "Build a complete Industrial IoT platform using ESP32, Supabase, PySpark, BigQuery, Airflow and Looker Studio.",
 
@@ -20,17 +23,17 @@ export const projects = [
 
   github: "https://github.com/25007839d/iot-data-engineering-platform",
 
-  demo: "https://github.com/25007839d/iot-data-engineering-platform",
+  demo: "https://github.com/25007839d/data_engineer1",
 },
 
   {
     id: 2,
-    title: "Spotify Analytics Pipeline",
+    title: "Spark processing ETL",
     category: "Data Engineering",
     level: "Intermediate",
     duration: "2 Weeks",
 
-    image: "/images/projects/spotify.jpg",
+    image: sparkBanner,
 
     description:
       "Build an end-to-end ETL pipeline to analyze Spotify listening history.",
@@ -42,33 +45,35 @@ export const projects = [
       "Looker Studio",
     ],
 
-    github: "#",
-    demo: "#",
+    github: "https://github.com/25007839d/pcm_gcp_project",
+    demo: "https://github.com/25007839d/data_engineer1",
   },
 
   {
     id: 3,
-    title: "RAG AI Chatbot",
+    title: "Google Cloud Platform",
 
-    category: "Generative AI",
+    category: "CICD",
 
     level: "Advanced",
 
     duration: "3 Weeks",
 
-    image: "/images/projects/rag.jpg",
+    image: gcpBanner,
 
     description:
-      "Create an enterprise AI chatbot using LangChain, OpenAI, ChromaDB and FastAPI.",
+      "Create an enterprise CICD deployment on Cloud.",
 
     technologies: [
-      "OpenAI",
-      "LangChain",
-      "FastAPI",
-      "Vector DB",
+      "Airflow",
+      "Dataproc/Dataflow",
+      "Bigquery",
+      "GCS",
+      "Terraform",
+      "Github",
     ],
 
-    github: "#",
-    demo: "#",
+    github: "https://github.com/25007839d/pcm_gcp_project",
+    demo: "https://github.com/25007839d/data_engineer1",
   },
 ];
