@@ -15,7 +15,7 @@ import ThankYou from "../pages/ThankYou";
 import NotFound from "../pages/NotFound";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import Terms from "../pages/Terms";
-import ScrollToTop from "../components/layout/ScrollToTop";
+
 // ================= ADMIN =================
 
 import Login from "../admin/pages/Login";

@@ -1,51 +1,78 @@
+import SEO from "../seo/SEO";
+
 import DemoForm from "../components/demo/DemoForm";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+
 export default function BookDemo() {
   return (
-    <div className="min-h-screen bg-[#030712] text-white py-20 px-6">
-      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+    <>
+      <SEO
+        title="Book Free Demo Class | Infinity AI Cloud Academy"
+        description="Book a free live demo session with Infinity AI Cloud Academy. Get personalized career guidance, interact with industry experts, explore our Data Engineering, AI, Cloud Computing, Python, SQL, and Generative AI courses before enrolling."
+        keywords={[
+          "Book Free Demo",
+          "Free Demo Class",
+          "AI Course Demo",
+          "Data Engineering Demo",
+          "Cloud Computing Demo",
+          "Python Demo Class",
+          "SQL Demo",
+          "PySpark Training",
+          "GCP Training",
+          "AWS Training",
+          "Generative AI Course",
+          "Career Guidance",
+          "Industry Expert Mentors",
+          "Placement Assistance",
+          "Infinity AI Cloud Academy",
+        ]}
+        url="https://infinityaicloudacademy.com/book-demo"
+      />
 
-        {/* Left Section */}
-        <div>
-          <span className="bg-blue-600/20 text-blue-400 px-4 py-2 rounded-full text-sm">
-            BOOK FREE DEMO
-          </span>
+      <div className="min-h-screen bg-[#030712] text-white py-20 px-6">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
 
-          <h1 className="text-5xl font-bold mt-6 leading-tight">
-            Build Your Future with
-            <span className="text-cyan-400"> AI & Cloud</span>
-          </h1>
+          {/* Left Section */}
+          <div>
+            <span className="bg-blue-600/20 text-blue-400 px-4 py-2 rounded-full text-sm">
+              BOOK FREE DEMO
+            </span>
 
-          <p className="text-gray-400 mt-6 text-lg">
-            Book a FREE live demo with our industry experts and get a personalized roadmap for your IT career.
-          </p>
+            <h1 className="text-5xl font-bold mt-6 leading-tight">
+              Build Your Future with
+              <span className="text-cyan-400"> AI & Cloud</span>
+            </h1>
 
-          <div className="mt-10 space-y-5">
-            <Feature text="Expert Mentors from Industry" />
-            <Feature text="Real World Projects" />
-            <Feature text="Placement Assistance" />
-            <Feature text="Resume & Interview Preparation" />
-            <Feature text="Live Q&A Session" />
-            <div className="max-w-7xl mx-auto px-6 pt-8">
+            <p className="text-gray-400 mt-6 text-lg">
+              Book a FREE live demo with our industry experts and get a personalized roadmap for your IT career.
+            </p>
 
-              <Link
-                to="/"
-                className="inline-flex items-center gap-2 text-slate-400 hover:text-blue-400 transition"
-              >
-                <ArrowLeft size={18} />
-                Back to Home
-              </Link>
+            <div className="mt-10 space-y-5">
+              <Feature text="Expert Mentors from Industry" />
+              <Feature text="Real World Projects" />
+              <Feature text="Placement Assistance" />
+              <Feature text="Resume & Interview Preparation" />
+              <Feature text="Live Q&A Session" />
 
+              <div className="max-w-7xl mx-auto px-6 pt-8">
+                <Link
+                  to="/"
+                  className="inline-flex items-center gap-2 text-slate-400 hover:text-blue-400 transition"
+                >
+                  <ArrowLeft size={18} />
+                  Back to Home
+                </Link>
+              </div>
             </div>
           </div>
+
+          {/* Right Section */}
+          <DemoForm />
+
         </div>
-
-        {/* Right Section */}
-        <DemoForm />
-
       </div>
-    </div>
+    </>
   );
 }
 

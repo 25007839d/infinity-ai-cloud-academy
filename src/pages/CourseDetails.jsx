@@ -2,7 +2,9 @@ import { useParams, Link } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import { courses } from "../data/courses";
-
+import { CourseSEO } from "../seo";
+import CourseSchema from "../seo/schemas/CourseSchema";
+import BreadcrumbSchema from "../seo/schemas/BreadcrumbSchema";
 export default function CourseDetails() {
   const { slug } = useParams();
 
@@ -11,6 +13,26 @@ export default function CourseDetails() {
   if (!course) {
     return (
       <>
+        <CourseSEO course={course} />
+
+        <CourseSchema course={course} />
+
+        <BreadcrumbSchema
+          items={[
+            {
+              name: "Home",
+              url: "/",
+            },
+            {
+              name: "Courses",
+              url: "/courses",
+            },
+            {
+              name: course.title,
+              url: `/courses/${course.slug}`,
+            },
+          ]}
+        />
         <Navbar />
         <div className="min-h-screen flex items-center justify-center bg-[#030712] text-white">
           <div className="text-center">

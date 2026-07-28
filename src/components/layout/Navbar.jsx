@@ -1,13 +1,15 @@
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
-import logo from "../../assets/images/logo.png";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Menu,
+  X,
+  ArrowRight,
+} from "lucide-react";
 
-export default function Navbar() {
-  const [open, setOpen] = useState(false);
-  const location = useLocation();
+import logo from "../../assets/images/logo.png";
 
-const links = [
+const navigation = [
   { name: "Home", href: "/" },
   { name: "Courses", href: "/courses" },
   { name: "Roadmaps", href: "/roadmaps" },
@@ -17,95 +19,192 @@ const links = [
   { name: "Contact", href: "/contact" },
 ];
 
+export default function Navbar() {
+
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener("scroll", onScroll);
+
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
+
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-slate-950/80 backdrop-blur border-b border-slate-800">
-      <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "border-b border-slate-800 bg-slate-950/90 backdrop-blur-xl shadow-xl"
+          : "bg-transparent"
+      }`}
+    >      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
 
-        <div className="flex items-center gap-3">
+        <Link
+          to="/"
+          className="flex items-center gap-3"
+          aria-label="Infinity AI Cloud Academy"
+        >
 
-          <img
+          <motion.img
+            whileHover={{ rotate: 4, scale: 1.05 }}
+            transition={{ duration: 0.3 }}
             src={logo}
-            alt="Infinity AI Cloud Academy"
-            className="w-14 h-14 rounded-xl object-contain"
+            alt="Infinity AI Cloud Academy Logo"
+            className="h-14 w-14 rounded-xl object-contain"
           />
 
           <div>
-            <h2 className="font-bold text-lg">
+
+            <h2 className="text-lg font-bold text-white">
+
               Infinity AI Cloud Academy
+
             </h2>
 
             <p className="text-xs text-slate-400">
+
               Learn • Build • Deploy • Grow
+
             </p>
 
           </div>
 
-        </div>
+        </Link>
 
-        <nav className="hidden lg:flex gap-8">
+        <nav className="hidden items-center gap-8 lg:flex">
 
-          {links.map((link) => (
-            <Link
-              key={link.name}
-              to={link.href}
-              className={`transition ${
-                location.pathname === link.href
-                  ? "text-blue-400 font-semibold"
-                  : "text-slate-300 hover:text-blue-400"
-              }`}
-            >
-              {link.name}
-            </Link>
+          {navigation.map((item) => {
 
-          ))}
+            const active = location.pathname === item.href;
+
+            return (
+
+              <Link
+                key={item.name}
+                to={item.href}
+                aria-current={active ? "page" : undefined}
+                className={`relative font-medium transition ${
+                  active
+                    ? "text-cyan-400"
+                    : "text-slate-300 hover:text-cyan-400"
+                }`}
+              >
+
+                {item.name}
+
+                {active && (
+                  <motion.span
+                    layoutId="active-nav"
+                    className="absolute -bottom-2 left-0 h-[2px] w-full rounded-full bg-cyan-400"
+                  />
+                )}
+
+              </Link>
+
+            );
+
+          })}
 
         </nav>
 
-        <Link
-          to="/book-demo"
-          className="hidden lg:block bg-blue-600 hover:bg-blue-700 px-5 py-3 rounded-xl transition"
-        >
-          Book Free Demo
-        </Link>
-
-        <button
-          onClick={() => setOpen(!open)}
-          className="lg:hidden"
-        >
-          {open ? <X /> : <Menu />}
-        </button>
-
-      </div>
-
-      {open && (
-        <div className="lg:hidden bg-slate-900 border-t border-slate-800 px-6 py-6 flex flex-col gap-5">
-
-          {links.map((item) => (
-            <Link
-              key={item.href}
-              to={item.href}
-              onClick={() => setOpen(false)}
-              className={`transition ${
-                location.pathname === item.href
-                  ? "text-blue-400 font-semibold"
-                  : "text-slate-300 hover:text-blue-400"
-              }`}
-            >
-              {item.name}
-            </Link>
-          ))}
+        <div className="hidden lg:flex">
 
           <Link
-            to="/book-demo"
-            onClick={() => setOpen(false)}
-            className="mt-2 bg-blue-600 hover:bg-blue-700 text-center py-3 rounded-xl font-semibold transition"
+            to="/courses"
+            className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/30"
           >
-            Book Free Demo
+
+            Explore Courses
+
+            <ArrowRight
+              size={18}
+              className="transition-transform group-hover:translate-x-1"
+            />
+
           </Link>
 
         </div>
-      )}
+
+        <button
+          onClick={() => setOpen(!open)}
+          aria-label={open ? "Close menu" : "Open menu"}
+          className="rounded-lg p-2 lg:hidden"
+        >
+
+          {open ? <X size={28} /> : <Menu size={28} />}
+
+        </button>
+
+      </div>
+            <AnimatePresence>
+
+        {open && (
+
+          <motion.div
+            initial={{ opacity: 0, y: -15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.25 }}
+            className="border-t border-slate-800 bg-slate-950 lg:hidden"
+          >
+
+            <nav className="flex flex-col gap-2 px-6 py-6">
+
+              {navigation.map((item) => {
+
+                const active = location.pathname === item.href;
+
+                return (
+
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className={`rounded-xl px-4 py-4 transition ${
+                      active
+                        ? "bg-cyan-500/10 font-semibold text-cyan-400"
+                        : "text-slate-300 hover:bg-slate-900 hover:text-cyan-400"
+                    }`}
+                  >
+
+                    {item.name}
+
+                  </Link>
+
+                );
+
+              })}
+
+              <Link
+                to="/courses"
+                className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 py-4 font-semibold text-white"
+              >
+
+                Explore Courses
+
+                <ArrowRight size={18} />
+
+              </Link>
+
+            </nav>
+
+          </motion.div>
+
+        )}
+
+      </AnimatePresence>
 
     </header>
+
   );
+
 }

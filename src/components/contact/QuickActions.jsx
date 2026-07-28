@@ -1,4 +1,4 @@
-import siteConfig from "../../config/siteConfig";
+import siteConfig from "../../seo/config/siteConfig.js";
 import { Link } from "react-router-dom";
 
 export default function QuickActions() {

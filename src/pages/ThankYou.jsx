@@ -9,7 +9,7 @@ import {
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
-import siteConfig from "../config/siteConfig";
+import siteConfig from "../seo/config/siteConfig.js";
 
 export default function ThankYou() {
   const { state } = useLocation();

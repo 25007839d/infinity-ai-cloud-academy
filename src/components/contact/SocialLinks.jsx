@@ -1,4 +1,4 @@
-import siteConfig from "../../config/siteConfig";
+import siteConfig from "../../seo/config/siteConfig.js";
 
 export default function SocialLinks() {
   return (
