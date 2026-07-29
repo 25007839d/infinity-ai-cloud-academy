@@ -44,10 +44,10 @@ const seoConfig = {
     "https://infinityaicloudacademy.com/logo.png",
 
   image:
-    "https://infinityaicloudacademy.com/og-image.png",
+    "https://infinityaicloudacademy.com/academy.png",
 
   favicon:
-    "https://infinityaicloudacademy.com/favicon.ico",
+    "https://infinityaicloudacademy.com/favicon.png",
 
   // ============================
   // Social Media
