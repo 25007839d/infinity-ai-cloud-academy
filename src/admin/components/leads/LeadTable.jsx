@@ -5,6 +5,9 @@ import { exportLeadsToCSV } from "../../utils/csvExport";
 import LeadFilters from "./LeadFilters";
 import LeadActions from "./LeadActions";
 import LeadDetailsDrawer from "./LeadDetailsDrawer";
+import {
+  deleteLead
+} from "../../services/leadService";
 
 export default function LeadTable() {
   const [loading, setLoading] = useState(true);
@@ -17,9 +20,30 @@ export default function LeadTable() {
   const [selectedLead, setSelectedLead] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+
   useEffect(() => {
     loadLeads();
-  }, []);
+
+      }, []);
+  async function handleDelete(lead) {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${lead.full_name}"?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteLead(lead.id);
+
+      // UI Refresh
+      await loadLeads();
+
+      alert("Lead deleted successfully.");
+    } catch (err) {
+      console.error(err);
+      alert("Unable to delete lead.");
+    }
+  }
 
   async function loadLeads() {
     try {
@@ -222,6 +246,7 @@ export default function LeadTable() {
                           setSelectedLead(lead);
                           setDrawerOpen(true);
                         }}
+                        onDelete={handleDelete}
                       />
 
                     </td>

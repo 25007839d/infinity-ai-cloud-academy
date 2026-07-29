@@ -4,12 +4,14 @@ import {
   Phone,
   MessageCircle,
   Mail,
+  Trash2,
 } from "lucide-react";
 
 export default function LeadActions({
   lead,
   onView,
   onEdit,
+  onDelete,  
 }) {
   const phone = lead.phone || "";
   const email = lead.email || "";
@@ -71,6 +73,16 @@ export default function LeadActions({
       >
         <Mail size={18} />
       </a>
+
+      {/* Delete */}
+
+      <button
+          onClick={() => onDelete(lead)}
+          title="Delete Lead"
+          className="text-red-600 hover:text-red-500"
+        >
+          <Trash2 size={18} />
+      </button>
 
     </div>
   );
