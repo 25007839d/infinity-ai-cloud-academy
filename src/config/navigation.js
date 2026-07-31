@@ -1,36 +1,9 @@
 export const navigation = [
-  {
-    name: "Home",
-    path: "/",
-  },
-
-  {
-    name: "Courses",
-    path: "/courses",
-  },
-
-  {
-    name: "Roadmaps",
-    path: "/roadmaps",
-  },
-
-  {
-    name: "Projects",
-    path: "/projects",
-  },
-
-  {
-    name: "Resources",
-    path: "/resources",
-  },
-
-  {
-    name: "About",
-    path: "/about",
-  },
-
-  {
-    name: "Contact",
-    path: "/contact",
-  },
+  { name: "Home", href: "/" },
+  { name: "Courses", href: "/courses" },
+  { name: "Roadmaps", href: "/roadmaps" },
+  { name: "Projects", href: "/projects" },
+  { name: "Resources", href: "/resources" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" }
 ];

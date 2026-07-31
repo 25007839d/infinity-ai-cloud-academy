@@ -23,6 +23,9 @@ import Dashboard from "../admin/pages/Dashboard";
 import DemoRegistrations from "../admin/pages/DemoRegistrations";
 import Analytics from "../admin/pages/Analytics";
 
+// ================= STUDENT =================
+import StudentPortal from "../pages/student/StudentPortal";
+
 // ================= PROTECTED ROUTE =================
 
 import ProtectedRoute from "../admin/routes/ProtectedRoute";
@@ -66,6 +69,10 @@ export default function AppRoutes() {
       <Route
         path="/contact"
         element={<Contact />}
+      />
+      <Route
+      path="/student"
+      element={<StudentPortal />}
       />
 
       <Route

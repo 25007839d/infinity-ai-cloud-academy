@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { supabase } from "../../services/supabase";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Menu,
@@ -8,6 +10,7 @@ import {
 } from "lucide-react";
 
 import logo from "../../assets/images/logo.png";
+
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -25,6 +28,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   const location = useLocation();
+  const { user } = useAuth();
 
   useEffect(() => {
     const onScroll = () => {
@@ -117,21 +121,30 @@ export default function Navbar() {
 
         </nav>
 
-        <div className="hidden lg:flex">
+        <div className="hidden lg:flex items-center gap-3">
 
           <Link
             to="/courses"
             className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/30"
           >
-
             Explore Courses
-
             <ArrowRight
               size={18}
               className="transition-transform group-hover:translate-x-1"
             />
-
           </Link>
+
+          {user && (
+            <button
+              onClick={async () => {
+                await supabase.auth.signOut();
+                window.location.reload();
+              }}
+              className="rounded-xl border border-red-500 px-5 py-3 font-semibold text-red-400 transition hover:bg-red-500 hover:text-white"
+            >
+              Logout
+            </button>
+          )}
 
         </div>
 
@@ -194,7 +207,17 @@ export default function Navbar() {
                 <ArrowRight size={18} />
 
               </Link>
-
+              {user && (
+              <button
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  window.location.reload();
+                }}
+                className="mt-3 rounded-xl border border-red-500 py-4 font-semibold text-red-400 transition hover:bg-red-500 hover:text-white"
+              >
+                Logout
+              </button>
+            )}
             </nav>
 
           </motion.div>

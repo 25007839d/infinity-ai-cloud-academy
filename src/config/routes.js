@@ -1,17 +1,21 @@
-export const routes = {
-  home: "/",
+export const ROUTES = {
 
-  courses: "/courses",
+  HOME: "/",
 
-  roadmaps: "/roadmaps",
+  COURSES: "/courses",
 
-  projects: "/projects",
+  PROJECTS: "/projects",
 
-  resources: "/resources",
+  RESOURCES: "/resources",
 
-  about: "/about",
+  ROADMAPS: "/roadmaps",
 
-  contact: "/contact",
+  STUDENT: "/student",
 
-  demo: "/book-demo",
+  DASHBOARD: "/dashboard",
+
+  LOGIN: "/login",
+
+  ADMIN: "/admin"
+
 };

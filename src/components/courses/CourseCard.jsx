@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import ProtectedAction from "../auth/ProtectedAction";
 
 export default function CourseCard({ course }) {
   return (
@@ -41,12 +42,14 @@ export default function CourseCard({ course }) {
 
       {/* Buttons */}
       <div className="mt-8 flex gap-3">
-        <Link
-          to={`/courses/${course.slug}`}
-          className="flex-1 rounded-xl border border-cyan-500 py-3 text-center font-semibold text-cyan-400 transition hover:bg-cyan-500 hover:text-black"
-        >
-          View Details
-        </Link>
+        <ProtectedAction>
+          <Link
+            to={`/courses/${course.slug}`}
+            className="flex-1 rounded-xl border border-cyan-500 py-3 text-center font-semibold text-cyan-400 transition hover:bg-cyan-500 hover:text-black"
+          >
+            View Details
+          </Link>
+        </ProtectedAction>
 
         <Link
           to="/book-demo"
