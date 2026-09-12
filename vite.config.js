@@ -6,6 +6,12 @@ import sitemap from "vite-plugin-sitemap";
 export default defineConfig({
   base: "/",
 
+  server: {
+    proxy: {
+      "/api": "http://localhost:3000",
+    },
+  },
+
   plugins: [
     react(),
     tailwindcss(),
@@ -21,6 +27,10 @@ export default defineConfig({
         "/resources",
         "/about",
         "/contact",
+        "/book-demo",
+        "/privacy-policy",
+        "/terms",
+        "/student",
       ],
     }),
   ],

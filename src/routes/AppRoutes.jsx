@@ -15,6 +15,7 @@ import ThankYou from "../pages/ThankYou";
 import NotFound from "../pages/NotFound";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import Terms from "../pages/Terms";
+import ResetPassword from "../pages/ResetPassword";
 
 // ================= ADMIN =================
 
@@ -87,6 +88,7 @@ export default function AppRoutes() {
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
       <Route path="/terms" element={<Terms />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       {/* ================= ADMIN ================= */}
 

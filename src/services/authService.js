@@ -1,53 +1,39 @@
-import { supabase } from "./supabase";
+import { apiRequest } from './api';
 
-// Register
 export async function signUp(email, password, profile = {}) {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: profile,
-    },
-  });
-
-  if (error) throw error;
-
-  return data;
-}
-
-// Login
-export async function signIn(email, password) {
-  const { data, error } =
-    await supabase.auth.signInWithPassword({
+  return apiRequest('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({
       email,
       password,
-    });
-
-  if (error) throw error;
-
-  return data;
+      full_name: profile.full_name || '',
+    }),
+  });
 }
 
-// Logout
+export async function signIn(email, password) {
+  return apiRequest('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+}
+
 export async function signOut() {
-  const { error } = await supabase.auth.signOut();
-
-  if (error) throw error;
+  return apiRequest('/auth/logout', { method: 'POST' });
 }
 
-// Current User
 export async function getCurrentUser() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  return user;
+  try {
+    return await apiRequest('/auth/me');
+  } catch (error) {
+    if (error.status === 401) return null;
+    throw error;
+  }
 }
 
-// Forgot Password
 export async function resetPassword(email) {
-  const { error } =
-    await supabase.auth.resetPasswordForEmail(email);
-
-  if (error) throw error;
+  return apiRequest('/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { signIn } from "../../services/authService";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function LoginForm({
   onSuccess,
@@ -10,6 +11,8 @@ export default function LoginForm({
     email: "",
     password: "",
   });
+
+  const { setUser } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -28,8 +31,8 @@ export default function LoginForm({
     setError("");
 
     try {
-      await signIn(form.email, form.password);
-
+      const user = await signIn(form.email, form.password);
+      setUser(user);
       onSuccess?.();
 
     } catch (err) {

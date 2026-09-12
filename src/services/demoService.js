@@ -1,18 +1,8 @@
-import { supabase } from "./supabase";
+import { apiRequest } from './api';
 
 export async function registerDemo(formData) {
-  const { error } = await supabase
-    .from("demo_registrations")
-    .insert([
-      {
-        full_name: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        course: formData.course,
-        experience: formData.experience,
-        status: "New",
-      },
-    ]);
-
-  if (error) throw error;
+  return apiRequest('/demo-registrations', {
+    method: 'POST',
+    body: JSON.stringify(formData),
+  });
 }

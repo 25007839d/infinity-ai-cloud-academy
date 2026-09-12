@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiRequest } from "../../services/api";
 
 export default function ContactForm() {
   const [form, setForm] = useState({
@@ -16,10 +17,28 @@ export default function ContactForm() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
-    alert("Next step: Connect this form with Supabase.");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage("");
+    setError("");
+
+    try {
+      await apiRequest("/contact", {
+        method: "POST",
+        body: JSON.stringify(form),
+      });
+      setMessage("Thanks! Your message has been sent.");
+      setForm({ name: "", email: "", phone: "", course: "", message: "" });
+    } catch (err) {
+      setError(err.message || "Unable to send your message.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -80,11 +99,15 @@ export default function ContactForm() {
             className="md:col-span-2 rounded-xl bg-slate-800 p-4 outline-none"
           />
 
+          {message && <p className="md:col-span-2 rounded-xl bg-green-500/10 p-4 text-green-400">{message}</p>}
+          {error && <p className="md:col-span-2 rounded-xl bg-red-500/10 p-4 text-red-400">{error}</p>}
+
           <button
             type="submit"
-            className="md:col-span-2 rounded-xl bg-blue-600 py-4 font-semibold hover:bg-blue-700"
+            disabled={loading}
+            className="md:col-span-2 rounded-xl bg-blue-600 py-4 font-semibold hover:bg-blue-700 disabled:opacity-50"
           >
-            Send Message
+            {loading ? "Sending..." : "Send Message"}
           </button>
 
         </form>

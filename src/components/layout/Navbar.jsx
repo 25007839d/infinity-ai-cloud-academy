@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { supabase } from "../../services/supabase";
+import { signOut } from "../../services/authService";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Menu,
@@ -137,7 +137,7 @@ export default function Navbar() {
           {user && (
             <button
               onClick={async () => {
-                await supabase.auth.signOut();
+                await signOut();
                 window.location.reload();
               }}
               className="rounded-xl border border-red-500 px-5 py-3 font-semibold text-red-400 transition hover:bg-red-500 hover:text-white"
@@ -210,7 +210,7 @@ export default function Navbar() {
               {user && (
               <button
                 onClick={async () => {
-                  await supabase.auth.signOut();
+                  await signOut();
                   window.location.reload();
                 }}
                 className="mt-3 rounded-xl border border-red-500 py-4 font-semibold text-red-400 transition hover:bg-red-500 hover:text-white"

@@ -8,7 +8,7 @@ Status: Active
 
 Database
 
-PostgreSQL (Supabase)
+MySQL (Hostinger)
 
 ---
 
@@ -481,7 +481,7 @@ Lessons
 
 # Security
 
-Supabase Authentication
+JWT + HttpOnly Cookie Authentication
 
 ↓
 

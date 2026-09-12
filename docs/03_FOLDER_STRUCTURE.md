@@ -338,7 +338,7 @@ analyticsService
 
 paymentService
 
-supabase
+server/database
 ```
 
 No UI code.

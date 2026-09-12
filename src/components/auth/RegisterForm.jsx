@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { signUp } from "../../services/authService";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function RegisterForm({
   onSuccess,
@@ -10,6 +11,8 @@ export default function RegisterForm({
     email: "",
     password: "",
   });
+
+  const { setUser } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -28,7 +31,7 @@ export default function RegisterForm({
     setError("");
 
     try {
-      await signUp(
+      const user = await signUp(
         form.email,
         form.password,
         {
@@ -36,6 +39,7 @@ export default function RegisterForm({
         }
       );
 
+      setUser(user);
       onSuccess?.();
 
     } catch (err) {
