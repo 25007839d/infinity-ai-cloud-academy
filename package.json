@@ -9,8 +9,8 @@
     "generate:sitemap": "node scripts/generate-sitemap.js",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "node server.js",
-    "server": "node server.js",
+    "start": "node app.js",
+    "server": "node app.js",
     "dev:api": "node server.js",
     "seed:admin": "node db/seed-admin.js"
   },

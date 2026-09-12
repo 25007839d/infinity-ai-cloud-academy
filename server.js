@@ -127,6 +127,14 @@ function requireAuth(requiredRole = null) {
   };
 }
 
+app.get('/health', async (req, res) => {
+  return res.status(200).json({ success: true, service: 'infinity-ai-cloud-academy', node: process.version });
+});
+
+app.get('/api/ping', (req, res) => {
+  return sendSuccess(res, { service: 'infinity-ai-cloud-academy', node: process.version });
+});
+
 app.get('/api/health', async (req, res) => {
   try {
     await pool.query('SELECT 1');
@@ -479,4 +487,8 @@ app.use((error, req, res, next) => {
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Infinity AI Cloud Academy server running on port ${PORT}`);
+  console.log(`NODE_ENV=${process.env.NODE_ENV || 'development'}`);
+  console.log(`APP_URL=${process.env.APP_URL || '(not set)'}`);
+  console.log(`DB_HOST=${process.env.DB_HOST || '(not set)'}`);
+  console.log(`DB_NAME=${process.env.DB_NAME || '(not set)'}`);
 });
