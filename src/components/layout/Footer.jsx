@@ -136,6 +136,7 @@ export default function Footer() {
 
               <li>
                 <Link to="/resources">Resources</Link>
+                <Link to="/blog">Blog</Link>
               </li>
 
               <li>

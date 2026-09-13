@@ -16,6 +16,9 @@ import NotFound from "../pages/NotFound";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import Terms from "../pages/Terms";
 import ResetPassword from "../pages/ResetPassword";
+import Blog from "../pages/Blog";
+import BlogPost from "../pages/BlogPost";
+import CmsPage from "../pages/CmsPage";
 
 // ================= ADMIN =================
 
@@ -23,6 +26,10 @@ import Login from "../admin/pages/Login";
 import Dashboard from "../admin/pages/Dashboard";
 import DemoRegistrations from "../admin/pages/DemoRegistrations";
 import Analytics from "../admin/pages/Analytics";
+import CoursesCMS from "../admin/pages/CoursesCMS";
+import PostsCMS from "../admin/pages/PostsCMS";
+import PagesCMS from "../admin/pages/PagesCMS";
+import SeoCMS from "../admin/pages/SeoCMS";
 
 // ================= STUDENT =================
 import StudentPortal from "../pages/student/StudentPortal";
@@ -90,6 +97,10 @@ export default function AppRoutes() {
       <Route path="/terms" element={<Terms />} />
       <Route path="/reset-password" element={<ResetPassword />} />
 
+      <Route path="/blog" element={<Blog />} />
+      <Route path="/blog/:slug" element={<BlogPost />} />
+      <Route path="/page/:slug" element={<CmsPage />} />
+
       {/* ================= ADMIN ================= */}
 
       <Route
@@ -128,6 +139,11 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      <Route path="/admin/courses" element={<ProtectedRoute><CoursesCMS /></ProtectedRoute>} />
+      <Route path="/admin/posts" element={<ProtectedRoute><PostsCMS /></ProtectedRoute>} />
+      <Route path="/admin/pages" element={<ProtectedRoute><PagesCMS /></ProtectedRoute>} />
+      <Route path="/admin/seo" element={<ProtectedRoute><SeoCMS /></ProtectedRoute>} />
 
       {/* ================= 404 ================= */}
 

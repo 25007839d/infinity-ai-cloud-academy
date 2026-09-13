@@ -491,6 +491,206 @@ app.post('/api/contact', demoLimiter, async (req, res) => {
   }
 });
 
+
+// ---------- Public CMS helpers ----------
+function parseJsonOrCsv(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) return value.map(String).map((x) => x.trim()).filter(Boolean);
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) return parsed.map(String).map((x) => x.trim()).filter(Boolean);
+  } catch {}
+  return String(value).split(',').map((x) => x.trim()).filter(Boolean);
+}
+
+function sanitizeHtml(input = '') {
+  return String(input)
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<iframe[\s\S]*?<\/iframe>/gi, '')
+    .replace(/<object[\s\S]*?<\/object>/gi, '')
+    .replace(/<embed[\s\S]*?>/gi, '')
+    .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/javascript:/gi, '');
+}
+
+function slugify(value = '') {
+  return String(value).toLowerCase().trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function normalizeSeoInput(seo = {}) {
+  return {
+    meta_title: seo.meta_title ?? seo.title ?? null,
+    meta_description: seo.meta_description ?? seo.description ?? null,
+    focus_keyword: seo.focus_keyword ?? seo.focusKeyword ?? null,
+    keywords: JSON.stringify(parseJsonOrCsv(seo.keywords)),
+    canonical_url: seo.canonical_url ?? seo.canonicalUrl ?? null,
+    og_title: seo.og_title ?? seo.ogTitle ?? null,
+    og_description: seo.og_description ?? seo.ogDescription ?? null,
+    og_image: seo.og_image ?? seo.ogImage ?? null,
+    robots: seo.robots || 'index,follow',
+    schema_json: seo.schema_json ? (typeof seo.schema_json === 'string' ? seo.schema_json : JSON.stringify(seo.schema_json)) : null,
+  };
+}
+
+function mapSeoRow(row) {
+  if (!row) return null;
+  return {
+    title: row.meta_title || '',
+    description: row.meta_description || '',
+    focusKeyword: row.focus_keyword || '',
+    keywords: parseJsonOrCsv(row.keywords),
+    canonicalUrl: row.canonical_url || '',
+    ogTitle: row.og_title || '',
+    ogDescription: row.og_description || '',
+    ogImage: row.og_image || '',
+    robots: row.robots || 'index,follow',
+    schemaJson: row.schema_json || null,
+  };
+}
+
+async function getCourseForAdmin(id) {
+  const [rows] = await pool.query('SELECT * FROM courses WHERE id = ? LIMIT 1', [id]);
+  if (!rows.length) return null;
+  const course = rows[0];
+  const [tech] = await pool.query('SELECT id, technology, display_order FROM course_technologies WHERE course_id = ? ORDER BY display_order, technology', [id]);
+  const [mods] = await pool.query('SELECT id, module_name, description, display_order FROM course_modules WHERE course_id = ? ORDER BY display_order, module_name', [id]);
+  let topics = [];
+  if (mods.length) {
+    [topics] = await pool.query(`SELECT id, module_id, topic, display_order FROM course_module_topics WHERE module_id IN (${mods.map(() => '?').join(',')}) ORDER BY display_order, topic`, mods.map((m) => m.id));
+  }
+  const [seo] = await pool.query('SELECT * FROM course_seo WHERE course_id = ? LIMIT 1', [id]);
+  const topicMap = new Map();
+  topics.forEach((t) => { if (!topicMap.has(t.module_id)) topicMap.set(t.module_id, []); topicMap.get(t.module_id).push(t); });
+  return {
+    ...mapCourseRow(course, tech.map((t) => t.technology), mods.map((m) => ({ module: m.module_name, description: m.description || '', topics: (topicMap.get(m.id) || []).map((t) => t.topic) })), mapSeoRow(seo[0])),
+    id: course.id,
+    status: course.status,
+  };
+}
+
+function coursePayload(body) {
+  const title = String(body.title || '').trim();
+  const slug = slugify(body.slug || title);
+  if (!title || !slug) throw new Error('Course title and slug are required.');
+  return {
+    title, slug,
+    tagline: body.tagline || null,
+    short_description: body.short_description ?? body.shortDescription ?? null,
+    overview: body.overview || null,
+    thumbnail: body.thumbnail || null,
+    banner: body.banner || null,
+    category: body.category || null,
+    duration: body.duration || null,
+    level: body.level || null,
+    mode: body.mode || null,
+    language: body.language || null,
+    certificate_available: body.certificate_available ?? body.certificateAvailable ? 1 : 0,
+    certificate_title: body.certificate_title ?? body.certificateTitle ?? null,
+    featured: body.featured ? 1 : 0,
+    students: body.students || null,
+    rating: body.rating === '' || body.rating == null ? null : Number(body.rating),
+    projects: Number(body.projects || 0),
+    modules_count: Array.isArray(body.curriculum) ? body.curriculum.length : Number(body.modules_count || body.modules || 0),
+    icon: body.icon || null,
+    theme_color: body.theme_color ?? body.themeColor ?? null,
+    display_order: Number(body.display_order ?? body.displayOrder ?? 0),
+    coming_soon: body.coming_soon ?? body.comingSoon ? 1 : 0,
+    popular: body.popular ? 1 : 0,
+    enrollment_open: body.enrollment_open ?? body.enrollmentOpen ? 1 : 0,
+    last_updated: body.last_updated || body.lastUpdated || null,
+    version: body.version || null,
+    status: ['draft','published','archived'].includes(body.status) ? body.status : 'draft',
+  };
+}
+
+async function replaceCourseChildren(courseId, body) {
+  await pool.query('DELETE FROM course_technologies WHERE course_id = ?', [courseId]);
+  await pool.query('DELETE FROM course_modules WHERE course_id = ?', [courseId]);
+  const technologies = Array.isArray(body.technologies) ? body.technologies : parseJsonOrCsv(body.technologies);
+  for (let i = 0; i < technologies.length; i++) {
+    await pool.query('INSERT INTO course_technologies (id, course_id, technology, display_order) VALUES (?, ?, ?, ?)', [crypto.randomUUID(), courseId, String(technologies[i]).trim(), i]);
+  }
+  const curriculum = Array.isArray(body.curriculum) ? body.curriculum : [];
+  for (let i = 0; i < curriculum.length; i++) {
+    const module = curriculum[i] || {};
+    const moduleId = crypto.randomUUID();
+    await pool.query('INSERT INTO course_modules (id, course_id, module_name, description, display_order) VALUES (?, ?, ?, ?, ?)', [moduleId, courseId, String(module.module || module.module_name || '').trim() || `Module ${i + 1}`, module.description || null, i]);
+    const topics = Array.isArray(module.topics) ? module.topics : [];
+    for (let j = 0; j < topics.length; j++) {
+      await pool.query('INSERT INTO course_module_topics (id, module_id, topic, display_order) VALUES (?, ?, ?, ?)', [crypto.randomUUID(), moduleId, String(topics[j]).trim(), j]);
+    }
+  }
+  const seo = normalizeSeoInput(body.seo || {});
+  await pool.query(`INSERT INTO course_seo (id, course_id, meta_title, meta_description, focus_keyword, keywords, canonical_url, og_title, og_description, og_image, robots, schema_json)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE meta_title=VALUES(meta_title), meta_description=VALUES(meta_description), focus_keyword=VALUES(focus_keyword), keywords=VALUES(keywords), canonical_url=VALUES(canonical_url), og_title=VALUES(og_title), og_description=VALUES(og_description), og_image=VALUES(og_image), robots=VALUES(robots), schema_json=VALUES(schema_json)`,
+    [crypto.randomUUID(), courseId, seo.meta_title, seo.meta_description, seo.focus_keyword, seo.keywords, seo.canonical_url, seo.og_title, seo.og_description, seo.og_image, seo.robots, seo.schema_json]);
+}
+
+function mapPost(row, seo) {
+  return {
+    id: row.id, slug: row.slug, title: row.title, excerpt: row.excerpt || '', content: row.content || '', featuredImage: row.featured_image || '',
+    category: row.category || '', tags: parseJsonOrCsv(row.tags), authorName: row.author_name || '', status: row.status,
+    featured: Boolean(row.featured), publishedAt: row.published_at, createdAt: row.created_at, updatedAt: row.updated_at,
+    url: `/blog/${row.slug}`,
+    seo: mapSeoRow(seo),
+  };
+}
+
+function mapPage(row, seo) {
+  return {
+    id: row.id, slug: row.slug, title: row.title, excerpt: row.excerpt || '', content: row.content || '', featuredImage: row.featured_image || '',
+    authorName: row.author_name || '', status: row.status, publishedAt: row.published_at, createdAt: row.created_at, updatedAt: row.updated_at,
+    url: `/page/${row.slug}`, seo: mapSeoRow(seo),
+  };
+}
+
+async function getPostById(id) {
+  const [rows] = await pool.query('SELECT * FROM blog_posts WHERE id = ? LIMIT 1', [id]); if (!rows.length) return null;
+  const [seo] = await pool.query('SELECT * FROM post_seo WHERE post_id = ? LIMIT 1', [id]); return mapPost(rows[0], seo[0]);
+}
+async function getPageById(id) {
+  const [rows] = await pool.query('SELECT * FROM site_pages WHERE id = ? LIMIT 1', [id]); if (!rows.length) return null;
+  const [seo] = await pool.query('SELECT * FROM page_seo WHERE page_id = ? LIMIT 1', [id]); return mapPage(rows[0], seo[0]);
+}
+
+// ---------- Public blog/page APIs ----------
+app.get('/api/site-seo', async (req, res) => {
+  try { const [rows] = await pool.query('SELECT * FROM site_seo_settings LIMIT 1'); return sendSuccess(res, rows[0] || {}); }
+  catch { return sendSuccess(res, {}); }
+});
+
+app.get('/api/blog', async (req, res) => {
+  try {
+    const [rows] = await pool.query(`SELECT * FROM blog_posts WHERE status='published' ORDER BY COALESCE(published_at, created_at) DESC`);
+    const out = [];
+    for (const row of rows) { const [seo] = await pool.query('SELECT * FROM post_seo WHERE post_id=? LIMIT 1', [row.id]); out.push(mapPost(row, seo[0])); }
+    return sendSuccess(res, out);
+  } catch (error) { return sendError(res, 'Unable to load blog posts.', 500); }
+});
+
+app.get('/api/blog/:slug', async (req, res) => {
+  try {
+    const [rows] = await pool.query(`SELECT * FROM blog_posts WHERE slug=? AND status='published' LIMIT 1`, [req.params.slug]);
+    if (!rows.length) return sendError(res, 'Post not found.', 404);
+    const [seo] = await pool.query('SELECT * FROM post_seo WHERE post_id=? LIMIT 1', [rows[0].id]);
+    return sendSuccess(res, mapPost(rows[0], seo[0]));
+  } catch { return sendError(res, 'Post not found.', 404); }
+});
+
+app.get('/api/pages/:slug', async (req, res) => {
+  try {
+    const [rows] = await pool.query(`SELECT * FROM site_pages WHERE slug=? AND status='published' LIMIT 1`, [req.params.slug]);
+    if (!rows.length) return sendError(res, 'Page not found.', 404);
+    const [seo] = await pool.query('SELECT * FROM page_seo WHERE page_id=? LIMIT 1', [rows[0].id]);
+    return sendSuccess(res, mapPage(rows[0], seo[0]));
+  } catch { return sendError(res, 'Page not found.', 404); }
+});
+
 // ---------- Admin ----------
 app.post('/api/admin/login', authLimiter, async (req, res) => {
   try {
@@ -616,6 +816,61 @@ app.get('/api/admin/stats', requireAuth('admin'), async (req, res) => {
 });
 
 
+
+// ---------- Admin CMS: Courses ----------
+app.get('/api/admin/courses', requireAuth('admin'), async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM courses ORDER BY display_order ASC, created_at DESC');
+    return sendSuccess(res, rows.map((r) => ({ ...r, featured: Boolean(r.featured), coming_soon: Boolean(r.coming_soon), popular: Boolean(r.popular), enrollment_open: Boolean(r.enrollment_open) })));
+  } catch (error) { console.error(error); return sendError(res, 'Unable to load courses.', 500); }
+});
+
+app.get('/api/admin/courses/:id', requireAuth('admin'), async (req, res) => {
+  try { const course = await getCourseForAdmin(req.params.id); return course ? sendSuccess(res, course) : sendError(res, 'Course not found.', 404); }
+  catch (error) { console.error(error); return sendError(res, 'Unable to load course.', 500); }
+});
+
+app.post('/api/admin/courses', requireAuth('admin'), async (req, res) => {
+  const conn = await pool.getConnection();
+  try {
+    const data = coursePayload(req.body); const id = crypto.randomUUID(); await conn.beginTransaction();
+    await conn.query(`INSERT INTO courses (id,slug,title,tagline,short_description,overview,thumbnail,banner,category,duration,level,mode,language,certificate_available,certificate_title,featured,students,rating,projects,modules_count,icon,theme_color,display_order,coming_soon,popular,enrollment_open,last_updated,version,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, Object.values({id,...data}));
+    await conn.commit();
+    await replaceCourseChildren(id, req.body);
+    return sendSuccess(res, await getCourseForAdmin(id), 201);
+  } catch (error) { try { await conn.rollback(); } catch {} console.error('Create course error:', error); return sendError(res, error.code === 'ER_DUP_ENTRY' ? 'Slug already exists.' : (error.message || 'Unable to create course.'), 400); }
+  finally { conn.release(); }
+});
+
+app.put('/api/admin/courses/:id', requireAuth('admin'), async (req, res) => {
+  try {
+    const data = coursePayload(req.body); const id=req.params.id;
+    const [existing] = await pool.query('SELECT id FROM courses WHERE id=? LIMIT 1',[id]); if(!existing.length) return sendError(res,'Course not found.',404);
+    const fields=Object.keys(data); await pool.query(`UPDATE courses SET ${fields.map(f=>`${f}=?`).join(',')}, updated_at=NOW() WHERE id=?`, [...fields.map(f=>data[f]),id]);
+    await replaceCourseChildren(id, req.body); return sendSuccess(res, await getCourseForAdmin(id));
+  } catch(error){ console.error('Update course error:',error); return sendError(res,error.code==='ER_DUP_ENTRY'?'Slug already exists.':(error.message||'Unable to update course.'),400); }
+});
+
+app.delete('/api/admin/courses/:id', requireAuth('admin'), async (req,res)=>{ try { const [r]=await pool.query('DELETE FROM courses WHERE id=?',[req.params.id]); return r.affectedRows?sendSuccess(res,{deleted:true}):sendError(res,'Course not found.',404); } catch(error){console.error(error);return sendError(res,'Unable to delete course.',500);} });
+
+// ---------- Admin CMS: Posts ----------
+app.get('/api/admin/posts', requireAuth('admin'), async (req,res)=>{ try { const [rows]=await pool.query('SELECT * FROM blog_posts ORDER BY created_at DESC'); const out=[]; for(const r of rows){const [seo]=await pool.query('SELECT * FROM post_seo WHERE post_id=? LIMIT 1',[r.id]);out.push(mapPost(r,seo[0]));} return sendSuccess(res,out);}catch(e){return sendError(res,'Unable to load posts.',500);} });
+app.get('/api/admin/posts/:id', requireAuth('admin'), async (req,res)=>{ try {const x=await getPostById(req.params.id);return x?sendSuccess(res,x):sendError(res,'Post not found.',404);}catch(e){return sendError(res,'Unable to load post.',500);} });
+app.post('/api/admin/posts', requireAuth('admin'), async (req,res)=>{ try {const title=String(req.body.title||'').trim(),slug=slugify(req.body.slug||title);if(!title||!slug)return sendError(res,'Post title and slug are required.');const id=crypto.randomUUID();const status=['draft','published','archived'].includes(req.body.status)?req.body.status:'draft';const publishedAt=status==='published'?(req.body.publishedAt||new Date()):null;await pool.query(`INSERT INTO blog_posts (id,slug,title,excerpt,content,featured_image,category,tags,author_name,status,featured,published_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,[id,slug,title,req.body.excerpt||null,sanitizeHtml(req.body.content||''),req.body.featuredImage||null,req.body.category||null,JSON.stringify(parseJsonOrCsv(req.body.tags)),req.body.authorName||req.admin.full_name,status,req.body.featured?1:0,publishedAt]);const seo=normalizeSeoInput(req.body.seo||{});await pool.query(`INSERT INTO post_seo (id,post_id,meta_title,meta_description,focus_keyword,keywords,canonical_url,og_title,og_description,og_image,robots,schema_json) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,[crypto.randomUUID(),id,seo.meta_title,seo.meta_description,seo.focus_keyword,seo.keywords,seo.canonical_url,seo.og_title,seo.og_description,seo.og_image,seo.robots,seo.schema_json]);return sendSuccess(res,await getPostById(id),201);}catch(e){console.error(e);return sendError(res,e.code==='ER_DUP_ENTRY'?'Slug already exists.':(e.message||'Unable to create post.'),400);} });
+app.put('/api/admin/posts/:id', requireAuth('admin'), async (req,res)=>{ try {const id=req.params.id;const [exists]=await pool.query('SELECT id FROM blog_posts WHERE id=? LIMIT 1',[id]);if(!exists.length)return sendError(res,'Post not found.',404);const title=String(req.body.title||'').trim(),slug=slugify(req.body.slug||title);if(!title||!slug)return sendError(res,'Post title and slug are required.');const status=['draft','published','archived'].includes(req.body.status)?req.body.status:'draft';const publishedAt=status==='published'?(req.body.publishedAt||new Date()):null;await pool.query(`UPDATE blog_posts SET slug=?,title=?,excerpt=?,content=?,featured_image=?,category=?,tags=?,author_name=?,status=?,featured=?,published_at=?,updated_at=NOW() WHERE id=?`,[slug,title,req.body.excerpt||null,sanitizeHtml(req.body.content||''),req.body.featuredImage||null,req.body.category||null,JSON.stringify(parseJsonOrCsv(req.body.tags)),req.body.authorName||req.admin.full_name,status,req.body.featured?1:0,publishedAt,id]);const seo=normalizeSeoInput(req.body.seo||{});await pool.query(`INSERT INTO post_seo (id,post_id,meta_title,meta_description,focus_keyword,keywords,canonical_url,og_title,og_description,og_image,robots,schema_json) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE meta_title=VALUES(meta_title),meta_description=VALUES(meta_description),focus_keyword=VALUES(focus_keyword),keywords=VALUES(keywords),canonical_url=VALUES(canonical_url),og_title=VALUES(og_title),og_description=VALUES(og_description),og_image=VALUES(og_image),robots=VALUES(robots),schema_json=VALUES(schema_json)`,[crypto.randomUUID(),id,seo.meta_title,seo.meta_description,seo.focus_keyword,seo.keywords,seo.canonical_url,seo.og_title,seo.og_description,seo.og_image,seo.robots,seo.schema_json]);return sendSuccess(res,await getPostById(id));}catch(e){console.error(e);return sendError(res,e.code==='ER_DUP_ENTRY'?'Slug already exists.':(e.message||'Unable to update post.'),400);} });
+app.delete('/api/admin/posts/:id', requireAuth('admin'), async (req,res)=>{try{const[r]=await pool.query('DELETE FROM blog_posts WHERE id=?',[req.params.id]);return r.affectedRows?sendSuccess(res,{deleted:true}):sendError(res,'Post not found.',404);}catch(e){return sendError(res,'Unable to delete post.',500);}});
+
+// ---------- Admin CMS: Pages ----------
+app.get('/api/admin/pages', requireAuth('admin'), async (req,res)=>{try{const[rows]=await pool.query('SELECT * FROM site_pages ORDER BY created_at DESC');const out=[];for(const r of rows){const[seo]=await pool.query('SELECT * FROM page_seo WHERE page_id=? LIMIT 1',[r.id]);out.push(mapPage(r,seo[0]));}return sendSuccess(res,out);}catch(e){return sendError(res,'Unable to load pages.',500);}});
+app.get('/api/admin/pages/:id', requireAuth('admin'), async (req,res)=>{try{const x=await getPageById(req.params.id);return x?sendSuccess(res,x):sendError(res,'Page not found.',404);}catch(e){return sendError(res,'Unable to load page.',500);}});
+app.post('/api/admin/pages', requireAuth('admin'), async (req,res)=>{try{const title=String(req.body.title||'').trim(),slug=slugify(req.body.slug||title);if(!title||!slug)return sendError(res,'Page title and slug are required.');const id=crypto.randomUUID();const status=['draft','published','archived'].includes(req.body.status)?req.body.status:'draft';const publishedAt=status==='published'?(req.body.publishedAt||new Date()):null;await pool.query(`INSERT INTO site_pages (id,slug,title,excerpt,content,featured_image,status,author_name,published_at) VALUES (?,?,?,?,?,?,?,?,?)`,[id,slug,title,req.body.excerpt||null,sanitizeHtml(req.body.content||''),req.body.featuredImage||null,status,req.body.authorName||req.admin.full_name,publishedAt]);const seo=normalizeSeoInput(req.body.seo||{});await pool.query(`INSERT INTO page_seo (id,page_id,meta_title,meta_description,focus_keyword,keywords,canonical_url,og_title,og_description,og_image,robots,schema_json) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,[crypto.randomUUID(),id,seo.meta_title,seo.meta_description,seo.focus_keyword,seo.keywords,seo.canonical_url,seo.og_title,seo.og_description,seo.og_image,seo.robots,seo.schema_json]);return sendSuccess(res,await getPageById(id),201);}catch(e){return sendError(res,e.code==='ER_DUP_ENTRY'?'Slug already exists.':(e.message||'Unable to create page.'),400);}});
+app.put('/api/admin/pages/:id', requireAuth('admin'), async (req,res)=>{try{const id=req.params.id;const[exists]=await pool.query('SELECT id FROM site_pages WHERE id=? LIMIT 1',[id]);if(!exists.length)return sendError(res,'Page not found.',404);const title=String(req.body.title||'').trim(),slug=slugify(req.body.slug||title);if(!title||!slug)return sendError(res,'Page title and slug are required.');const status=['draft','published','archived'].includes(req.body.status)?req.body.status:'draft';const publishedAt=status==='published'?(req.body.publishedAt||new Date()):null;await pool.query(`UPDATE site_pages SET slug=?,title=?,excerpt=?,content=?,featured_image=?,status=?,author_name=?,published_at=?,updated_at=NOW() WHERE id=?`,[slug,title,req.body.excerpt||null,sanitizeHtml(req.body.content||''),req.body.featuredImage||null,status,req.body.authorName||req.admin.full_name,publishedAt,id]);const seo=normalizeSeoInput(req.body.seo||{});await pool.query(`INSERT INTO page_seo (id,page_id,meta_title,meta_description,focus_keyword,keywords,canonical_url,og_title,og_description,og_image,robots,schema_json) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE meta_title=VALUES(meta_title),meta_description=VALUES(meta_description),focus_keyword=VALUES(focus_keyword),keywords=VALUES(keywords),canonical_url=VALUES(canonical_url),og_title=VALUES(og_title),og_description=VALUES(og_description),og_image=VALUES(og_image),robots=VALUES(robots),schema_json=VALUES(schema_json)`,[crypto.randomUUID(),id,seo.meta_title,seo.meta_description,seo.focus_keyword,seo.keywords,seo.canonical_url,seo.og_title,seo.og_description,seo.og_image,seo.robots,seo.schema_json]);return sendSuccess(res,await getPageById(id));}catch(e){return sendError(res,e.code==='ER_DUP_ENTRY'?'Slug already exists.':(e.message||'Unable to update page.'),400);}});
+app.delete('/api/admin/pages/:id', requireAuth('admin'), async (req,res)=>{try{const[r]=await pool.query('DELETE FROM site_pages WHERE id=?',[req.params.id]);return r.affectedRows?sendSuccess(res,{deleted:true}):sendError(res,'Page not found.',404);}catch(e){return sendError(res,'Unable to delete page.',500);}});
+
+// ---------- Admin CMS: Global SEO ----------
+app.get('/api/admin/seo', requireAuth('admin'), async (req,res)=>{try{const[rows]=await pool.query('SELECT * FROM site_seo_settings LIMIT 1');return sendSuccess(res,rows[0]||{});}catch(e){return sendError(res,'Unable to load SEO settings.',500);}});
+app.put('/api/admin/seo', requireAuth('admin'), async (req,res)=>{try{const[rows]=await pool.query('SELECT id FROM site_seo_settings LIMIT 1');const id=rows[0]?.id||crypto.randomUUID();await pool.query(`INSERT INTO site_seo_settings (id,site_name,default_title,default_description,default_keywords,default_image,default_robots,google_verification,bing_verification,analytics_id) VALUES (?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE site_name=VALUES(site_name),default_title=VALUES(default_title),default_description=VALUES(default_description),default_keywords=VALUES(default_keywords),default_image=VALUES(default_image),default_robots=VALUES(default_robots),google_verification=VALUES(google_verification),bing_verification=VALUES(bing_verification),analytics_id=VALUES(analytics_id)`,[id,req.body.siteName||null,req.body.defaultTitle||null,req.body.defaultDescription||null,JSON.stringify(parseJsonOrCsv(req.body.defaultKeywords)),req.body.defaultImage||null,req.body.defaultRobots||'index,follow',req.body.googleVerification||null,req.body.bingVerification||null,req.body.analyticsId||null]);const[out]=await pool.query('SELECT * FROM site_seo_settings WHERE id=?',[id]);return sendSuccess(res,out[0]);}catch(e){console.error(e);return sendError(res,'Unable to update SEO settings.',500);}});
+
 // ---------- Server-rendered SEO for course URLs + dynamic sitemap ----------
 function escapeHtml(value = '') {
   return String(value)
@@ -677,6 +932,34 @@ function buildCourseSeoHead(course) {
   ].join('\n');
 }
 
+function buildContentSeoHead(item, type = 'website') {
+  const seo = item?.seo || {};
+  const rawTitle = seo.title || item.title;
+  const title = rawTitle.endsWith('| Infinity AI Cloud Academy') ? rawTitle : `${rawTitle} | Infinity AI Cloud Academy`;
+  const description = seo.description || item.excerpt || '';
+  const base = process.env.APP_URL || 'https://infinityaicloudacademy.com';
+  const canonical = seo.canonicalUrl || `${base}${item.url}`;
+  const imagePath = seo.ogImage || item.featuredImage || '/academy.png';
+  const image = imagePath.startsWith('http') ? imagePath : `${base}${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}`;
+  const schema = type === 'article' ? {
+    '@context':'https://schema.org','@type':'BlogPosting',headline:item.title,description,url:canonical,image,
+    datePublished:item.publishedAt || item.createdAt,dateModified:item.updatedAt || item.publishedAt || item.createdAt,
+    author:{'@type':'Organization',name:'Infinity AI Cloud Academy'},publisher:{'@type':'Organization',name:'Infinity AI Cloud Academy',url:base}
+  } : {'@context':'https://schema.org','@type':'WebPage',name:item.title,description,url:canonical,image};
+  return [
+    `<title>${escapeHtml(title)}</title>`, seoTag('description',description), seoTag('robots',seo.robots || 'index,follow'),
+    `<link rel="canonical" href="${escapeHtml(canonical)}">`, seoTag('og:type',type,true), seoTag('og:title',title,true),
+    seoTag('og:description',description,true), seoTag('og:url',canonical,true), seoTag('og:image',image,true),
+    seoTag('twitter:card','summary_large_image'), seoTag('twitter:title',title), seoTag('twitter:description',description), seoTag('twitter:image',image),
+    `<script type="application/ld+json">${JSON.stringify(schema)}</script>`
+  ].join('\n');
+}
+
+async function sendContentHtml(req,res,item,type='website') {
+  const indexFile=path.join(distPath,'index.html'); let html=await fs.readFile(indexFile,'utf8');
+  html=html.replace('</head>',`${buildContentSeoHead(item,type)}\n</head>`); return res.send(html);
+}
+
 async function sendCourseHtml(req, res, course) {
   const indexFile = path.join(distPath, 'index.html');
   let html = await fs.readFile(indexFile, 'utf8');
@@ -687,17 +970,15 @@ async function sendCourseHtml(req, res, course) {
 app.get('/sitemap.xml', async (req, res) => {
   const base = process.env.APP_URL || 'https://infinityaicloudacademy.com';
   try {
-    const [rows] = await pool.query(
-      `SELECT slug, updated_at FROM courses WHERE status = 'published' ORDER BY display_order ASC, title ASC`
-    );
-    const urls = rows.map((row) => ({
-      loc: `${base}/courses/${encodeURIComponent(row.slug)}`,
-      lastmod: row.updated_at ? new Date(row.updated_at).toISOString().slice(0, 10) : null,
-    }));
-    const staticPaths = ['/', '/courses', '/roadmaps', '/projects', '/resources', '/about', '/contact', '/book-demo', '/privacy-policy', '/terms'];
+    const [courseRows] = await pool.query(`SELECT slug, updated_at FROM courses WHERE status = 'published' ORDER BY display_order ASC, title ASC`);
+    const [postRows] = await pool.query(`SELECT slug, updated_at, published_at FROM blog_posts WHERE status = 'published' ORDER BY COALESCE(published_at, created_at) DESC`);
+    const [pageRows] = await pool.query(`SELECT slug, updated_at, published_at FROM site_pages WHERE status = 'published' ORDER BY created_at DESC`);
+    const staticPaths = ['/', '/courses', '/blog', '/roadmaps', '/projects', '/resources', '/about', '/contact', '/book-demo', '/privacy-policy', '/terms'];
     const staticXml = staticPaths.map((p) => `<url><loc>${escapeHtml(base + p)}</loc></url>`).join('');
-    const courseXml = urls.map((u) => `<url><loc>${escapeHtml(u.loc)}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}</url>`).join('');
-    res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${staticXml}${courseXml}</urlset>`);
+    const courseXml = courseRows.map((r) => `<url><loc>${escapeHtml(`${base}/courses/${encodeURIComponent(r.slug)}`)}</loc>${r.updated_at ? `<lastmod>${new Date(r.updated_at).toISOString().slice(0,10)}</lastmod>` : ''}</url>`).join('');
+    const postXml = postRows.map((r) => `<url><loc>${escapeHtml(`${base}/blog/${encodeURIComponent(r.slug)}`)}</loc>${r.updated_at ? `<lastmod>${new Date(r.updated_at).toISOString().slice(0,10)}</lastmod>` : ''}</url>`).join('');
+    const pageXml = pageRows.map((r) => `<url><loc>${escapeHtml(`${base}/page/${encodeURIComponent(r.slug)}`)}</loc>${r.updated_at ? `<lastmod>${new Date(r.updated_at).toISOString().slice(0,10)}</lastmod>` : ''}</url>`).join('');
+    return res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${staticXml}${courseXml}${postXml}${pageXml}</urlset>`);
   } catch (error) {
     console.warn('Dynamic sitemap fallback:', error.message);
     return res.sendFile(path.join(distPath, 'sitemap.xml'));
@@ -721,6 +1002,26 @@ app.use(async (req, res, next) => {
     }
     const legacy = legacyCourses.find((item) => item.slug === decodeURIComponent(req.path.slice('/courses/'.length).split('/')[0]));
     if (legacy) return sendCourseHtml(req, res, legacyCourseToApi(legacy));
+  }
+  if (req.path.startsWith('/blog/')) {
+    try {
+      const slug = decodeURIComponent(req.path.slice('/blog/'.length).split('/')[0]);
+      const [rows] = await pool.query(`SELECT * FROM blog_posts WHERE slug=? AND status='published' LIMIT 1`, [slug]);
+      if (rows.length) {
+        const [seo] = await pool.query('SELECT * FROM post_seo WHERE post_id=? LIMIT 1', [rows[0].id]);
+        return sendContentHtml(req,res,mapPost(rows[0],seo[0]),'article');
+      }
+    } catch (error) { console.warn('Server SEO post lookup failed:', error.message); }
+  }
+  if (req.path.startsWith('/page/')) {
+    try {
+      const slug = decodeURIComponent(req.path.slice('/page/'.length).split('/')[0]);
+      const [rows] = await pool.query(`SELECT * FROM site_pages WHERE slug=? AND status='published' LIMIT 1`, [slug]);
+      if (rows.length) {
+        const [seo] = await pool.query('SELECT * FROM page_seo WHERE page_id=? LIMIT 1', [rows[0].id]);
+        return sendContentHtml(req,res,mapPage(rows[0],seo[0]),'website');
+      }
+    } catch (error) { console.warn('Server SEO page lookup failed:', error.message); }
   }
   return res.sendFile(path.join(distPath, 'index.html'));
 });
