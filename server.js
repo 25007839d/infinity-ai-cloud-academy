@@ -8,8 +8,10 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import nodemailer from 'nodemailer';
 import path from 'node:path';
+import fs from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import crypto from 'node:crypto';
+import { courses as legacyCourses } from './src/data/courses.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -304,6 +306,149 @@ app.post('/api/auth/reset-password', authLimiter, async (req, res) => {
   }
 });
 
+
+// ---------- Public course APIs (DB-first, legacy-safe fallback) ----------
+function mapCourseRow(row, technologies = [], curriculum = [], seo = null) {
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    tagline: row.tagline,
+    shortDescription: row.short_description,
+    overview: row.overview,
+    thumbnail: row.thumbnail,
+    banner: row.banner,
+    category: row.category,
+    duration: row.duration,
+    level: row.level,
+    mode: row.mode,
+    language: row.language,
+    certificate: {
+      available: Boolean(row.certificate_available),
+      title: row.certificate_title,
+    },
+    featured: Boolean(row.featured),
+    students: row.students,
+    rating: row.rating === null ? null : Number(row.rating),
+    projects: Number(row.projects || 0),
+    modules: Number(row.modules_count || curriculum.length),
+    icon: row.icon,
+    themeColor: row.theme_color,
+    displayOrder: Number(row.display_order || 0),
+    comingSoon: Boolean(row.coming_soon),
+    popular: Boolean(row.popular),
+    enrollmentOpen: Boolean(row.enrollment_open),
+    lastUpdated: row.last_updated,
+    version: row.version,
+    technologies,
+    curriculum,
+    seo: seo || {
+      title: row.title,
+      description: row.short_description || '',
+      keywords: [],
+    },
+  };
+}
+
+function legacyCourseToApi(course) {
+  return {
+    ...course,
+    shortDescription: course.shortDescription,
+    displayOrder: course.displayOrder,
+    themeColor: course.themeColor,
+    comingSoon: course.comingSoon,
+    enrollmentOpen: course.enrollmentOpen,
+  };
+}
+
+async function loadCourseFromDb(slug) {
+  const [rows] = await pool.query(
+    `SELECT * FROM courses WHERE slug = ? AND status = 'published' LIMIT 1`,
+    [slug]
+  );
+  if (!rows.length) return null;
+  const courseId = rows[0].id;
+
+  const [techRows] = await pool.query(
+    'SELECT technology FROM course_technologies WHERE course_id = ? ORDER BY display_order ASC, technology ASC',
+    [courseId]
+  );
+  const [moduleRows] = await pool.query(
+    'SELECT id, module_name FROM course_modules WHERE course_id = ? ORDER BY display_order ASC, module_name ASC',
+    [courseId]
+  );
+  let topicRows = [];
+  if (moduleRows.length) {
+    [topicRows] = await pool.query(
+      `SELECT module_id, topic FROM course_module_topics
+       WHERE module_id IN (${moduleRows.map(() => '?').join(',')})
+       ORDER BY display_order ASC, topic ASC`,
+      moduleRows.map((m) => m.id)
+    );
+  }
+  const [seoRows] = await pool.query(
+    'SELECT meta_title, meta_description, focus_keyword, keywords, canonical_url, og_title, og_description, og_image, robots FROM course_seo WHERE course_id = ? LIMIT 1',
+    [courseId]
+  );
+  const topicsByModule = new Map();
+  for (const row of topicRows) {
+    if (!topicsByModule.has(row.module_id)) topicsByModule.set(row.module_id, []);
+    topicsByModule.get(row.module_id).push(row.topic);
+  }
+  const curriculum = moduleRows.map((m) => ({
+    module: m.module_name,
+    topics: topicsByModule.get(m.id) || [],
+  }));
+  const seoRow = seoRows[0];
+  let keywords = [];
+  if (seoRow?.keywords) {
+    try { keywords = JSON.parse(seoRow.keywords); } catch { keywords = String(seoRow.keywords).split(',').map((x) => x.trim()).filter(Boolean); }
+  }
+  const seo = seoRow ? {
+    title: seoRow.meta_title || rows[0].title,
+    description: seoRow.meta_description || rows[0].short_description || '',
+    keywords,
+    focusKeyword: seoRow.focus_keyword || '',
+    canonicalUrl: seoRow.canonical_url || '',
+    ogTitle: seoRow.og_title || '',
+    ogDescription: seoRow.og_description || '',
+    ogImage: seoRow.og_image || rows[0].thumbnail || '',
+    robots: seoRow.robots || 'index,follow',
+  } : null;
+
+  return mapCourseRow(rows[0], techRows.map((r) => r.technology), curriculum, seo);
+}
+
+app.get('/api/courses', async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      `SELECT * FROM courses WHERE status = 'published' ORDER BY display_order ASC, title ASC`
+    );
+    const courses = await Promise.all(rows.map((row) => loadCourseFromDb(row.slug)));
+    return sendSuccess(res, courses.filter(Boolean));
+  } catch (error) {
+    // Keep the site working during the additive migration if the new tables
+    // have not yet been imported. Once seeded, DB becomes the source of truth.
+    console.warn('Courses DB API fallback:', error.message);
+    return sendSuccess(res, legacyCourses.map(legacyCourseToApi));
+  }
+});
+
+app.get('/api/courses/:slug', async (req, res) => {
+  try {
+    const course = await loadCourseFromDb(req.params.slug);
+    if (course) return sendSuccess(res, course);
+    const legacy = legacyCourses.find((item) => item.slug === req.params.slug);
+    if (legacy) return sendSuccess(res, legacyCourseToApi(legacy));
+    return sendError(res, 'Course not found.', 404);
+  } catch (error) {
+    console.warn('Course DB API fallback:', error.message);
+    const legacy = legacyCourses.find((item) => item.slug === req.params.slug);
+    if (legacy) return sendSuccess(res, legacyCourseToApi(legacy));
+    return sendError(res, 'Course not found.', 404);
+  }
+});
+
 // ---------- Public lead/demo APIs ----------
 app.post('/api/demo-registrations', demoLimiter, async (req, res) => {
   try {
@@ -470,13 +615,113 @@ app.get('/api/admin/stats', requireAuth('admin'), async (req, res) => {
   }
 });
 
+
+// ---------- Server-rendered SEO for course URLs + dynamic sitemap ----------
+function escapeHtml(value = '') {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function seoTag(name, content, property = false) {
+  if (!content) return '';
+  const attr = property ? 'property' : 'name';
+  return `<meta ${attr}="${escapeHtml(name)}" content="${escapeHtml(content)}">`;
+}
+
+function buildCourseSeoHead(course) {
+  const seo = course?.seo || {};
+  const rawTitle = seo.title || course.title;
+  const title = rawTitle.endsWith('| Infinity AI Cloud Academy') ? rawTitle : `${rawTitle} | Infinity AI Cloud Academy`;
+  const description = seo.description || course.shortDescription || course.overview || '';
+  const canonical = seo.canonicalUrl || `${process.env.APP_URL || 'https://infinityaicloudacademy.com'}/courses/${course.slug}`;
+  const imagePath = seo.ogImage || course.thumbnail || '/academy.png';
+  const image = imagePath.startsWith('http') ? imagePath : `${process.env.APP_URL || 'https://infinityaicloudacademy.com'}${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}`;
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: course.title,
+    description,
+    url: canonical,
+    image,
+    provider: {
+      '@type': 'EducationalOrganization',
+      '@id': `${process.env.APP_URL || 'https://infinityaicloudacademy.com'}/#organization`,
+      name: 'Infinity AI Cloud Academy',
+      url: process.env.APP_URL || 'https://infinityaicloudacademy.com',
+    },
+    inLanguage: course.language || 'en',
+    educationalLevel: course.level || undefined,
+    teaches: course.technologies || [],
+    keywords: seo.keywords || [],
+  };
+  return [
+    `<title>${escapeHtml(title)} | Infinity AI Cloud Academy</title>`,
+    seoTag('description', description),
+    seoTag('robots', seo.robots || 'index,follow'),
+    `<link rel="canonical" href="${escapeHtml(canonical)}">`,
+    seoTag('og:type', 'website', true),
+    seoTag('og:title', title, true),
+    seoTag('og:description', description, true),
+    seoTag('og:url', canonical, true),
+    seoTag('og:image', image, true),
+    seoTag('og:site_name', 'Infinity AI Cloud Academy', true),
+    seoTag('twitter:card', 'summary_large_image'),
+    seoTag('twitter:title', title),
+    seoTag('twitter:description', description),
+    seoTag('twitter:image', image),
+    `<script type="application/ld+json">${JSON.stringify(schema)}</script>`,
+  ].join('\n');
+}
+
+async function sendCourseHtml(req, res, course) {
+  const indexFile = path.join(distPath, 'index.html');
+  let html = await fs.readFile(indexFile, 'utf8');
+  html = html.replace('</head>', `${buildCourseSeoHead(course)}\n</head>`);
+  return res.send(html);
+}
+
+app.get('/sitemap.xml', async (req, res) => {
+  const base = process.env.APP_URL || 'https://infinityaicloudacademy.com';
+  try {
+    const [rows] = await pool.query(
+      `SELECT slug, updated_at FROM courses WHERE status = 'published' ORDER BY display_order ASC, title ASC`
+    );
+    const urls = rows.map((row) => ({
+      loc: `${base}/courses/${encodeURIComponent(row.slug)}`,
+      lastmod: row.updated_at ? new Date(row.updated_at).toISOString().slice(0, 10) : null,
+    }));
+    const staticPaths = ['/', '/courses', '/roadmaps', '/projects', '/resources', '/about', '/contact', '/book-demo', '/privacy-policy', '/terms'];
+    const staticXml = staticPaths.map((p) => `<url><loc>${escapeHtml(base + p)}</loc></url>`).join('');
+    const courseXml = urls.map((u) => `<url><loc>${escapeHtml(u.loc)}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}</url>`).join('');
+    res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${staticXml}${courseXml}</urlset>`);
+  } catch (error) {
+    console.warn('Dynamic sitemap fallback:', error.message);
+    return res.sendFile(path.join(distPath, 'sitemap.xml'));
+  }
+});
+
 // Serve the Vite production build.
 const distPath = path.join(__dirname, 'dist');
 app.use(express.static(distPath, { index: false }));
 
 // React Router fallback. API routes must remain above this handler.
-app.use((req, res, next) => {
-  if (req.method !== 'GET' || req.path.startsWith('/api/')) return next();
+app.use(async (req, res, next) => {
+  if (req.method !== 'GET' || req.path.startsWith('/api/') || req.path === '/sitemap.xml') return next();
+  if (req.path.startsWith('/courses/')) {
+    try {
+      const slug = decodeURIComponent(req.path.slice('/courses/'.length).split('/')[0]);
+      const course = await loadCourseFromDb(slug);
+      if (course) return sendCourseHtml(req, res, course);
+    } catch (error) {
+      console.warn('Server SEO course lookup failed:', error.message);
+    }
+    const legacy = legacyCourses.find((item) => item.slug === decodeURIComponent(req.path.slice('/courses/'.length).split('/')[0]));
+    if (legacy) return sendCourseHtml(req, res, legacyCourseToApi(legacy));
+  }
   return res.sendFile(path.join(distPath, 'index.html'));
 });
 

@@ -14,8 +14,8 @@ export default function SEO({
   robots = defaultSEO.robots,
 }) {
   const pageTitle =
-    title === defaultSEO.title
-      ? defaultSEO.title
+    title === defaultSEO.title || title.endsWith(`| ${siteConfig.siteName}`)
+      ? title
       : `${title} | ${siteConfig.siteName}`;
 
   return (
