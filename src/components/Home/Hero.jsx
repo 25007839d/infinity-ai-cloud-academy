@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import AuthModal from "../auth/AuthModal";
 import {
   ArrowRight,
   BrainCircuit,
@@ -80,6 +82,8 @@ const achievements = [
 ];
 
 export default function Hero() {
+  const [authOpen, setAuthOpen] = useState(false);
+
   return (
     <section
       id="hero"
@@ -173,6 +177,14 @@ export default function Hero() {
                 className="transition-transform group-hover:translate-x-1"
               />
             </Link>
+
+            <button
+              type="button"
+              onClick={() => setAuthOpen(true)}
+              className="inline-flex items-center gap-2 rounded-xl border border-cyan-500 px-8 py-4 font-semibold text-cyan-300 transition hover:bg-cyan-500 hover:text-white"
+            >
+              Student Login
+            </button>
 
             <Link
               to="/roadmaps"
@@ -467,6 +479,7 @@ export default function Hero() {
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#020617] to-transparent" />
 
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} onSuccess={() => setAuthOpen(false)} />
     </section>
 
   );

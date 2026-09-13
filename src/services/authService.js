@@ -7,6 +7,7 @@ export async function signUp(email, password, profile = {}) {
       email,
       password,
       full_name: profile.full_name || '',
+      phone: profile.phone || '',
     }),
   });
 }

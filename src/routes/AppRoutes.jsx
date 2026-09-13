@@ -30,6 +30,7 @@ import CoursesCMS from "../admin/pages/CoursesCMS";
 import PostsCMS from "../admin/pages/PostsCMS";
 import PagesCMS from "../admin/pages/PagesCMS";
 import SeoCMS from "../admin/pages/SeoCMS";
+import Users from "../admin/pages/Users";
 
 // ================= STUDENT =================
 import StudentPortal from "../pages/student/StudentPortal";
@@ -140,6 +141,7 @@ export default function AppRoutes() {
         }
       />
 
+      <Route path="/admin/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
       <Route path="/admin/courses" element={<ProtectedRoute><CoursesCMS /></ProtectedRoute>} />
       <Route path="/admin/posts" element={<ProtectedRoute><PostsCMS /></ProtectedRoute>} />
       <Route path="/admin/pages" element={<ProtectedRoute><PagesCMS /></ProtectedRoute>} />

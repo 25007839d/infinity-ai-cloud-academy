@@ -5,6 +5,7 @@ import Footer from "../components/layout/Footer";
 import { courses as legacyCourses } from "../data/courses";
 import { apiRequest } from "../services/api";
 import { CourseSEO, CourseSchema, BreadcrumbSchema } from "../seo";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function CourseDetails() {
   const { slug } = useParams();
@@ -12,6 +13,7 @@ export default function CourseDetails() {
   const [course, setCourse] = useState(fallback || null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     let active = true;
@@ -35,6 +37,11 @@ export default function CourseDetails() {
 
     return () => { active = false; };
   }, [slug]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !slug) return;
+    apiRequest(`/courses/${encodeURIComponent(slug)}/view`, { method: "POST" }).catch(() => {});
+  }, [isAuthenticated, slug]);
 
   if (!course && (loading || !notFound)) {
     return (

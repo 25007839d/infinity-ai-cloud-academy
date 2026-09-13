@@ -19,3 +19,8 @@ export async function getCurrentUser() {
     throw error;
   }
 }
+
+
+export async function listStudents() { return apiRequest('/admin/users'); }
+export async function getStudent(id) { return apiRequest(`/admin/users/${id}`); }
+export async function updateStudent(id, data) { return apiRequest(`/admin/users/${id}`, { method: 'PATCH', body: JSON.stringify(data) }); }

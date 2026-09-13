@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS admins (
 CREATE TABLE IF NOT EXISTS users (
   id CHAR(36) NOT NULL PRIMARY KEY,
   email VARCHAR(255) NOT NULL UNIQUE,
+  phone VARCHAR(20) NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   full_name VARCHAR(150) NOT NULL,
   role ENUM('student','lead','trainer','counsellor','admin','super_admin') NOT NULL DEFAULT 'student',
@@ -166,4 +167,19 @@ CREATE TABLE IF NOT EXISTS course_seo (
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_course_seo_course
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS user_course_views (
+  id CHAR(36) NOT NULL PRIMARY KEY,
+  user_id CHAR(36) NOT NULL,
+  course_id CHAR(36) NOT NULL,
+  view_count INT NOT NULL DEFAULT 1,
+  first_viewed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_viewed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_user_course_view (user_id, course_id),
+  CONSTRAINT fk_user_course_view_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_user_course_view_course FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+  INDEX idx_user_course_views_user (user_id, last_viewed_at),
+  INDEX idx_user_course_views_course (course_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -111,7 +111,7 @@ function requireAuth(requiredRole = null) {
         req.admin = rows[0];
       } else if (payload.role === 'student') {
         const [rows] = await pool.query(
-          'SELECT id, email, full_name, role, status FROM users WHERE id = ? LIMIT 1',
+          'SELECT id, email, phone, full_name, role, status FROM users WHERE id = ? LIMIT 1',
           [payload.sub]
         );
         if (!rows.length || rows[0].status !== 'Active') {
@@ -150,26 +150,30 @@ app.get('/api/health', async (req, res) => {
 // ---------- Public authentication ----------
 app.post('/api/auth/register', authLimiter, async (req, res) => {
   try {
-    const { email, password, full_name } = req.body;
-    if (!email || !password || !full_name) return sendError(res, 'Full name, email and password are required.');
+    const { email, password, full_name, phone } = req.body;
+    if (!email || !password || !full_name || !phone) return sendError(res, 'Full name, mobile number, email and password are required.');
+    if (!/^\d{10}$/.test(String(phone).trim())) return sendError(res, 'Mobile number must be exactly 10 digits.');
     if (password.length < 8) return sendError(res, 'Password must be at least 8 characters.');
 
     const normalizedEmail = String(email).trim().toLowerCase();
+    const normalizedPhone = String(phone).trim();
     const [existing] = await pool.query('SELECT id FROM users WHERE email = ? LIMIT 1', [normalizedEmail]);
     if (existing.length) return sendError(res, 'An account with this email already exists.', 409);
+    const [existingPhone] = await pool.query('SELECT id FROM users WHERE phone = ? LIMIT 1', [normalizedPhone]);
+    if (existingPhone.length) return sendError(res, 'An account with this mobile number already exists.', 409);
 
     const id = crypto.randomUUID();
     const passwordHash = await bcrypt.hash(password, 12);
 
     await pool.query(
-      `INSERT INTO users (id, email, password_hash, full_name, role, status)
-       VALUES (?, ?, ?, ?, 'student', 'Active')`,
-      [id, normalizedEmail, passwordHash, String(full_name).trim()]
+      `INSERT INTO users (id, email, phone, password_hash, full_name, role, status)
+       VALUES (?, ?, ?, ?, ?, 'student', 'Active')`,
+      [id, normalizedEmail, normalizedPhone, passwordHash, String(full_name).trim()]
     );
 
     const token = createToken({ sub: id, role: 'student' });
     setAuthCookie(res, token);
-    return sendSuccess(res, { id, email: normalizedEmail, full_name: String(full_name).trim(), role: 'student' }, 201);
+    return sendSuccess(res, { id, email: normalizedEmail, phone: normalizedPhone, full_name: String(full_name).trim(), role: 'student' }, 201);
   } catch (error) {
     console.error('Register error:', error);
     return sendError(res, 'Unable to create account.', 500);
@@ -183,7 +187,7 @@ app.post('/api/auth/login', authLimiter, async (req, res) => {
 
     const normalizedEmail = String(email).trim().toLowerCase();
     const [rows] = await pool.query(
-      'SELECT id, email, password_hash, full_name, role, status FROM users WHERE email = ? LIMIT 1',
+      'SELECT id, email, phone, password_hash, full_name, role, status FROM users WHERE email = ? LIMIT 1',
       [normalizedEmail]
     );
 
@@ -197,7 +201,7 @@ app.post('/api/auth/login', authLimiter, async (req, res) => {
     const token = createToken({ sub: user.id, role: 'student' });
     setAuthCookie(res, token);
 
-    return sendSuccess(res, { id: user.id, email: user.email, full_name: user.full_name, role: user.role });
+    return sendSuccess(res, { id: user.id, email: user.email, phone: user.phone, full_name: user.full_name, role: user.role });
   } catch (error) {
     console.error('User login error:', error);
     return sendError(res, 'Unable to login.', 500);
@@ -225,7 +229,7 @@ app.get('/api/auth/me', async (req, res) => {
     }
 
     const [rows] = await pool.query(
-      'SELECT id, email, full_name, role, status FROM users WHERE id = ? LIMIT 1',
+      'SELECT id, email, phone, full_name, role, status FROM users WHERE id = ? LIMIT 1',
       [payload.sub]
     );
     if (!rows.length || rows[0].status !== 'Active') return sendError(res, 'Not authenticated.', 401);
@@ -446,6 +450,29 @@ app.get('/api/courses/:slug', async (req, res) => {
     const legacy = legacyCourses.find((item) => item.slug === req.params.slug);
     if (legacy) return sendSuccess(res, legacyCourseToApi(legacy));
     return sendError(res, 'Course not found.', 404);
+  }
+});
+
+// Record an authenticated student's course detail view. This is intentionally lightweight and non-blocking for the UI.
+app.post('/api/courses/:slug/view', requireAuth('student'), async (req, res) => {
+  try {
+    const [courses] = await pool.query(
+      `SELECT id, title, slug FROM courses WHERE slug = ? AND status = 'published' LIMIT 1`,
+      [req.params.slug]
+    );
+    if (!courses.length) return sendError(res, 'Course not found.', 404);
+    const course = courses[0];
+    await pool.query(
+      `INSERT INTO user_course_views (id, user_id, course_id, view_count, first_viewed_at, last_viewed_at)
+       VALUES (?, ?, ?, 1, NOW(), NOW())
+       ON DUPLICATE KEY UPDATE view_count = view_count + 1, last_viewed_at = NOW()`,
+      [crypto.randomUUID(), req.user.id, course.id]
+    );
+    return sendSuccess(res, { viewed: true, course: { id: course.id, title: course.title, slug: course.slug } });
+  } catch (error) {
+    // Course viewing should never break the public course page if tracking table is not migrated yet.
+    console.warn('Course view tracking error:', error.message);
+    return sendSuccess(res, { viewed: false });
   }
 });
 
@@ -816,6 +843,66 @@ app.get('/api/admin/stats', requireAuth('admin'), async (req, res) => {
 });
 
 
+
+// ---------- Admin: Students / Users ----------
+app.get('/api/admin/users', requireAuth('admin'), async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT id, full_name, email, phone, role, status, last_login, created_at, updated_at
+      FROM users
+      WHERE role = 'student'
+      ORDER BY created_at DESC
+    `);
+    return sendSuccess(res, rows);
+  } catch (error) {
+    console.error('Get users error:', error);
+    return sendError(res, 'Unable to load students.', 500);
+  }
+});
+
+app.get('/api/admin/users/:id', requireAuth('admin'), async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT id, full_name, email, phone, role, status, last_login, created_at, updated_at
+      FROM users WHERE id = ? AND role = 'student' LIMIT 1
+    `, [req.params.id]);
+    if (!rows.length) return sendError(res, 'Student not found.', 404);
+
+    const [views] = await pool.query(`
+      SELECT c.id, c.title, c.slug, v.view_count, v.first_viewed_at, v.last_viewed_at
+      FROM user_course_views v
+      INNER JOIN courses c ON c.id = v.course_id
+      WHERE v.user_id = ?
+      ORDER BY v.last_viewed_at DESC
+    `, [req.params.id]);
+
+    return sendSuccess(res, { ...rows[0], viewedCourses: views });
+  } catch (error) {
+    console.error('Get student details error:', error);
+    return sendError(res, 'Unable to load student details.', 500);
+  }
+});
+
+app.patch('/api/admin/users/:id', requireAuth('admin'), async (req, res) => {
+  try {
+    const updates = {};
+    if (req.body.status && ['Active', 'Disabled'].includes(req.body.status)) updates.status = req.body.status;
+    if (req.body.phone !== undefined) {
+      const phone = String(req.body.phone).trim();
+      if (!/^\d{10}$/.test(phone)) return sendError(res, 'Mobile number must be exactly 10 digits.');
+      updates.phone = phone;
+    }
+    if (!Object.keys(updates).length) return sendError(res, 'No editable fields supplied.');
+    const fields = Object.keys(updates);
+    await pool.query(`UPDATE users SET ${fields.map((f) => `${f} = ?`).join(', ')}, updated_at = NOW() WHERE id = ? AND role = 'student'`, [...fields.map((f) => updates[f]), req.params.id]);
+    const [rows] = await pool.query("SELECT id, full_name, email, phone, role, status, last_login, created_at, updated_at FROM users WHERE id = ? AND role = 'student' LIMIT 1", [req.params.id]);
+    if (!rows.length) return sendError(res, 'Student not found.', 404);
+    return sendSuccess(res, rows[0]);
+  } catch (error) {
+    console.error('Update student error:', error);
+    return sendError(res, error.code === 'ER_DUP_ENTRY' ? 'Mobile number already belongs to another account.' : 'Unable to update student.', 400);
+  }
+});
 
 // ---------- Admin CMS: Courses ----------
 app.get('/api/admin/courses', requireAuth('admin'), async (req, res) => {

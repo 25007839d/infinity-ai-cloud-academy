@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { signOut } from "../../services/authService";
+import AuthModal from "../auth/AuthModal";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Menu,
@@ -30,6 +31,7 @@ export default function Navbar() {
 
   const location = useLocation();
   const { user } = useAuth();
+  const [authOpen, setAuthOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
@@ -46,6 +48,7 @@ export default function Navbar() {
   }, [location.pathname]);
 
   return (
+    <>
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
         scrolled
@@ -135,16 +138,13 @@ export default function Navbar() {
             />
           </Link>
 
-          {user && (
-            <button
-              onClick={async () => {
-                await signOut();
-                window.location.reload();
-              }}
-              className="rounded-xl border border-red-500 px-5 py-3 font-semibold text-red-400 transition hover:bg-red-500 hover:text-white"
-            >
-              Logout
-            </button>
+          {user ? (
+            <>
+              <Link to="/student" className="rounded-xl border border-cyan-500 px-5 py-3 font-semibold text-cyan-300 transition hover:bg-cyan-500 hover:text-white">Student Portal</Link>
+              <button onClick={async () => { await signOut(); window.location.reload(); }} className="rounded-xl border border-red-500 px-5 py-3 font-semibold text-red-400 transition hover:bg-red-500 hover:text-white">Logout</button>
+            </>
+          ) : (
+            <button onClick={() => setAuthOpen(true)} className="rounded-xl border border-cyan-500 px-5 py-3 font-semibold text-cyan-300 transition hover:bg-cyan-500 hover:text-white">Student Login</button>
           )}
 
         </div>
@@ -198,6 +198,12 @@ export default function Navbar() {
 
               })}
 
+              {user ? (
+                <Link to="/student" className="mt-3 flex items-center justify-center rounded-xl border border-cyan-500 py-4 font-semibold text-cyan-300">Student Portal</Link>
+              ) : (
+                <button onClick={() => setAuthOpen(true)} className="mt-3 rounded-xl border border-cyan-500 py-4 font-semibold text-cyan-300">Student Login</button>
+              )}
+
               <Link
                 to="/courses"
                 className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 py-4 font-semibold text-white"
@@ -229,6 +235,8 @@ export default function Navbar() {
 
     </header>
 
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} onSuccess={() => setAuthOpen(false)} />
+    </>
   );
 
 }

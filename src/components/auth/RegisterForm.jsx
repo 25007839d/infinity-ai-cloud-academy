@@ -8,6 +8,7 @@ export default function RegisterForm({
 }) {
   const [form, setForm] = useState({
     fullName: "",
+    phone: "",
     email: "",
     password: "",
   });
@@ -36,6 +37,7 @@ export default function RegisterForm({
         form.password,
         {
           full_name: form.fullName,
+          phone: form.phone,
         }
       );
 
@@ -71,6 +73,25 @@ export default function RegisterForm({
           onChange={handleChange}
           className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-500"
         />
+      </div>
+
+      <div>
+        <label className="mb-2 block text-sm text-slate-300">
+          Mobile Number <span className="text-red-400">*</span>
+        </label>
+        <input
+          type="tel"
+          name="phone"
+          required
+          inputMode="numeric"
+          pattern="[0-9]{10}"
+          maxLength={10}
+          value={form.phone}
+          onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value.replace(/\D/g, '').slice(0, 10) }))}
+          placeholder="10-digit mobile number"
+          className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-500"
+        />
+        <p className="mt-1 text-xs text-slate-500">Example: 9876543210</p>
       </div>
 
       <div>
