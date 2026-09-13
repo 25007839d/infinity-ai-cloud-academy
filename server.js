@@ -37,6 +37,22 @@ const pool = mysql.createPool({
   charset: 'utf8mb4',
 });
 
+async function hasDbColumn(tableName, columnName) {
+  const [rows] = await pool.query(`
+    SELECT COUNT(*) AS count FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?
+  `, [tableName, columnName]);
+  return Number(rows[0]?.count) > 0;
+}
+
+async function hasDbTable(tableName) {
+  const [rows] = await pool.query(`
+    SELECT COUNT(*) AS count FROM INFORMATION_SCHEMA.TABLES
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?
+  `, [tableName]);
+  return Number(rows[0]?.count) > 0;
+}
+
 app.set('trust proxy', 1);
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: '1mb' }));
@@ -86,9 +102,15 @@ function clearAuthCookie(res) {
   res.clearCookie('iaa_token', { httpOnly: true, secure: isProduction, sameSite: 'lax', path: '/' });
 }
 
+function authConfigError(res) {
+  if (JWT_SECRET) return false;
+  return sendError(res, 'Authentication is not configured on the server. Please set JWT_SECRET in Hostinger Environment Variables and restart the Node.js app.', 503);
+}
+
 function requireAuth(requiredRole = null) {
   return async (req, res, next) => {
     try {
+      if (!JWT_SECRET) return authConfigError(res);
       const token = req.cookies.iaa_token;
       if (!token) return sendError(res, 'Authentication required.', 401);
 
@@ -110,8 +132,9 @@ function requireAuth(requiredRole = null) {
         }
         req.admin = rows[0];
       } else if (payload.role === 'student') {
+        const phoneColumn = await hasDbColumn('users', 'phone');
         const [rows] = await pool.query(
-          'SELECT id, email, phone, full_name, role, status FROM users WHERE id = ? LIMIT 1',
+          `SELECT id, email, ${phoneColumn ? 'phone' : 'NULL AS phone'}, full_name, role, status FROM users WHERE id = ? LIMIT 1`,
           [payload.sub]
         );
         if (!rows.length || rows[0].status !== 'Active') {
@@ -140,7 +163,7 @@ app.get('/api/ping', (req, res) => {
 app.get('/api/health', async (req, res) => {
   try {
     await pool.query('SELECT 1');
-    return sendSuccess(res, { status: 'ok', database: 'connected' });
+    return sendSuccess(res, { status: 'ok', database: 'connected', authentication: JWT_SECRET ? 'configured' : 'missing' });
   } catch (error) {
     console.error('Health DB error:', error.message);
     return sendError(res, 'Database connection failed.', 503);
@@ -150,6 +173,7 @@ app.get('/api/health', async (req, res) => {
 // ---------- Public authentication ----------
 app.post('/api/auth/register', authLimiter, async (req, res) => {
   try {
+    if (authConfigError(res)) return;
     const { email, password, full_name, phone } = req.body;
     if (!email || !password || !full_name || !phone) return sendError(res, 'Full name, mobile number, email and password are required.');
     if (!/^\d{10}$/.test(String(phone).trim())) return sendError(res, 'Mobile number must be exactly 10 digits.');
@@ -182,12 +206,14 @@ app.post('/api/auth/register', authLimiter, async (req, res) => {
 
 app.post('/api/auth/login', authLimiter, async (req, res) => {
   try {
+    if (authConfigError(res)) return;
     const { email, password } = req.body;
     if (!email || !password) return sendError(res, 'Email and password are required.');
 
     const normalizedEmail = String(email).trim().toLowerCase();
+    const phoneColumn = await hasDbColumn('users', 'phone');
     const [rows] = await pool.query(
-      'SELECT id, email, phone, password_hash, full_name, role, status FROM users WHERE email = ? LIMIT 1',
+      `SELECT id, email, ${phoneColumn ? 'phone' : 'NULL AS phone'}, password_hash, full_name, role, status FROM users WHERE email = ? LIMIT 1`,
       [normalizedEmail]
     );
 
@@ -228,8 +254,9 @@ app.get('/api/auth/me', async (req, res) => {
       return sendSuccess(res, rows[0]);
     }
 
+    const phoneColumn = await hasDbColumn('users', 'phone');
     const [rows] = await pool.query(
-      'SELECT id, email, phone, full_name, role, status FROM users WHERE id = ? LIMIT 1',
+      `SELECT id, email, ${phoneColumn ? 'phone' : 'NULL AS phone'}, full_name, role, status FROM users WHERE id = ? LIMIT 1`,
       [payload.sub]
     );
     if (!rows.length || rows[0].status !== 'Active') return sendError(res, 'Not authenticated.', 401);
@@ -721,6 +748,7 @@ app.get('/api/pages/:slug', async (req, res) => {
 // ---------- Admin ----------
 app.post('/api/admin/login', authLimiter, async (req, res) => {
   try {
+    if (authConfigError(res)) return;
     const { email, password } = req.body;
     if (!email || !password) return sendError(res, 'Email and password are required.');
 
@@ -847,8 +875,9 @@ app.get('/api/admin/stats', requireAuth('admin'), async (req, res) => {
 // ---------- Admin: Students / Users ----------
 app.get('/api/admin/users', requireAuth('admin'), async (req, res) => {
   try {
+    const phoneColumn = await hasDbColumn('users', 'phone');
     const [rows] = await pool.query(`
-      SELECT id, full_name, email, phone, role, status, last_login, created_at, updated_at
+      SELECT id, full_name, email, ${phoneColumn ? 'phone' : 'NULL AS phone'}, role, status, last_login, created_at, updated_at
       FROM users
       WHERE role = 'student'
       ORDER BY created_at DESC
@@ -862,19 +891,23 @@ app.get('/api/admin/users', requireAuth('admin'), async (req, res) => {
 
 app.get('/api/admin/users/:id', requireAuth('admin'), async (req, res) => {
   try {
+    const phoneColumn = await hasDbColumn('users', 'phone');
     const [rows] = await pool.query(`
-      SELECT id, full_name, email, phone, role, status, last_login, created_at, updated_at
+      SELECT id, full_name, email, ${phoneColumn ? 'phone' : 'NULL AS phone'}, role, status, last_login, created_at, updated_at
       FROM users WHERE id = ? AND role = 'student' LIMIT 1
     `, [req.params.id]);
     if (!rows.length) return sendError(res, 'Student not found.', 404);
 
-    const [views] = await pool.query(`
-      SELECT c.id, c.title, c.slug, v.view_count, v.first_viewed_at, v.last_viewed_at
-      FROM user_course_views v
-      INNER JOIN courses c ON c.id = v.course_id
-      WHERE v.user_id = ?
-      ORDER BY v.last_viewed_at DESC
-    `, [req.params.id]);
+    let views = [];
+    if (await hasDbTable('user_course_views') && await hasDbTable('courses')) {
+      [views] = await pool.query(`
+        SELECT c.id, c.title, c.slug, v.view_count, v.first_viewed_at, v.last_viewed_at
+        FROM user_course_views v
+        INNER JOIN courses c ON c.id = v.course_id
+        WHERE v.user_id = ?
+        ORDER BY v.last_viewed_at DESC
+      `, [req.params.id]);
+    }
 
     return sendSuccess(res, { ...rows[0], viewedCourses: views });
   } catch (error) {
@@ -1118,10 +1151,78 @@ app.use((error, req, res, next) => {
   return sendError(res, 'Internal server error.', 500);
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+// Runtime compatibility checks for databases created before the Student CMS migration.
+// These are intentionally additive: they never delete or rewrite existing application data.
+async function ensureStudentRuntimeSchema() {
+  try {
+    const [userTable] = await pool.query(`
+      SELECT COUNT(*) AS count
+      FROM INFORMATION_SCHEMA.TABLES
+      WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users'
+    `);
+    if (!Number(userTable[0]?.count)) {
+      console.warn('Student schema check: users table does not exist. Run db/schema.sql first.');
+      return;
+    }
+
+    const [phoneColumn] = await pool.query(`
+      SELECT COUNT(*) AS count
+      FROM INFORMATION_SCHEMA.COLUMNS
+      WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = 'phone'
+    `);
+    if (!Number(phoneColumn[0]?.count)) {
+      await pool.query(`ALTER TABLE users ADD COLUMN phone VARCHAR(20) NULL AFTER email`);
+      console.log('Student schema check: added users.phone');
+    }
+
+    try {
+      const [phoneIndex] = await pool.query(`SHOW INDEX FROM users WHERE Column_name = 'phone' AND Non_unique = 0`);
+      if (!phoneIndex.length) {
+        await pool.query(`ALTER TABLE users ADD UNIQUE KEY uq_users_phone (phone)`);
+        console.log('Student schema check: added unique index on users.phone');
+      }
+    } catch (indexError) {
+      console.warn('Student schema check: could not add unique phone index:', indexError.message);
+    }
+
+    const [courseTable] = await pool.query(`
+      SELECT COUNT(*) AS count
+      FROM INFORMATION_SCHEMA.TABLES
+      WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'courses'
+    `);
+    if (Number(courseTable[0]?.count)) {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS user_course_views (
+          id CHAR(36) NOT NULL PRIMARY KEY,
+          user_id CHAR(36) NOT NULL,
+          course_id CHAR(36) NOT NULL,
+          view_count INT NOT NULL DEFAULT 1,
+          first_viewed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          last_viewed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE KEY uq_user_course_view (user_id, course_id),
+          CONSTRAINT fk_user_course_view_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+          CONSTRAINT fk_user_course_view_course FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+          INDEX idx_user_course_views_user (user_id, last_viewed_at),
+          INDEX idx_user_course_views_course (course_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+    }
+  } catch (error) {
+    // Do not prevent the existing site from starting if the DB user cannot ALTER/CREATE.
+    console.warn('Student schema compatibility check failed:', error.message);
+  }
+}
+
+async function startServer() {
+  await ensureStudentRuntimeSchema();
+  app.listen(PORT, '0.0.0.0', () => {
+
   console.log(`Infinity AI Cloud Academy server running on port ${PORT}`);
   console.log(`NODE_ENV=${process.env.NODE_ENV || 'development'}`);
   console.log(`APP_URL=${process.env.APP_URL || '(not set)'}`);
   console.log(`DB_HOST=${process.env.DB_HOST || '(not set)'}`);
   console.log(`DB_NAME=${process.env.DB_NAME || '(not set)'}`);
-});
+  });
+}
+
+startServer();
