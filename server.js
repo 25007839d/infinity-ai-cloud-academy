@@ -405,7 +405,7 @@ async function loadCourseFromDb(slug) {
     [courseId]
   );
   const [moduleRows] = await pool.query(
-    'SELECT id, module_name FROM course_modules WHERE course_id = ? ORDER BY display_order ASC, module_name ASC',
+    'SELECT id, module_name, description FROM course_modules WHERE course_id = ? ORDER BY display_order ASC, module_name ASC',
     [courseId]
   );
   let topicRows = [];
@@ -428,6 +428,7 @@ async function loadCourseFromDb(slug) {
   }
   const curriculum = moduleRows.map((m) => ({
     module: m.module_name,
+    description: m.description || '',
     topics: topicsByModule.get(m.id) || [],
   }));
   const seoRow = seoRows[0];
@@ -661,25 +662,31 @@ function coursePayload(body) {
   };
 }
 
-async function replaceCourseChildren(courseId, body) {
-  await pool.query('DELETE FROM course_technologies WHERE course_id = ?', [courseId]);
-  await pool.query('DELETE FROM course_modules WHERE course_id = ?', [courseId]);
+async function replaceCourseChildren(executor, courseId, body) {
+  await executor.query('DELETE FROM course_technologies WHERE course_id = ?', [courseId]);
+  await executor.query('DELETE FROM course_modules WHERE course_id = ?', [courseId]);
   const technologies = Array.isArray(body.technologies) ? body.technologies : parseJsonOrCsv(body.technologies);
   for (let i = 0; i < technologies.length; i++) {
-    await pool.query('INSERT INTO course_technologies (id, course_id, technology, display_order) VALUES (?, ?, ?, ?)', [crypto.randomUUID(), courseId, String(technologies[i]).trim(), i]);
+    const technology = String(technologies[i] || '').trim();
+    if (!technology) continue;
+    await executor.query('INSERT INTO course_technologies (id, course_id, technology, display_order) VALUES (?, ?, ?, ?)', [crypto.randomUUID(), courseId, technology, i]);
   }
   const curriculum = Array.isArray(body.curriculum) ? body.curriculum : [];
   for (let i = 0; i < curriculum.length; i++) {
     const module = curriculum[i] || {};
+    const moduleName = String(module.module || module.module_name || '').trim();
+    if (!moduleName) continue;
     const moduleId = crypto.randomUUID();
-    await pool.query('INSERT INTO course_modules (id, course_id, module_name, description, display_order) VALUES (?, ?, ?, ?, ?)', [moduleId, courseId, String(module.module || module.module_name || '').trim() || `Module ${i + 1}`, module.description || null, i]);
+    await executor.query('INSERT INTO course_modules (id, course_id, module_name, description, display_order) VALUES (?, ?, ?, ?, ?)', [moduleId, courseId, moduleName, String(module.description || '').trim() || null, i]);
     const topics = Array.isArray(module.topics) ? module.topics : [];
     for (let j = 0; j < topics.length; j++) {
-      await pool.query('INSERT INTO course_module_topics (id, module_id, topic, display_order) VALUES (?, ?, ?, ?)', [crypto.randomUUID(), moduleId, String(topics[j]).trim(), j]);
+      const topic = String(topics[j] || '').trim();
+      if (!topic) continue;
+      await executor.query('INSERT INTO course_module_topics (id, module_id, topic, display_order) VALUES (?, ?, ?, ?)', [crypto.randomUUID(), moduleId, topic, j]);
     }
   }
   const seo = normalizeSeoInput(body.seo || {});
-  await pool.query(`INSERT INTO course_seo (id, course_id, meta_title, meta_description, focus_keyword, keywords, canonical_url, og_title, og_description, og_image, robots, schema_json)
+  await executor.query(`INSERT INTO course_seo (id, course_id, meta_title, meta_description, focus_keyword, keywords, canonical_url, og_title, og_description, og_image, robots, schema_json)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON DUPLICATE KEY UPDATE meta_title=VALUES(meta_title), meta_description=VALUES(meta_description), focus_keyword=VALUES(focus_keyword), keywords=VALUES(keywords), canonical_url=VALUES(canonical_url), og_title=VALUES(og_title), og_description=VALUES(og_description), og_image=VALUES(og_image), robots=VALUES(robots), schema_json=VALUES(schema_json)`,
     [crypto.randomUUID(), courseId, seo.meta_title, seo.meta_description, seo.focus_keyword, seo.keywords, seo.canonical_url, seo.og_title, seo.og_description, seo.og_image, seo.robots, seo.schema_json]);
@@ -953,24 +960,39 @@ app.get('/api/admin/courses/:id', requireAuth('admin'), async (req, res) => {
 app.post('/api/admin/courses', requireAuth('admin'), async (req, res) => {
   const conn = await pool.getConnection();
   try {
-    const data = coursePayload(req.body); const id = crypto.randomUUID(); await conn.beginTransaction();
+    const data = coursePayload(req.body);
+    const id = crypto.randomUUID();
+    await conn.beginTransaction();
     await conn.query(`INSERT INTO courses (id,slug,title,tagline,short_description,overview,thumbnail,banner,category,duration,level,mode,language,certificate_available,certificate_title,featured,students,rating,projects,modules_count,icon,theme_color,display_order,coming_soon,popular,enrollment_open,last_updated,version,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, Object.values({id,...data}));
+    await replaceCourseChildren(conn, id, req.body);
     await conn.commit();
-    await replaceCourseChildren(id, req.body);
     return sendSuccess(res, await getCourseForAdmin(id), 201);
-  } catch (error) { try { await conn.rollback(); } catch {} console.error('Create course error:', error); return sendError(res, error.code === 'ER_DUP_ENTRY' ? 'Slug already exists.' : (error.message || 'Unable to create course.'), 400); }
-  finally { conn.release(); }
+  } catch (error) {
+    try { await conn.rollback(); } catch {}
+    console.error('Create course error:', error);
+    return sendError(res, error.code === 'ER_DUP_ENTRY' ? 'Slug already exists.' : (error.message || 'Unable to create course.'), 400);
+  } finally { conn.release(); }
 });
 
 app.put('/api/admin/courses/:id', requireAuth('admin'), async (req, res) => {
+  const conn = await pool.getConnection();
   try {
-    const data = coursePayload(req.body); const id=req.params.id;
-    const [existing] = await pool.query('SELECT id FROM courses WHERE id=? LIMIT 1',[id]); if(!existing.length) return sendError(res,'Course not found.',404);
-    const fields=Object.keys(data); await pool.query(`UPDATE courses SET ${fields.map(f=>`${f}=?`).join(',')}, updated_at=NOW() WHERE id=?`, [...fields.map(f=>data[f]),id]);
-    await replaceCourseChildren(id, req.body); return sendSuccess(res, await getCourseForAdmin(id));
-  } catch(error){ console.error('Update course error:',error); return sendError(res,error.code==='ER_DUP_ENTRY'?'Slug already exists.':(error.message||'Unable to update course.'),400); }
+    const data = coursePayload(req.body);
+    const id = req.params.id;
+    await conn.beginTransaction();
+    const [existing] = await conn.query('SELECT id FROM courses WHERE id=? LIMIT 1', [id]);
+    if (!existing.length) { await conn.rollback(); return sendError(res, 'Course not found.', 404); }
+    const fields = Object.keys(data);
+    await conn.query(`UPDATE courses SET ${fields.map(f => `${f}=?`).join(',')}, updated_at=NOW() WHERE id=?`, [...fields.map(f => data[f]), id]);
+    await replaceCourseChildren(conn, id, req.body);
+    await conn.commit();
+    return sendSuccess(res, await getCourseForAdmin(id));
+  } catch (error) {
+    try { await conn.rollback(); } catch {}
+    console.error('Update course error:', error);
+    return sendError(res, error.code === 'ER_DUP_ENTRY' ? 'Slug already exists.' : (error.message || 'Unable to update course.'), 400);
+  } finally { conn.release(); }
 });
-
 app.delete('/api/admin/courses/:id', requireAuth('admin'), async (req,res)=>{ try { const [r]=await pool.query('DELETE FROM courses WHERE id=?',[req.params.id]); return r.affectedRows?sendSuccess(res,{deleted:true}):sendError(res,'Course not found.',404); } catch(error){console.error(error);return sendError(res,'Unable to delete course.',500);} });
 
 // ---------- Admin CMS: Posts ----------
