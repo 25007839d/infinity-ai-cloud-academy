@@ -13,14 +13,14 @@
 <li>**Validation** — test correctness, schema, edge cases and failure handling before release.</li>
 <li>**Operations** — expose logs, metrics, alerts and runbook information so the pipeline can be supported.</li>
 <h2>Architecture lens</h2>
-<pre><code>flowchart LR
+<pre class="mermaid">flowchart LR
   A[Source] --&gt; B[Ingestion]
   B --&gt; C[Raw / Bronze]
   C --&gt; D[Transform / Silver]
   D --&gt; E[Curated / Gold]
   E --&gt; F[Analytics / ML / Apps]
   D --&gt; G[Quality Checks]
-  G --&gt; H[Observability]</code></pre>
+  G --&gt; H[Observability]</pre>
 <h2>Worked example</h2>
 <p>Suppose a retail company receives customer orders every hour. The engineering team needs to land raw records, standardize types, remove invalid rows, calculate business metrics and publish a curated dataset for analysts. The implementation should be **idempotent**, observable and safe to rerun.</p>
 <h3>Engineering checklist</h3>
@@ -48,4 +48,25 @@
 <li>Write or sketch the smallest production-safe implementation.</li>
 <li>State two metrics you would monitor.</li>
 <h2>Assignment</h2>
-<p>Build a small production-style example for **DataFrames and Spark SQL**. Submit source code or architecture, sample input/output, validation evidence, and a short README containing assumptions, failure handling and how to run the solution.</p></div></main></body></html>
+<p>Build a small production-style example for **DataFrames and Spark SQL**. Submit source code or architecture, sample input/output, validation evidence, and a short README containing assumptions, failure handling and how to run the solution.</p></div></main>
+<style>
+  pre.mermaid {
+    background: #07111f;
+    border: 1px solid #29415f;
+    border-radius: 16px;
+    padding: 22px;
+    overflow-x: auto;
+    text-align: center;
+  }
+  pre.mermaid svg { max-width: 100%; height: auto; }
+</style>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'strict',
+    theme: 'dark',
+    flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' }
+  });
+  await mermaid.run({ querySelector: '.mermaid', suppressErrors: false });
+</script></body></html>

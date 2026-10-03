@@ -15,7 +15,27 @@ export default function LearningExperience({ courseSlug, lessonSlug }){
   </div>;
 }
 
-function Visuals({visuals}){ if(!visuals.length) return null; return <section className="rounded-2xl border border-cyan-500/20 bg-slate-900 overflow-hidden"><div className="px-5 py-4 border-b border-slate-800 flex items-center gap-2"><ImageIcon size={18} className="text-cyan-400"/><div><h2 className="font-bold">Concept Visual</h2><p className="text-xs text-slate-500">Visual explanation before the hands-on work</p></div></div><div className="p-4 space-y-4">{visuals.map(v=><figure key={v.id} className="rounded-xl overflow-hidden border border-slate-800 bg-slate-950"><img src={v.imageUrl} alt={v.altText} className="w-full h-auto" loading="lazy"/><figcaption className="px-4 py-3 text-sm text-slate-400">{v.caption}</figcaption></figure>)}</div></section> }
+function Visuals({visuals}){
+  if(!visuals.length) return null;
+  return <section className="rounded-2xl border border-cyan-500/20 bg-slate-900 overflow-hidden">
+    <div className="px-5 py-4 border-b border-slate-800 flex items-center gap-2">
+      <ImageIcon size={18} className="text-cyan-400"/>
+      <div><h2 className="font-bold">Concept Visual</h2><p className="text-xs text-slate-500">Visual explanation before the hands-on work</p></div>
+    </div>
+    <div className="p-4 space-y-4">
+      {visuals.map(v=><figure key={v.id} className="rounded-xl overflow-hidden border border-slate-800 bg-slate-950">
+        <img
+          src={v.imageUrl}
+          alt={v.altText}
+          className="block w-full h-auto max-h-[620px] object-contain bg-slate-950"
+          loading="lazy"
+          onError={(e)=>{e.currentTarget.style.display='none';e.currentTarget.parentElement?.classList.add('p-5');}}
+        />
+        <figcaption className="px-4 py-3 text-sm text-slate-400">{v.caption}</figcaption>
+      </figure>)}
+    </div>
+  </section>
+}
 
 function Practice({practice}){ if(!practice) return null; return <section className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6"><div className="flex items-center gap-2"><Lightbulb size={19} className="text-amber-300"/><h2 className="text-xl font-bold">{practice.title}</h2></div><p className="text-sm text-slate-400 mt-2">{practice.instructions}</p><ol className="mt-4 space-y-3">{(practice.tasks||[]).map((t,i)=><li key={i} className="flex gap-3 text-sm text-slate-200"><span className="w-6 h-6 shrink-0 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-xs text-amber-300">{i+1}</span><span>{t}</span></li>)}</ol></section> }
 

@@ -79,3 +79,6 @@ A lesson should now appear in this order:
 5. Concept Check
 6. Industry Assignment
 7. Complete Lesson / Progress
+
+## Visual + Mermaid deployment fix
+The course content is prepared into `public/content/courses` during `npm run build`. This includes all lesson HTML and concept SVG files. Lesson HTML now converts Mermaid code blocks into rendered SVG diagrams using Mermaid's browser ESM runtime. Do not deploy only the database seed; run the normal Hostinger build so `dist/content/courses` is populated.
