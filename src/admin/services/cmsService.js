@@ -27,3 +27,9 @@ export const cms = {
     update: (data) => apiRequest('/admin/seo', { method: 'PUT', body: JSON.stringify(data) }),
   },
 };
+
+cms.enrollments = {
+  list: () => apiRequest('/admin/enrollments'),
+  enroll: (courseId, data) => apiRequest(`/admin/courses/${courseId}/enroll`, { method:'POST', body:JSON.stringify(data) }),
+  update: (id, data) => apiRequest(`/admin/enrollments/${id}`, { method:'PATCH', body:JSON.stringify(data) }),
+};

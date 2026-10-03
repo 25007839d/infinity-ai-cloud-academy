@@ -5,6 +5,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "../pages/Home";
 import Courses from "../pages/Courses";
 import CourseDetails from "../pages/CourseDetails";
+import PreviewLesson from "../pages/PreviewLesson";
 import Roadmaps from "../pages/Roadmaps";
 import Projects from "../pages/Projects";
 import Resources from "../pages/Resources";
@@ -33,7 +34,10 @@ import SeoCMS from "../admin/pages/SeoCMS";
 import Users from "../admin/pages/Users";
 
 // ================= STUDENT =================
-import StudentPortal from "../pages/student/StudentPortal";
+import StudentDashboard from "../pages/student/StudentDashboard";
+import LearningCourse from "../pages/student/LearningCourse";
+import LearningLesson from "../pages/student/LearningLesson";
+import StudentProtectedRoute from "../pages/student/StudentProtectedRoute";
 
 // ================= PROTECTED ROUTE =================
 
@@ -79,10 +83,9 @@ export default function AppRoutes() {
         path="/contact"
         element={<Contact />}
       />
-      <Route
-      path="/student"
-      element={<StudentPortal />}
-      />
+      <Route path="/student" element={<StudentProtectedRoute><StudentDashboard /></StudentProtectedRoute>} />
+      <Route path="/learn/:slug" element={<StudentProtectedRoute><LearningCourse /></StudentProtectedRoute>} />
+      <Route path="/learn/:slug/:lessonSlug" element={<StudentProtectedRoute><LearningLesson /></StudentProtectedRoute>} />
 
       <Route
         path="/book-demo"

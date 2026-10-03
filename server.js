@@ -75,6 +75,14 @@ const demoLimiter = rateLimit({
   message: { success: false, message: 'Too many submissions. Please try again later.' },
 });
 
+const sqlLabLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'SQL Lab rate limit reached. Please wait a few minutes.' },
+});
+
 function sendSuccess(res, data = null, status = 200) {
   return res.status(status).json({ success: true, data });
 }
@@ -369,6 +377,9 @@ function mapCourseRow(row, technologies = [], curriculum = [], seo = null) {
     comingSoon: Boolean(row.coming_soon),
     popular: Boolean(row.popular),
     enrollmentOpen: Boolean(row.enrollment_open),
+    accessType: row.access_type || 'free',
+    price: Number(row.price || 0),
+    currency: row.currency || 'INR',
     lastUpdated: row.last_updated,
     version: row.version,
     technologies,
@@ -417,6 +428,21 @@ async function loadCourseFromDb(slug) {
       moduleRows.map((m) => m.id)
     );
   }
+  const [lessonRows] = await pool.query(
+    `SELECT id, module_id, title, slug, description, lesson_type, duration_minutes, is_preview, status, display_order
+     FROM course_lessons WHERE module_id IN (${moduleRows.map(() => '?').join(',') || 'NULL'})
+     ORDER BY display_order ASC, title ASC`,
+    moduleRows.map((m) => m.id)
+  );
+  const lessonIds = lessonRows.map((l) => l.id);
+  const [contentRows] = lessonIds.length ? await pool.query(
+    `SELECT lesson_id, content_type, title, content_url, content_html, display_order FROM lesson_content
+     WHERE lesson_id IN (${lessonIds.map(() => '?').join(',')}) ORDER BY display_order ASC, title ASC`, lessonIds
+  ) : [[]];
+  const [labRows] = lessonIds.length ? await pool.query(
+    `SELECT id, lesson_id, lab_type, title, external_url, instructions, dataset_url, config_json, display_order FROM lesson_labs
+     WHERE lesson_id IN (${lessonIds.map(() => '?').join(',')}) ORDER BY display_order ASC, title ASC`, lessonIds
+  ) : [[]];
   const [seoRows] = await pool.query(
     'SELECT meta_title, meta_description, focus_keyword, keywords, canonical_url, og_title, og_description, og_image, robots FROM course_seo WHERE course_id = ? LIMIT 1',
     [courseId]
@@ -426,10 +452,29 @@ async function loadCourseFromDb(slug) {
     if (!topicsByModule.has(row.module_id)) topicsByModule.set(row.module_id, []);
     topicsByModule.get(row.module_id).push(row.topic);
   }
+  const lessonsByModule = new Map();
+  const contentByLesson = new Map();
+  const labsByLesson = new Map();
+  for (const row of contentRows) {
+    if (!contentByLesson.has(row.lesson_id)) contentByLesson.set(row.lesson_id, []);
+    contentByLesson.get(row.lesson_id).push({ contentType: row.content_type, title: row.title || '', contentUrl: row.content_url || '', contentHtml: row.content_html || '' });
+  }
+  for (const row of labRows) {
+    if (!labsByLesson.has(row.lesson_id)) labsByLesson.set(row.lesson_id, []);
+    labsByLesson.get(row.lesson_id).push({ id: row.id, labType: row.lab_type, title: row.title, externalUrl: row.external_url || '', instructions: row.instructions || '', datasetUrl: row.dataset_url || '', config: parseJsonSafe(row.config_json) });
+  }
+  for (const lesson of lessonRows) {
+    if (!lessonsByModule.has(lesson.module_id)) lessonsByModule.set(lesson.module_id, []);
+    lessonsByModule.get(lesson.module_id).push({
+      id: lesson.id, title: lesson.title, slug: lesson.slug, description: lesson.description || '',
+      lessonType: lesson.lesson_type, durationMinutes: Number(lesson.duration_minutes || 0),
+      isPreview: Boolean(lesson.is_preview), status: lesson.status,
+      content: contentByLesson.get(lesson.id) || [], labs: labsByLesson.get(lesson.id) || []
+    });
+  }
   const curriculum = moduleRows.map((m) => ({
-    module: m.module_name,
-    description: m.description || '',
-    topics: topicsByModule.get(m.id) || [],
+    id: m.id, module: m.module_name, description: m.description || '',
+    topics: topicsByModule.get(m.id) || [], lessons: lessonsByModule.get(m.id) || [],
   }));
   const seoRow = seoRows[0];
   let keywords = [];
@@ -504,6 +549,167 @@ app.post('/api/courses/:slug/view', requireAuth('student'), async (req, res) => 
   }
 });
 
+// ---------- SQL Lab (read-only practice database) ----------
+const SQL_LAB_DATABASE = process.env.SQL_LAB_DATABASE || '';
+function isSafeSql(sql='') {
+  const normalized = String(sql).trim().replace(/;+\s*$/,'').trim();
+  if (!normalized || normalized.length > 10000) return false;
+  if (normalized.includes(';')) return false;
+  return /^(SELECT|WITH|SHOW|DESCRIBE|DESC|EXPLAIN)\b/i.test(normalized)
+    && !/\b(DROP|DELETE|UPDATE|INSERT|ALTER|TRUNCATE|CREATE|RENAME|GRANT|REVOKE|LOAD|INTO\s+OUTFILE|INTO\s+DUMPFILE|CALL|SET|USE|SLEEP|BENCHMARK|LOAD_FILE)\b/i.test(normalized);
+}
+app.get('/api/labs/sql/schema', requireAuth('student'), async (req,res)=>{
+  try {
+    if(!SQL_LAB_DATABASE) return sendSuccess(res,{configured:false,tables:[]});
+    const [tables]=await pool.query(`SELECT TABLE_NAME AS name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=? AND TABLE_TYPE='BASE TABLE' ORDER BY TABLE_NAME`,[SQL_LAB_DATABASE]);
+    return sendSuccess(res,{configured:true,database:SQL_LAB_DATABASE,tables:tables.map(t=>t.name)});
+  } catch(e){console.error('SQL schema error:',e);return sendError(res,'Unable to load SQL Lab schema.',500);}
+});
+app.post('/api/labs/sql/execute', sqlLabLimiter, requireAuth('student'), async (req,res)=>{
+  try {
+    if(!SQL_LAB_DATABASE) return sendError(res,'SQL Lab is not configured. Set SQL_LAB_DATABASE on the server.',503);
+    const sql=String(req.body.sql||'').trim();
+    if(!isSafeSql(sql)) return sendError(res,'Only single read-only SELECT/CTE/SHOW/DESCRIBE/EXPLAIN queries are allowed in the Academy SQL Lab.');
+    const started=Date.now();
+    const conn=await pool.getConnection();
+    try {
+      await conn.query(`USE \`${SQL_LAB_DATABASE.replace(/`/g,'') }\``);
+      const [rows,fields]=await conn.query(sql);
+      return sendSuccess(res,{rows,columns:fields.map(f=>f.name),rowCount:Array.isArray(rows)?rows.length:0,executionMs:Date.now()-started});
+    } finally { conn.release(); }
+  } catch(e){console.error('SQL Lab execute error:',e);return sendError(res,e.sqlMessage||e.message||'SQL execution failed.',400);}
+});
+
+// ---------- LMS access, enrollment and learning APIs ----------
+async function getCourseAccess(courseId, userId) {
+  const [rows] = await pool.query(
+    `SELECT ce.id, ce.status, ce.access_type, ce.start_date, ce.expiry_date
+     FROM course_enrollments ce
+     WHERE ce.course_id = ? AND ce.user_id = ? LIMIT 1`,
+    [courseId, userId]
+  );
+  if (!rows.length) return null;
+  const e = rows[0];
+  const expired = e.expiry_date && new Date(e.expiry_date) < new Date();
+  if (expired && e.status === 'ACTIVE') {
+    await pool.query(`UPDATE course_enrollments SET status='EXPIRED', updated_at=NOW() WHERE id=?`, [e.id]);
+    e.status = 'EXPIRED';
+  }
+  return e;
+}
+
+function mapEnrollment(row) {
+  return {
+    id: row.id, courseId: row.course_id, slug: row.slug, title: row.title,
+    thumbnail: row.thumbnail || '', status: row.status, accessType: row.access_type,
+    startDate: row.start_date, expiryDate: row.expiry_date,
+    progressPercent: Number(row.progress_percent || 0), completedLessons: Number(row.completed_lessons || 0),
+    totalLessons: Number(row.total_lessons || 0), lastAccessedAt: row.last_accessed_at || null,
+  };
+}
+
+app.get('/api/courses/:slug/access', async (req, res) => {
+  try {
+    const [rows] = await pool.query(`SELECT id, slug, title, access_type, price, currency, enrollment_open FROM courses WHERE slug=? AND status='published' LIMIT 1`, [req.params.slug]);
+    if (!rows.length) return sendError(res, 'Course not found.', 404);
+    if (!JWT_SECRET || !req.cookies.iaa_token) return sendSuccess(res, { authenticated:false, enrolled:false, access:false, course: rows[0] });
+    try {
+      const payload = jwt.verify(req.cookies.iaa_token, JWT_SECRET);
+      if (payload.role !== 'student') return sendSuccess(res, { authenticated:false, enrolled:false, access:false, course: rows[0] });
+      const enrollment = await getCourseAccess(rows[0].id, payload.sub);
+      return sendSuccess(res, { authenticated:true, enrolled:Boolean(enrollment && enrollment.status==='ACTIVE'), access:Boolean(enrollment && enrollment.status==='ACTIVE'), enrollment, course: rows[0] });
+    } catch { return sendSuccess(res, { authenticated:false, enrolled:false, access:false, course: rows[0] }); }
+  } catch (error) { console.error('Course access error:', error); return sendError(res, 'Unable to check course access.', 500); }
+});
+
+app.post('/api/courses/:slug/enroll', requireAuth('student'), async (req, res) => {
+  try {
+    const [rows] = await pool.query(`SELECT id, slug, title, access_type, price, currency, enrollment_open FROM courses WHERE slug=? AND status='published' LIMIT 1`, [req.params.slug]);
+    if (!rows.length) return sendError(res, 'Course not found.', 404);
+    const course = rows[0];
+    if (!course.enrollment_open) return sendError(res, 'Enrollment is currently closed.', 403);
+    const existing = await getCourseAccess(course.id, req.user.id);
+    if (existing?.status === 'ACTIVE') return sendSuccess(res, { enrolled:true, alreadyEnrolled:true, enrollment:existing });
+    if (course.access_type === 'paid') return res.status(402).json({ success:false, message:'Payment is required before this course can be activated.', data:{ paymentRequired:true, course:{ id:course.id, slug:course.slug, title:course.title, price:Number(course.price||0), currency:course.currency||'INR' } } });
+    if (course.access_type === 'invite') return sendError(res, 'This course is available by invitation or admin enrollment.', 403);
+    const id = crypto.randomUUID();
+    await pool.query(`INSERT INTO course_enrollments (id,user_id,course_id,status,access_type,start_date) VALUES (?,?,?,?,?,NOW()) ON DUPLICATE KEY UPDATE status='ACTIVE',access_type=VALUES(access_type),start_date=NOW(),updated_at=NOW()`, [id,req.user.id,course.id,'ACTIVE','FREE']);
+    const enrollment = await getCourseAccess(course.id, req.user.id);
+    return sendSuccess(res, { enrolled:true, enrollment }, 201);
+  } catch (error) { console.error('Enrollment error:', error); return sendError(res, 'Unable to enroll in this course.', 500); }
+});
+
+app.get('/api/student/dashboard', requireAuth('student'), async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT c.id AS course_id,c.slug,c.title,c.thumbnail,ce.id,ce.status,ce.access_type,ce.start_date,ce.expiry_date,
+             COALESCE(SUM(CASE WHEN lp.status='COMPLETED' THEN 1 ELSE 0 END),0) completed_lessons,
+             COUNT(cl.id) total_lessons,
+             COALESCE(ROUND(100 * SUM(CASE WHEN lp.status='COMPLETED' THEN 1 ELSE 0 END) / NULLIF(COUNT(cl.id),0)),0) progress_percent,
+             MAX(lp.last_accessed_at) last_accessed_at
+      FROM course_enrollments ce
+      JOIN courses c ON c.id=ce.course_id
+      LEFT JOIN course_modules cm ON cm.course_id=c.id
+      LEFT JOIN course_lessons cl ON cl.module_id=cm.id AND cl.status='published'
+      LEFT JOIN lesson_progress lp ON lp.lesson_id=cl.id AND lp.user_id=ce.user_id
+      WHERE ce.user_id=?
+      GROUP BY c.id,c.slug,c.title,c.thumbnail,ce.id,ce.status,ce.access_type,ce.start_date,ce.expiry_date
+      ORDER BY COALESCE(MAX(lp.last_accessed_at),ce.updated_at) DESC`, [req.user.id]);
+    return sendSuccess(res, { user:req.user, courses:rows.map(mapEnrollment) });
+  } catch (error) { console.error('Student dashboard error:', error); return sendError(res, 'Unable to load student dashboard.', 500); }
+});
+
+app.get('/api/courses/:slug/preview/:lessonSlug', async (req,res)=>{
+  try {
+    const [rows]=await pool.query(`SELECT cl.*,cm.course_id,c.title AS course_title,c.slug AS course_slug FROM course_lessons cl JOIN course_modules cm ON cm.id=cl.module_id JOIN courses c ON c.id=cm.course_id WHERE c.slug=? AND cl.slug=? AND cl.status='published' AND cl.is_preview=1 LIMIT 1`,[req.params.slug,req.params.lessonSlug]);
+    if(!rows.length)return sendError(res,'Preview lesson not found.',404);
+    const l=rows[0]; const [content]=await pool.query(`SELECT content_type,title,content_url,content_html,display_order FROM lesson_content WHERE lesson_id=? ORDER BY display_order,title`,[l.id]);
+    return sendSuccess(res,{lesson:{id:l.id,title:l.title,slug:l.slug,description:l.description||'',lessonType:l.lesson_type,durationMinutes:Number(l.duration_minutes||0),content:content.map(c=>({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''}))},course:{title:l.course_title,slug:l.course_slug}});
+  }catch(e){console.error('Preview lesson error:',e);return sendError(res,'Unable to load preview.',500);}
+});
+
+app.get('/api/learn/courses/:slug', requireAuth('student'), async (req, res) => {
+  try {
+    const [courses] = await pool.query(`SELECT * FROM courses WHERE slug=? AND status='published' LIMIT 1`, [req.params.slug]);
+    if (!courses.length) return sendError(res, 'Course not found.', 404);
+    const course = courses[0];
+    const enrollment = await getCourseAccess(course.id, req.user.id);
+    if (!enrollment || enrollment.status !== 'ACTIVE') return sendError(res, 'You are not enrolled in this course.', 403);
+    const full = await loadCourseFromDb(course.slug);
+    return sendSuccess(res, { course:full, enrollment });
+  } catch (error) { console.error('Learning course error:', error); return sendError(res, 'Unable to load course.', 500); }
+});
+
+app.get('/api/learn/courses/:slug/lessons/:lessonSlug', requireAuth('student'), async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT cl.*,cm.course_id,c.slug AS course_slug,c.title AS course_title
+      FROM course_lessons cl JOIN course_modules cm ON cm.id=cl.module_id JOIN courses c ON c.id=cm.course_id
+      WHERE c.slug=? AND cl.slug=? AND cl.status='published' LIMIT 1`, [req.params.slug,req.params.lessonSlug]);
+    if (!rows.length) return sendError(res, 'Lesson not found.', 404);
+    const lesson = rows[0];
+    const enrollment = await getCourseAccess(lesson.course_id, req.user.id);
+    if (!enrollment || enrollment.status !== 'ACTIVE') return sendError(res, 'You are not enrolled in this course.', 403);
+    const [content] = await pool.query(`SELECT content_type,title,content_url,content_html,display_order FROM lesson_content WHERE lesson_id=? ORDER BY display_order,title`, [lesson.id]);
+    const [labs] = await pool.query(`SELECT id,lab_type,title,external_url,instructions,dataset_url,config_json,display_order FROM lesson_labs WHERE lesson_id=? ORDER BY display_order,title`, [lesson.id]);
+    const [progress] = await pool.query(`SELECT * FROM lesson_progress WHERE user_id=? AND lesson_id=? LIMIT 1`, [req.user.id,lesson.id]);
+    return sendSuccess(res, { lesson:{ id:lesson.id,title:lesson.title,slug:lesson.slug,description:lesson.description||'',lessonType:lesson.lesson_type,durationMinutes:Number(lesson.duration_minutes||0),isPreview:Boolean(lesson.is_preview),content:content.map(c=>({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''})),labs:labs.map(l=>({id:l.id,labType:l.lab_type,title:l.title,externalUrl:l.external_url||'',instructions:l.instructions||'',datasetUrl:l.dataset_url||'',config:parseJsonSafe(l.config_json)}))}, progress:progress[0]||null });
+  } catch (error) { console.error('Lesson error:', error); return sendError(res, 'Unable to load lesson.', 500); }
+});
+
+app.post('/api/learn/lessons/:lessonId/progress', requireAuth('student'), async (req, res) => {
+  try {
+    const percent=Math.max(0,Math.min(100,Number(req.body.progressPercent||0)));
+    const status=percent>=100?'COMPLETED':percent>0?'IN_PROGRESS':'NOT_STARTED';
+    const [lessons]=await pool.query(`SELECT cl.id,cm.course_id FROM course_lessons cl JOIN course_modules cm ON cm.id=cl.module_id WHERE cl.id=? LIMIT 1`,[req.params.lessonId]);
+    if(!lessons.length) return sendError(res,'Lesson not found.',404);
+    const enrollment=await getCourseAccess(lessons[0].course_id,req.user.id);
+    if(!enrollment || enrollment.status!=='ACTIVE') return sendError(res,'Course enrollment required.',403);
+    await pool.query(`INSERT INTO lesson_progress (id,user_id,lesson_id,status,progress_percent,started_at,completed_at,last_accessed_at) VALUES (?,?,?,?,?,IF(?<>'NOT_STARTED',NOW(),NULL),IF(?='COMPLETED',NOW(),NULL),NOW()) ON DUPLICATE KEY UPDATE status=VALUES(status),progress_percent=VALUES(progress_percent),started_at=COALESCE(started_at,VALUES(started_at)),completed_at=IF(VALUES(status)='COMPLETED',NOW(),completed_at),last_accessed_at=NOW(),updated_at=NOW()`,[crypto.randomUUID(),req.user.id,req.params.lessonId,status,percent,status,status]);
+    return sendSuccess(res,{lessonId:req.params.lessonId,status,progressPercent:percent});
+  } catch(error){console.error('Lesson progress error:',error);return sendError(res,'Unable to save lesson progress.',500);}
+});
+
 // ---------- Public lead/demo APIs ----------
 app.post('/api/demo-registrations', demoLimiter, async (req, res) => {
   try {
@@ -556,6 +762,12 @@ function parseJsonOrCsv(value) {
     if (Array.isArray(parsed)) return parsed.map(String).map((x) => x.trim()).filter(Boolean);
   } catch {}
   return String(value).split(',').map((x) => x.trim()).filter(Boolean);
+}
+
+function parseJsonSafe(value) {
+  if (value == null || value === '') return null;
+  if (typeof value === 'object') return value;
+  try { return JSON.parse(value); } catch { return null; }
 }
 
 function sanitizeHtml(input = '') {
@@ -617,13 +829,23 @@ async function getCourseForAdmin(id) {
   if (mods.length) {
     [topics] = await pool.query(`SELECT id, module_id, topic, display_order FROM course_module_topics WHERE module_id IN (${mods.map(() => '?').join(',')}) ORDER BY display_order, topic`, mods.map((m) => m.id));
   }
+  let lessons = [];
+  if (mods.length) {
+    [lessons] = await pool.query(`SELECT id, module_id, title, slug, description, lesson_type, duration_minutes, is_preview, status, display_order FROM course_lessons WHERE module_id IN (${mods.map(() => '?').join(',')}) ORDER BY display_order, title`, mods.map((m) => m.id));
+  }
+  const lessonIds = lessons.map((l) => l.id);
+  const [contents] = lessonIds.length ? await pool.query(`SELECT lesson_id, content_type, title, content_url, content_html, display_order FROM lesson_content WHERE lesson_id IN (${lessonIds.map(() => '?').join(',')}) ORDER BY display_order, title`, lessonIds) : [[]];
+  const [labs] = lessonIds.length ? await pool.query(`SELECT id, lesson_id, lab_type, title, external_url, instructions, dataset_url, config_json, display_order FROM lesson_labs WHERE lesson_id IN (${lessonIds.map(() => '?').join(',')}) ORDER BY display_order, title`, lessonIds) : [[]];
   const [seo] = await pool.query('SELECT * FROM course_seo WHERE course_id = ? LIMIT 1', [id]);
   const topicMap = new Map();
   topics.forEach((t) => { if (!topicMap.has(t.module_id)) topicMap.set(t.module_id, []); topicMap.get(t.module_id).push(t); });
+  const lessonMap = new Map();
+  lessons.forEach((l) => { if (!lessonMap.has(l.module_id)) lessonMap.set(l.module_id, []); lessonMap.get(l.module_id).push({ id:l.id,title:l.title,slug:l.slug,description:l.description||'',lessonType:l.lesson_type,durationMinutes:Number(l.duration_minutes||0),isPreview:Boolean(l.is_preview),status:l.status,content:[],labs:[] }); });
+  contents.forEach((c) => { for (const list of lessonMap.values()) { const lesson=list.find(l=>l.id===c.lesson_id); if(lesson) lesson.content.push({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''}); } });
+  labs.forEach((lab) => { for (const list of lessonMap.values()) { const lesson=list.find(l=>l.id===lab.lesson_id); if(lesson) lesson.labs.push({id:lab.id,labType:lab.lab_type,title:lab.title,externalUrl:lab.external_url||'',instructions:lab.instructions||'',datasetUrl:lab.dataset_url||'',config:parseJsonSafe(lab.config_json)}); } });
   return {
-    ...mapCourseRow(course, tech.map((t) => t.technology), mods.map((m) => ({ module: m.module_name, description: m.description || '', topics: (topicMap.get(m.id) || []).map((t) => t.topic) })), mapSeoRow(seo[0])),
-    id: course.id,
-    status: course.status,
+    ...mapCourseRow(course, tech.map((t) => t.technology), mods.map((m) => ({ id:m.id, module: m.module_name, description: m.description || '', topics: (topicMap.get(m.id) || []).map((t) => t.topic), lessons: lessonMap.get(m.id) || [] })), mapSeoRow(seo[0])),
+    id: course.id, status: course.status, accessType: course.access_type || 'free', price:Number(course.price||0), currency:course.currency||'INR',
   };
 }
 
@@ -658,8 +880,19 @@ function coursePayload(body) {
     enrollment_open: body.enrollment_open ?? body.enrollmentOpen ? 1 : 0,
     last_updated: body.last_updated || body.lastUpdated || null,
     version: body.version || null,
+    access_type: ['free','paid','invite'].includes(body.accessType || body.access_type) ? (body.accessType || body.access_type) : 'free',
+    price: Number(body.price || 0),
+    currency: String(body.currency || 'INR').toUpperCase().slice(0,10),
     status: ['draft','published','archived'].includes(body.status) ? body.status : 'draft',
   };
+}
+
+function inferLessonType(title='') {
+  const t = String(title).toLowerCase();
+  if (t.includes('pyspark') || t.includes('spark')) return 'PYSPARK';
+  if (t.includes('sql') || t.includes('query') || t.includes('join') || t.includes('select') || t.includes('cte') || t.includes('window')) return 'SQL';
+  if (t.includes('python')) return 'PYTHON';
+  return 'THEORY';
 }
 
 async function replaceCourseChildren(executor, courseId, body) {
@@ -683,6 +916,20 @@ async function replaceCourseChildren(executor, courseId, body) {
       const topic = String(topics[j] || '').trim();
       if (!topic) continue;
       await executor.query('INSERT INTO course_module_topics (id, module_id, topic, display_order) VALUES (?, ?, ?, ?)', [crypto.randomUUID(), moduleId, topic, j]);
+    }
+    const lessons = Array.isArray(module.lessons) && module.lessons.length ? module.lessons : topics.map((topic) => ({ title: topic, slug: slugify(topic), lessonType: inferLessonType(topic), description: '', durationMinutes: 0, isPreview: false, status: 'published', content: [], labs: [] }));
+    for (let j = 0; j < lessons.length; j++) {
+      const lesson = lessons[j] || {};
+      const title = String(lesson.title || lesson.topic || '').trim();
+      if (!title) continue;
+      const lessonId = crypto.randomUUID();
+      const slug = slugify(lesson.slug || title) || `lesson-${j+1}`;
+      const lessonType = ['THEORY','SLIDES','VIDEO','SQL','PYTHON','PYSPARK','QUIZ','ASSIGNMENT','PROJECT','LIVE','RESOURCE'].includes(lesson.lessonType) ? lesson.lessonType : inferLessonType(title);
+      await executor.query(`INSERT INTO course_lessons (id,module_id,title,slug,description,lesson_type,duration_minutes,is_preview,status,display_order) VALUES (?,?,?,?,?,?,?,?,?,?)`, [lessonId,moduleId,title,slug,String(lesson.description||'').trim()||null,lessonType,Number(lesson.durationMinutes||0),lesson.isPreview?1:0,['draft','published','archived'].includes(lesson.status)?lesson.status:'published',j]);
+      const contents = Array.isArray(lesson.content) ? lesson.content : [];
+      for (let k=0;k<contents.length;k++) { const c=contents[k]||{}; if(!c.contentType) continue; await executor.query(`INSERT INTO lesson_content (id,lesson_id,content_type,title,content_url,content_html,display_order) VALUES (?,?,?,?,?,?,?)`,[crypto.randomUUID(),lessonId,c.contentType,c.title||null,c.contentUrl||null,sanitizeHtml(c.contentHtml||''),k]); }
+      const labs = Array.isArray(lesson.labs) ? lesson.labs : [];
+      for (let k=0;k<labs.length;k++) { const lab=labs[k]||{}; if(!lab.labType||!lab.title) continue; await executor.query(`INSERT INTO lesson_labs (id,lesson_id,lab_type,title,external_url,instructions,dataset_url,config_json,display_order) VALUES (?,?,?,?,?,?,?,?,?)`,[crypto.randomUUID(),lessonId,lab.labType,lab.title,lab.externalUrl||null,lab.instructions||null,lab.datasetUrl||null,lab.config?JSON.stringify(lab.config):null,k]); }
     }
   }
   const seo = normalizeSeoInput(body.seo || {});
@@ -916,7 +1163,21 @@ app.get('/api/admin/users/:id', requireAuth('admin'), async (req, res) => {
       `, [req.params.id]);
     }
 
-    return sendSuccess(res, { ...rows[0], viewedCourses: views });
+    let enrollments = [];
+    if (await hasDbTable('course_enrollments')) {
+      [enrollments] = await pool.query(`
+        SELECT ce.id,ce.status,ce.access_type,ce.start_date,ce.expiry_date,c.id AS course_id,c.title,c.slug,
+               COALESCE(SUM(CASE WHEN lp.status='COMPLETED' THEN 1 ELSE 0 END),0) completed_lessons,
+               COUNT(cl.id) total_lessons,
+               COALESCE(ROUND(100*SUM(CASE WHEN lp.status='COMPLETED' THEN 1 ELSE 0 END)/NULLIF(COUNT(cl.id),0)),0) progress_percent
+        FROM course_enrollments ce JOIN courses c ON c.id=ce.course_id
+        LEFT JOIN course_modules cm ON cm.course_id=c.id
+        LEFT JOIN course_lessons cl ON cl.module_id=cm.id AND cl.status='published'
+        LEFT JOIN lesson_progress lp ON lp.lesson_id=cl.id AND lp.user_id=ce.user_id
+        WHERE ce.user_id=? GROUP BY ce.id,ce.status,ce.access_type,ce.start_date,ce.expiry_date,c.id,c.title,c.slug ORDER BY ce.created_at DESC`, [req.params.id]);
+    }
+
+    return sendSuccess(res, { ...rows[0], viewedCourses: views, enrollments });
   } catch (error) {
     console.error('Get student details error:', error);
     return sendError(res, 'Unable to load student details.', 500);
@@ -963,7 +1224,7 @@ app.post('/api/admin/courses', requireAuth('admin'), async (req, res) => {
     const data = coursePayload(req.body);
     const id = crypto.randomUUID();
     await conn.beginTransaction();
-    await conn.query(`INSERT INTO courses (id,slug,title,tagline,short_description,overview,thumbnail,banner,category,duration,level,mode,language,certificate_available,certificate_title,featured,students,rating,projects,modules_count,icon,theme_color,display_order,coming_soon,popular,enrollment_open,last_updated,version,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, Object.values({id,...data}));
+    await conn.query(`INSERT INTO courses (id,slug,title,tagline,short_description,overview,thumbnail,banner,category,duration,level,mode,language,certificate_available,certificate_title,featured,students,rating,projects,modules_count,icon,theme_color,display_order,coming_soon,popular,enrollment_open,last_updated,version,access_type,price,currency,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, Object.values({id,...data}));
     await replaceCourseChildren(conn, id, req.body);
     await conn.commit();
     return sendSuccess(res, await getCourseForAdmin(id), 201);
@@ -994,6 +1255,17 @@ app.put('/api/admin/courses/:id', requireAuth('admin'), async (req, res) => {
   } finally { conn.release(); }
 });
 app.delete('/api/admin/courses/:id', requireAuth('admin'), async (req,res)=>{ try { const [r]=await pool.query('DELETE FROM courses WHERE id=?',[req.params.id]); return r.affectedRows?sendSuccess(res,{deleted:true}):sendError(res,'Course not found.',404); } catch(error){console.error(error);return sendError(res,'Unable to delete course.',500);} });
+
+// ---------- Admin LMS: enrollments ----------
+app.get('/api/admin/enrollments', requireAuth('admin'), async (req,res)=>{
+  try { const [rows]=await pool.query(`SELECT ce.*,u.full_name,u.email,c.title,c.slug FROM course_enrollments ce JOIN users u ON u.id=ce.user_id JOIN courses c ON c.id=ce.course_id ORDER BY ce.created_at DESC`); return sendSuccess(res,rows); }
+  catch(e){console.error(e);return sendError(res,'Unable to load enrollments.',500);}
+});
+app.post('/api/admin/courses/:courseId/enroll', requireAuth('admin'), async (req,res)=>{
+  try { const {userId,status='ACTIVE',accessType='ADMIN',expiryDate=null}=req.body; if(!userId)return sendError(res,'Student is required.'); const [c]=await pool.query(`SELECT id FROM courses WHERE id=? LIMIT 1`,[req.params.courseId]); if(!c.length)return sendError(res,'Course not found.',404); const [u]=await pool.query(`SELECT id FROM users WHERE id=? AND role='student' LIMIT 1`,[userId]); if(!u.length)return sendError(res,'Student not found.',404); await pool.query(`INSERT INTO course_enrollments (id,user_id,course_id,status,access_type,start_date,expiry_date) VALUES (?,?,?,?,?,NOW(),?) ON DUPLICATE KEY UPDATE status=VALUES(status),access_type=VALUES(access_type),expiry_date=VALUES(expiry_date),updated_at=NOW()`,[crypto.randomUUID(),userId,req.params.courseId,status,accessType,expiryDate]); const [rows]=await pool.query(`SELECT ce.*,u.full_name,u.email,c.title,c.slug FROM course_enrollments ce JOIN users u ON u.id=ce.user_id JOIN courses c ON c.id=ce.course_id WHERE ce.user_id=? AND ce.course_id=? LIMIT 1`,[userId,req.params.courseId]); return sendSuccess(res,rows[0],201); }
+  catch(e){console.error(e);return sendError(res,'Unable to enroll student.',500);}
+});
+app.patch('/api/admin/enrollments/:id', requireAuth('admin'), async (req,res)=>{ try { const allowed=['PENDING','ACTIVE','EXPIRED','CANCELLED','COMPLETED']; const status=allowed.includes(req.body.status)?req.body.status:null; if(!status)return sendError(res,'Invalid enrollment status.'); await pool.query(`UPDATE course_enrollments SET status=?,expiry_date=?,updated_at=NOW() WHERE id=?`,[status,req.body.expiryDate||null,req.params.id]); const [rows]=await pool.query(`SELECT * FROM course_enrollments WHERE id=?`,[req.params.id]); return rows.length?sendSuccess(res,rows[0]):sendError(res,'Enrollment not found.',404); } catch(e){return sendError(res,'Unable to update enrollment.',500);} });
 
 // ---------- Admin CMS: Posts ----------
 app.get('/api/admin/posts', requireAuth('admin'), async (req,res)=>{ try { const [rows]=await pool.query('SELECT * FROM blog_posts ORDER BY created_at DESC'); const out=[]; for(const r of rows){const [seo]=await pool.query('SELECT * FROM post_seo WHERE post_id=? LIMIT 1',[r.id]);out.push(mapPost(r,seo[0]));} return sendSuccess(res,out);}catch(e){return sendError(res,'Unable to load posts.',500);} });

@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../layouts/AdminLayout';
 import { getStudent, listStudents, updateStudent } from '../services/adminService';
-import { ArrowLeft, Eye, Pencil, Phone, Mail, Calendar, BookOpen } from 'lucide-react';
+import { ArrowLeft, Eye, Phone, Mail, Calendar, BookOpen, Plus } from 'lucide-react';
+import { cms } from '../services/cmsService';
 
 export default function Users() {
   const [items, setItems] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [courses,setCourses]=useState([]);
+  const [enrollCourseId,setEnrollCourseId]=useState('');
 
   const load = () => listStudents().then(setItems).catch(e => setError(e.message)).finally(() => setLoading(false));
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); cms.courses.list().then(setCourses).catch(()=>{}); }, []);
 
   const open = async (id) => {
     setError('');
@@ -41,6 +44,17 @@ export default function Users() {
           <Info icon={<Calendar size={17}/>} label="Registered" value={selected.created_at ? new Date(selected.created_at).toLocaleString() : '—'}/>
           <Info icon={<Eye size={17}/>} label="Last Login" value={selected.last_login ? new Date(selected.last_login).toLocaleString() : 'Never'}/>
         </div>
+      </div>
+      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-7">
+        <h2 className="text-2xl font-bold flex items-center gap-2"><BookOpen size={22}/> Course Enrollment</h2>
+        <div className="mt-5 flex flex-col md:flex-row gap-3">
+          <select value={enrollCourseId} onChange={e=>setEnrollCourseId(e.target.value)} className="flex-1 rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-white">
+            <option value="">Select a course</option>{courses.filter(c=>c.status==='published').map(c=><option key={c.id} value={c.id}>{c.title}</option>)}
+          </select>
+          <button disabled={!enrollCourseId} onClick={async()=>{try{await cms.enrollments.enroll(enrollCourseId,{userId:selected.id,accessType:'ADMIN',status:'ACTIVE'}); const fresh=await getStudent(selected.id); setSelected(fresh); setEnrollCourseId('');}catch(e){setError(e.message)}}} className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold disabled:opacity-50"><Plus size={17}/> Enroll Student</button>
+        </div>
+        <p className="mt-2 text-xs text-slate-500">Admin enrollment can activate free, paid or invite courses without bypassing the student's account authentication.</p>
+        <div className="mt-6 space-y-3">{selected.enrollments?.length ? selected.enrollments.map(e=><div key={e.id} className="rounded-xl border border-slate-800 bg-slate-950/50 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3"><div><p className="font-semibold">{e.title}</p><p className="text-xs text-slate-500 mt-1">{e.access_type} · {e.status}</p></div><span className="text-cyan-300 text-sm">{e.progress_percent||0}%</span></div>) : <p className="text-slate-500">No enrollments yet.</p>}</div>
       </div>
       <div className="rounded-2xl border border-slate-800 bg-slate-900 p-7">
         <h2 className="text-2xl font-bold flex items-center gap-2"><BookOpen size={22}/> Course Views</h2>

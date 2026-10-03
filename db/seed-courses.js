@@ -51,6 +51,13 @@ CREATE TABLE IF NOT EXISTS course_seo (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`;
 
 await pool.query(schema);
+async function tableExists(tableName) {
+  const [rows] = await pool.query(`SELECT COUNT(*) count FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?`,[tableName]);
+  return Number(rows[0]?.count)>0;
+}
+function inferLessonType(title='') { const t=String(title).toLowerCase(); if(t.includes('pyspark')||t.includes('spark')) return 'PYSPARK'; if(t.includes('sql')||t.includes('query')||t.includes('join')||t.includes('select')||t.includes('cte')||t.includes('window')) return 'SQL'; if(t.includes('python')) return 'PYTHON'; return 'THEORY'; }
+
+
 for (const course of courses) {
   const [existing] = await pool.query('SELECT id FROM courses WHERE slug=? LIMIT 1', [course.slug]);
   const courseId = existing[0]?.id || crypto.randomUUID();
@@ -83,8 +90,12 @@ for (const course of courses) {
   for (const [i, module] of (course.curriculum||[]).entries()) {
     const moduleId=crypto.randomUUID();
     await pool.query('INSERT INTO course_modules (id,course_id,module_name,display_order) VALUES (?,?,?,?)',[moduleId,courseId,module.module,i+1]);
-    for (const [j,topic] of (module.topics||[]).entries())
+    for (const [j,topic] of (module.topics||[]).entries()) {
       await pool.query('INSERT INTO course_module_topics (id,module_id,topic,display_order) VALUES (?,?,?,?)',[crypto.randomUUID(),moduleId,topic,j+1]);
+      if (await tableExists('course_lessons')) {
+        await pool.query(`INSERT INTO course_lessons (id,module_id,title,slug,description,lesson_type,display_order) VALUES (?,?,?,?,?,?,?)`,[crypto.randomUUID(),moduleId,topic,`topic-${crypto.randomUUID().replaceAll('-','')}`,null,inferLessonType(topic),j+1]);
+      }
+    }
   }
   const seo=course.seo||{};
   await pool.query(`

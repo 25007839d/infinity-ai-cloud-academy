@@ -24,3 +24,5 @@ export async function getCurrentUser() {
 export async function listStudents() { return apiRequest('/admin/users'); }
 export async function getStudent(id) { return apiRequest(`/admin/users/${id}`); }
 export async function updateStudent(id, data) { return apiRequest(`/admin/users/${id}`, { method: 'PATCH', body: JSON.stringify(data) }); }
+
+export async function listAdminCourses() { return apiRequest('/admin/courses'); }
