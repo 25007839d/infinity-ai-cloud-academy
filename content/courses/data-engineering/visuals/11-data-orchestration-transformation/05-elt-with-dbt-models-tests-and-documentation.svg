@@ -1,3 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500">
-<defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#07111f"/><stop offset="1" stop-color="#0b1628"/></linearGradient><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#38bdf8"/></marker></defs>
-<rect width="1200" height="500" rx="28" fill="url(#g)"/><text x="60" y="75" font-family="Inter,Arial" font-size="30" font-weight="800" fill="#f8fafc">ELT with dbt: Models, Tests and Documentation</text><text x="60" y="112" font-family="Inter,Arial" font-size="16" fill="#67e8f9">INFINITY AI CLOUD ACADEMY · CONCEPT VISUAL</text><text x="60" y="150" font-family="Inter,Arial" font-size="15" fill="#94a3b8">11-data-orchestration-transformation</text><rect x="60" y="210" width="235" height="105" rx="18" fill="#0f1b2d" stroke="#22d3ee" stroke-width="2"/><text x="177" y="250" text-anchor="middle" font-family="Inter,Arial" font-size="18" font-weight="700" fill="#e2e8f0">CONTEXT</text><text x="177" y="278" text-anchor="middle" font-family="Inter,Arial" font-size="13" fill="#94a3b8">Step 1</text><line x1="295" y1="262" x2="340" y2="262" stroke="#38bdf8" stroke-width="3" marker-end="url(#a)"/><rect x="345" y="210" width="235" height="105" rx="18" fill="#0f1b2d" stroke="#22d3ee" stroke-width="2"/><text x="462" y="250" text-anchor="middle" font-family="Inter,Arial" font-size="18" font-weight="700" fill="#e2e8f0">INPUT</text><text x="462" y="278" text-anchor="middle" font-family="Inter,Arial" font-size="13" fill="#94a3b8">Step 2</text><line x1="580" y1="262" x2="625" y2="262" stroke="#38bdf8" stroke-width="3" marker-end="url(#a)"/><rect x="630" y="210" width="235" height="105" rx="18" fill="#0f1b2d" stroke="#22d3ee" stroke-width="2"/><text x="747" y="250" text-anchor="middle" font-family="Inter,Arial" font-size="18" font-weight="700" fill="#e2e8f0">ENGINEERING LOGIC</text><text x="747" y="278" text-anchor="middle" font-family="Inter,Arial" font-size="13" fill="#94a3b8">Step 3</text><line x1="865" y1="262" x2="910" y2="262" stroke="#38bdf8" stroke-width="3" marker-end="url(#a)"/><rect x="915" y="210" width="235" height="105" rx="18" fill="#0f1b2d" stroke="#22d3ee" stroke-width="2"/><text x="1032" y="250" text-anchor="middle" font-family="Inter,Arial" font-size="18" font-weight="700" fill="#e2e8f0">OUTPUT / DECISION</text><text x="1032" y="278" text-anchor="middle" font-family="Inter,Arial" font-size="13" fill="#94a3b8">Step 4</text><text x="60" y="405" font-family="Inter,Arial" font-size="14" fill="#94a3b8">Use this flow to explain the concept during interviews, code reviews and production design discussions.</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1d31"/><stop offset="1" stop-color="#050b14"/></linearGradient>
+ <linearGradient id="card" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#12243a"/><stop offset="1" stop-color="#0b1829"/></linearGradient>
+ <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity=".28"/></filter>
+</defs>
+<rect width="1600" height="900" rx="34" fill="url(#bg)"/>
+<text x="90" y="75" fill="#4fd1c5" font-family="Inter,Segoe UI,Arial" font-size="20" font-weight="800" letter-spacing="3">INFINITY AI CLOUD ACADEMY • CONCEPT VISUAL</text>
+<text x="90" y="135" fill="#f5f9ff" font-family="Inter,Segoe UI,Arial" font-size="42" font-weight="800">ELT with dbt: Models, Tests and Documentation</text>
+<text x="90" y="170" fill="#a9bad0" font-family="Inter,Segoe UI,Arial" font-size="18">data-engineering</text>
+<rect x="90" y="245" width="690" height="205" rx="24" fill="url(#card)" stroke="#24415f" stroke-width="2" filter="url(#shadow)"/>
+<circle cx="132" cy="287" r="20" fill="#4fd1c5"/><text x="132" y="294" text-anchor="middle" fill="#04101b" font-family="Inter,Segoe UI,Arial" font-size="16" font-weight="900">1</text>
+<text x="168" y="294" fill="#f5f9ff" font-family="Inter,Segoe UI,Arial" font-size="24" font-weight="800">WHAT</text>
+<text x="124" y="337" fill="#a9bad0" font-family="Inter,Segoe UI,Arial" font-size="19">What this topic is and the engineering</text>
+<text x="124" y="367" fill="#a9bad0" font-family="Inter,Segoe UI,Arial" font-size="19">problem it addresses.</text>
+<rect x="805" y="245" width="690" height="205" rx="24" fill="url(#card)" stroke="problem it addresses." stroke-width="2" filter="url(#shadow)"/>
+<circle cx="847" cy="287" r="20" fill="#38bdf8"/><text x="847" y="294" text-anchor="middle" fill="#04101b" font-family="Inter,Segoe UI,Arial" font-size="16" font-weight="900">2</text>
+<text x="883" y="294" fill="#f5f9ff" font-family="Inter,Segoe UI,Arial" font-size="24" font-weight="800">HOW</text>
+<text x="839" y="337" fill="#a9bad0" font-family="Inter,Segoe UI,Arial" font-size="19">Identify the main flow, inputs,</text>
+<text x="839" y="367" fill="#a9bad0" font-family="Inter,Segoe UI,Arial" font-size="19">transformation and output.</text>
+<rect x="90" y="505" width="690" height="205" rx="24" fill="url(#card)" stroke="transformation and output." stroke-width="2" filter="url(#shadow)"/>
+<circle cx="132" cy="547" r="20" fill="#fbbf24"/><text x="132" y="554" text-anchor="middle" fill="#04101b" font-family="Inter,Segoe UI,Arial" font-size="16" font-weight="900">3</text>
+<text x="168" y="554" fill="#f5f9ff" font-family="Inter,Segoe UI,Arial" font-size="24" font-weight="800">EXAMPLE</text>
+<text x="124" y="597" fill="#a9bad0" font-family="Inter,Segoe UI,Arial" font-size="19">Apply ELT with dbt: Models, Tests and</text>
+<text x="124" y="627" fill="#a9bad0" font-family="Inter,Segoe UI,Arial" font-size="19">Documentation to a realistic production</text>
+<text x="124" y="657" fill="#a9bad0" font-family="Inter,Segoe UI,Arial" font-size="19">data workflow.</text>
+<rect x="805" y="505" width="690" height="205" rx="24" fill="url(#card)" stroke="data workflow." stroke-width="2" filter="url(#shadow)"/>
+<circle cx="847" cy="547" r="20" fill="#a78bfa"/><text x="847" y="554" text-anchor="middle" fill="#04101b" font-family="Inter,Segoe UI,Arial" font-size="16" font-weight="900">4</text>
+<text x="883" y="554" fill="#f5f9ff" font-family="Inter,Segoe UI,Arial" font-size="24" font-weight="800">CODE</text>
+<text x="839" y="597" fill="#a9bad0" font-family="Inter,Segoe UI,Arial" font-size="19">Use dbt syntax to implement and validate</text>
+<text x="839" y="627" fill="#a9bad0" font-family="Inter,Segoe UI,Arial" font-size="19">the pattern.</text>
+<path d="M780 345 H805" stroke="#38bdf8" stroke-width="4"/><path d="M798 337 l14 8 -14 8" fill="none" stroke="#38bdf8" stroke-width="4"/>
+<path d="M435 475 V505" stroke="#38bdf8" stroke-width="4"/><path d="M427 493 l8 14 8-14" fill="none" stroke="#38bdf8" stroke-width="4"/>
+<path d="M780 605 H805" stroke="#38bdf8" stroke-width="4"/><path d="M798 597 l14 8 -14 8" fill="none" stroke="#38bdf8" stroke-width="4"/>
+<rect x="90" y="755" width="1405" height="88" rx="18" fill="#0b1828" stroke="#4fd1c5" stroke-width="2"/>
+<text x="115" y="790" fill="#4fd1c5" font-family="Inter,Segoe UI,Arial" font-size="16" font-weight="800">MEMORIZE</text>
+<text x="115" y="822" fill="#f5f9ff" font-family="Inter,Segoe UI,Arial" font-size="20" font-weight="700">ref() creates lineage and environment-aware dependencies.</text>
+</svg>
