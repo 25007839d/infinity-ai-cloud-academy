@@ -1,0 +1,127 @@
+---
+title: "Module 16 — Agile Data Engineering Workplace"
+subtitle: "Infinity AI Cloud Academy"
+author: "Infinity AI Cloud Academy"
+format:
+  revealjs:
+    theme: [default]
+    slide-number: true
+    chalkboard: true
+    transition: fade
+execute:
+  echo: true
+---
+
+<div class="ia-section">
+
+<div class="module-no">Module 16</div>
+
+# Agile Data Engineering Workplace
+
+**Learn → Visualize → Code → Practice → Explain**
+
+</div>
+
+---
+
+## 🎯 The memory rule
+
+> **value delivered = working increment + validated outcome**
+
+The goal of this module is not to memorize paragraphs. It is to build a mental model that you can **draw, implement and explain**.
+
+---
+
+## 🧭 Module roadmap
+
+- **1. Agile, Scrum and Data Team Roles** — Agile is a feedback loop, not a meeting calendar.
+- **2. User Stories, Acceptance Criteria and Estimation** — A good story makes the expected behavior testable.
+- **3. Sprint Planning and Technical Design Docs** — Plan the outcome and risks, not just a task list.
+- **4. Code Review and Engineering Standards** — Review correctness, maintainability, security and operational impact.
+- **5. Incident Management and Postmortems** — Fix systems, not people; turn incidents into engineering actions.
+- **6. Stakeholder Communication and Data Product Thinking** — Communicate business impact, freshness, limitations and ownership.
+- **7. Working with Product, Analytics, ML and Platform Teams** — Data engineering succeeds when interfaces between teams are explicit.
+
+---
+
+## 🖼️ Anchor concept visual
+
+![](../../visuals/16-agile-data-engineering-workplace/01-agile-scrum-and-data-team-roles.svg)
+
+---
+
+## 🧠 5-step recall loop
+
+```text
+DEFINE → DESIGN → BUILD → VALIDATE → OPERATE
+```
+
+For technical topics, add one more question:
+
+> **What happens when this fails or runs 10× larger?**
+
+---
+
+## 💻 Module implementation pattern
+
+```text
+Backlog → Sprint → Build → Review → Demo → Feedback
+```
+
+---
+
+## 🏭 Industry scenario
+
+A production data team is building a platform where the same concepts must work across development, testing and production. The design is judged by **correctness, scale, security, cost and operability**, not only by whether the code runs once.
+
+### Engineer checklist
+
+- Clear input/output contract
+- Correct data grain
+- Safe retries and reruns
+- Quality checks before publishing
+- Useful logs and metrics
+- Reproducible deployment
+- Documented ownership and recovery path
+
+---
+
+## ⚠️ What usually goes wrong
+
+- Tool-first design without clarifying the requirement
+- Large reading blocks without a concrete example
+- No evidence that the output is correct
+- Hidden assumptions about scale or freshness
+- Production code without failure handling
+
+---
+
+## 🧪 Module practice
+
+1. Pick one topic and explain it using the visual.
+2. Recreate the code pattern without copy-paste.
+3. Change one requirement and explain what must change.
+4. Add one quality check.
+5. Describe one failure and recovery path.
+
+---
+
+## 📝 Assessment
+
+Complete the module practice, lab and assignment. Your submission should contain:
+
+- implementation / SQL / architecture,
+- sample input and output,
+- validation evidence,
+- failure-handling decision,
+- short README.
+
+---
+
+## 🚀 Industry-ready outcome
+
+After this module, you should be able to:
+
+**See the topic → recall the visual → write the pattern → explain the trade-off → debug the failure.**
+
+**Infinity AI Cloud Academy — Industry Ready Data Engineering**

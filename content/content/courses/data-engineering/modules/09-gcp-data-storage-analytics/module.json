@@ -1,0 +1,138 @@
+{
+  "moduleNumber": 9,
+  "title": "GCP Data Storage & Analytics",
+  "slug": "gcp-data-storage-analytics",
+  "presentation": "09-gcp-data-storage-analytics.qmd",
+  "presentationHtml": "09-gcp-data-storage-analytics.html",
+  "practice": "practice/practice.md",
+  "assignment": "assignments/module-assignment.md",
+  "lab": "lab/lab.md",
+  "lessons": [
+    {
+      "title": "Cloud Storage and Object Lifecycle",
+      "slug": "cloud-storage-and-object-lifecycle",
+      "description": "Industry-ready lesson on Cloud Storage and Object Lifecycle.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Cloud Storage and Object Lifecycle \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lessons/01-cloud-storage-and-object-lifecycle/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "BigQuery Architecture and Storage Model",
+      "slug": "bigquery-architecture-and-storage-model",
+      "description": "Industry-ready lesson on BigQuery Architecture and Storage Model.",
+      "lessonType": "SQL",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "BigQuery Architecture and Storage Model \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lessons/02-bigquery-architecture-and-storage-model/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "BigQuery Datasets, Tables and External Data",
+      "slug": "bigquery-datasets-tables-and-external-data",
+      "description": "Industry-ready lesson on BigQuery Datasets, Tables and External Data.",
+      "lessonType": "SQL",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "BigQuery Datasets, Tables and External Data \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lessons/03-bigquery-datasets-tables-and-external-data/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Partitioning, Clustering and Query Optimization",
+      "slug": "partitioning-clustering-and-query-optimization",
+      "description": "Industry-ready lesson on Partitioning, Clustering and Query Optimization.",
+      "lessonType": "SQL",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Partitioning, Clustering and Query Optimization \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lessons/04-partitioning-clustering-and-query-optimization/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "BigLake, Dataplex and Governance Concepts",
+      "slug": "biglake-dataplex-and-governance-concepts",
+      "description": "Industry-ready lesson on BigLake, Dataplex and Governance Concepts.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "BigLake, Dataplex and Governance Concepts \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lessons/05-biglake-dataplex-and-governance-concepts/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Analytical Data Modeling in BigQuery",
+      "slug": "analytical-data-modeling-in-bigquery",
+      "description": "Industry-ready lesson on Analytical Data Modeling in BigQuery.",
+      "lessonType": "SQL",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Analytical Data Modeling in BigQuery \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lessons/06-analytical-data-modeling-in-bigquery/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "BigQuery Security and Cost Management",
+      "slug": "bigquery-security-and-cost-management",
+      "description": "Industry-ready lesson on BigQuery Security and Cost Management.",
+      "lessonType": "SQL",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "BigQuery Security and Cost Management \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lessons/07-bigquery-security-and-cost-management/lesson.html"
+        }
+      ],
+      "labs": [
+        {
+          "labType": "COLAB_PYTHON",
+          "title": "GCP Data Storage & Analytics \u2014 Hands-on Lab",
+          "instructions": "Complete the module lab from the repository. Submit code/design and validation evidence.",
+          "datasetUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lab/lab.md"
+        }
+      ]
+    }
+  ]
+}

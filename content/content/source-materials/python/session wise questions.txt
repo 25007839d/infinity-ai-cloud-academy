@@ -1,0 +1,185 @@
+Practice Questions
+
+
+Session 1: Python Fundamentals (20 Questions)
+Print Hello World.
+Create and print variables.
+Find datatype using type().
+Create int variable.
+Create float variable.
+Create complex variable.
+Print real part of complex number.
+Print imaginary part of complex number.
+Find absolute value of complex number.
+Demonstrate Boolean arithmetic.
+Convert string to uppercase.
+Convert string to lowercase.
+Use replace().
+Use split().
+Use join().
+Use find().
+Use count().
+Create list and access elements.
+Create tuple and access elements.
+Generate values using range().
+
+
+Session 2: Collections, Operators and Decision Making (20 Questions)
+Create a set.
+Add elements using add().
+Remove elements using remove().
+Perform set union.
+Perform set intersection.
+Create dictionary.
+Use keys().
+Use values().
+Use items().
+Update dictionary.
+Perform arithmetic operations.
+Compare two numbers.
+Demonstrate logical operators.
+Demonstrate assignment operators.
+Perform bitwise operations.
+Use membership operators.
+Use identity operators.
+Convert float to int.
+Accept user input.
+Create grading system using if-elif-else.
+
+
+Session 3: Loops and Comprehensions (20 Questions)
+Print 1-10 using while loop.
+Use while-else.
+Create infinite loop with break.
+Create nested while loop.
+Generate sequence using range().
+Print list using for loop.
+Print string using for loop.
+Use for-else.
+Create star pattern.
+Demonstrate break.
+Demonstrate continue.
+Demonstrate pass.
+Iterate list of tuples.
+Process tuple of lists.
+Access nested dictionary.
+Create list comprehension.
+Create even number list comprehension.
+Create set comprehension.
+Create dictionary comprehension.
+Create generator comprehension.
+
+
+Session 4: OOP (20 Questions)
+Create class and object.
+Create constructor.
+Create parameterized constructor.
+Create instance variable.
+Access instance variable.
+Create class variable.
+Create instance method.
+Create class method.
+Create static method.
+Create nested class.
+Implement single inheritance.
+Implement multilevel inheritance.
+Implement hierarchical inheritance.
+Implement multiple inheritance.
+Override constructor.
+Override method.
+Use super().
+Demonstrate encapsulation.
+Demonstrate polymorphism.
+Demonstrate abstraction.
+
+
+Session 5: Modules, Packages and Threads (20 Questions)
+Import math module.
+Import module with alias.
+Import specific function.
+Create user-defined module.
+Create package.
+Create sub-package.
+Use all.
+Create abstract class.
+Create abstract method.
+Create interface example.
+Display current date.
+Display current time.
+Format date using strftime().
+Use timedelta().
+Create thread.
+Create multiple threads.
+Pass arguments to thread.
+Use join().
+Create file download simulator.
+Create ETL multithreading example.
+
+
+Session 6: File Handling and Advanced Python (20 Questions)
+Create global variable.
+Modify global variable.
+Create protected variable.
+Create private variable.
+Access private variable through getter.
+Create lambda square function.
+Create lambda addition function.
+Use map().
+Use filter().
+Create generator function.
+Use yield.
+Open text file.
+Write text file.
+Read text file.
+Append file.
+Read CSV file.
+Write CSV file.
+Convert CSV to JSON.
+Process large file using generator.
+Build ETL transformation script.
+
+
+Session 7: Exception Handling, Logging and Decorators (20 Questions)
+Display current directory.
+List files from directory.
+Create directory.
+Rename directory.
+Delete directory.
+Handle ZeroDivisionError.
+Use try-except.
+Use try-except-else.
+Use finally block.
+Create custom exception.
+Raise custom exception.
+Configure logging.
+Log INFO message.
+Log ERROR message.
+Write logs to file.
+Create polymorphism example.
+Implement duck typing.
+Implement operator overloading.
+Use super().
+Create custom decorator.
+
+
+Session 8: NumPy and Pandas (20 Questions)
+Create NumPy array.
+Create zeros array.
+Create ones array.
+Create arange array.
+Create linspace array.
+Display shape and ndim.
+Slice array.
+Perform array addition.
+Calculate mean().
+Calculate sum().
+Reshape array.
+Flatten array.
+Use hstack().
+Use vstack().
+Generate random numbers.
+Create Pandas Series.
+Create DataFrame.
+Read CSV file.
+Apply groupby().
+Merge two DataFrames.

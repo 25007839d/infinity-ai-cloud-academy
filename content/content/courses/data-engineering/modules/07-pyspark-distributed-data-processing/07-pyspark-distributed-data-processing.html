@@ -1,0 +1,28 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Module 07 — PySpark &amp; Distributed Data Processing</title>
+<style>
+body{margin:0;background:#07111f;color:#e8f0fb;font:16px/1.6 Inter,Segoe UI,Arial,sans-serif}.wrap{max-width:1050px;margin:auto;padding:35px 22px 70px}
+.brand{color:#4fd1c5;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}h1{font-size:48px;line-height:1.08}h2{font-size:25px;margin-top:35px}
+.card{background:#0d1a2b;border:1px solid #203652;border-radius:20px;padding:25px;margin:18px 0}p,li{color:#a9bad0}
+.hook,.formula{font-size:21px;font-weight:800;color:#e7ffff;padding:18px;background:#0a2230;border-radius:14px;border:1px solid #24566b}
+img{width:100%;border-radius:16px;border:1px solid #203652}pre{background:#020817;padding:18px;border-radius:14px;overflow:auto;color:#d9fbea}
+.roadmap{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px;padding:0;list-style:none}.roadmap li{background:#101f33;border:1px solid #203652;padding:13px;border-radius:12px}.roadmap span{display:block;color:#7fd8e9;font-size:13px;margin-top:5px}
+.memory{font-weight:900;letter-spacing:.12em;color:#dffbff;text-align:center;padding:22px;background:linear-gradient(90deg,#0b2637,#10223b);border-radius:14px}
+</style></head><body><main class="wrap">
+<div class="brand">Infinity AI Cloud Academy · Industry Ready</div>
+<h1>Module 07<br>PySpark &amp; Distributed Data Processing</h1>
+<div class="card"><div class="hook">Learn → Visualize → Code → Practice → Explain</div></div>
+<div class="card"><h2>🧠 The memory rule</h2><div class="formula">parallelism ≈ number of useful tasks, not just CPU count</div><p>Do not memorize paragraphs. Build a mental model you can draw, implement and explain.</p></div>
+<div class="card"><h2>🧭 Module roadmap</h2><ul class="roadmap"><li><strong>1. Spark Architecture and Execution Model</strong><span>Driver plans; executors run tasks; shuffle moves data.</span></li><li><strong>2. RDDs and Functional Transformations</strong><span>RDDs expose distributed collections and transformations; DataFrames add optimized structured execution.</span></li><li><strong>3. DataFrames and Spark SQL</strong><span>Prefer structured APIs so Spark can optimize the plan.</span></li><li><strong>4. Transformations, Actions and Lazy Evaluation</strong><span>Transformations build a plan; actions execute it.</span></li><li><strong>5. Joins, Aggregations and Window Functions</strong><span>Joins and aggregations often trigger shuffle; reduce data before them.</span></li><li><strong>6. Partitions, Shuffle, Repartition and Coalesce</strong><span>repartition reshuffles; coalesce can reduce partitions with less movement.</span></li><li><strong>7. Caching, Broadcast Joins and Performance</strong><span>Cache only reused data; broadcast only small dimensions.</span></li><li><strong>8. Reading and Writing CSV, JSON and Parquet</strong><span>Parquet is columnar and typed; CSV is portable but expensive to parse.</span></li><li><strong>9. PySpark ETL Project: Bronze to Silver to Gold</strong><span>Preserve raw, clean in Silver, publish business-ready Gold.</span></li></ul></div>
+<div class="card"><h2>🖼️ Anchor concept visual</h2><img src="/content/courses/data-engineering/visuals/07-pyspark-distributed-data-processing/01-spark-architecture-and-execution-model.svg" alt="Spark Architecture and Execution Model concept visual"></div>
+<div class="card"><h2>🧠 5-step recall loop</h2><div class="memory">DEFINE → DESIGN → BUILD → VALIDATE → OPERATE</div></div>
+<div class="card"><h2>💻 Module implementation pattern</h2><pre><code>result = (
+    df.filter(&quot;amount &gt; 0&quot;)
+      .groupBy(&quot;customer_id&quot;)
+      .sum(&quot;amount&quot;)
+)</code></pre></div>
+<div class="card"><h2>🏭 Industry scenario</h2><p>A production data team is building a platform where the same concepts must work across development, testing and production. The design is judged by <strong>correctness, scale, security, cost and operability</strong>, not only by whether code runs once.</p></div>
+<div class="card"><h2>🧪 Module practice</h2><ol><li>Pick one topic and explain it using the visual.</li><li>Recreate the code pattern without copy-paste.</li><li>Change one requirement and explain what must change.</li><li>Add one quality check.</li><li>Describe one failure and recovery path.</li></ol></div>
+<div class="card"><h2>📝 Assessment</h2><p>Complete the module practice, lab and assignment with implementation, sample input/output, validation evidence, one failure-handling decision and a short README.</p></div>
+<div class="card"><h2>🚀 Industry-ready outcome</h2><p><strong>See the topic → recall the visual → write the pattern → explain the trade-off → debug the failure.</strong></p></div>
+</main></body></html>
