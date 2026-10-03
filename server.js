@@ -569,12 +569,51 @@ const sqlLabPool = mysql.createPool({
   connectionLimit: Number(process.env.SQL_LAB_CONNECTION_LIMIT || 5),
 });
 
+function splitSqlStatements(sql='') {
+  const input = String(sql || '');
+  const statements = [];
+  let current = '';
+  let quote = null;
+  let lineComment = false;
+  let blockComment = false;
+  for (let i = 0; i < input.length; i++) {
+    const ch = input[i];
+    const next = input[i + 1];
+    if (lineComment) {
+      current += ch;
+      if (ch === '\n') lineComment = false;
+      continue;
+    }
+    if (blockComment) {
+      current += ch;
+      if (ch === '*' && next === '/') { current += next; i++; blockComment = false; }
+      continue;
+    }
+    if (!quote && ch === '-' && next === '-') { current += ch + next; i++; lineComment = true; continue; }
+    if (!quote && ch === '/' && next === '*') { current += ch + next; i++; blockComment = true; continue; }
+    if (quote) {
+      current += ch;
+      if (ch === quote) {
+        if (next === quote) { current += next; i++; }
+        else if (quote !== '`' && input[i - 1] === '\\') {}
+        else quote = null;
+      }
+      continue;
+    }
+    if (ch === "'" || ch === '"' || ch === '`') { quote = ch; current += ch; continue; }
+    if (ch === ';') {
+      if (current.trim()) statements.push(current.trim());
+      current = '';
+    } else current += ch;
+  }
+  if (current.trim()) statements.push(current.trim());
+  return statements.filter(Boolean);
+}
 function isSafeSql(sql='') {
-  const normalized = String(sql).trim().replace(/;+\s*$/,'').trim();
-  if (!normalized || normalized.length > 10000) return false;
-  if (normalized.includes(';')) return false;
-  return /^(SELECT|WITH|SHOW|DESCRIBE|DESC|EXPLAIN)\b/i.test(normalized)
-    && !/\b(DROP|DELETE|UPDATE|INSERT|ALTER|TRUNCATE|CREATE|RENAME|GRANT|REVOKE|LOAD|INTO\s+OUTFILE|INTO\s+DUMPFILE|CALL|SET|USE|SLEEP|BENCHMARK|LOAD_FILE)\b/i.test(normalized);
+  const normalized = String(sql).trim();
+  if (!normalized || normalized.length > 50000) return false;
+  const forbidden = /\b(DROP|DELETE|UPDATE|INSERT|ALTER|TRUNCATE|CREATE|RENAME|GRANT|REVOKE|LOAD|INTO\s+OUTFILE|INTO\s+DUMPFILE|CALL|SET|USE|SLEEP|BENCHMARK|LOAD_FILE|HANDLER|LOCK|UNLOCK)\b/i;
+  return /^(SELECT|WITH|SHOW|DESCRIBE|DESC|EXPLAIN)\b/i.test(normalized) && !forbidden.test(normalized);
 }
 app.get('/api/labs/sql/schema', requireAuth('student'), async (req,res)=>{
   try {
@@ -587,13 +626,21 @@ app.post('/api/labs/sql/execute', sqlLabLimiter, requireAuth('student'), async (
   try {
     if(!SQL_LAB_DATABASE) return sendError(res,'SQL Lab is not configured. Set SQL_LAB_DATABASE on the server.',503);
     const sql=String(req.body.sql||'').trim();
-    if(!isSafeSql(sql)) return sendError(res,'Only single read-only SELECT/CTE/SHOW/DESCRIBE/EXPLAIN queries are allowed in the Academy SQL Lab.');
+    const statements=splitSqlStatements(sql);
+    if(!statements.length || statements.length>25 || statements.some(s=>!isSafeSql(s))) {
+      return sendError(res,'Only up to 25 read-only SELECT/CTE/SHOW/DESCRIBE/EXPLAIN statements are allowed. Separate queries with semicolons.');
+    }
     const started=Date.now();
     const conn=await sqlLabPool.getConnection();
     try {
       await conn.query(`USE \`${SQL_LAB_DATABASE.replace(/`/g,'') }\``);
-      const [rows,fields]=await conn.query(sql);
-      return sendSuccess(res,{rows,columns:fields.map(f=>f.name),rowCount:Array.isArray(rows)?rows.length:0,executionMs:Date.now()-started});
+      const resultSets=[];
+      for (let i=0;i<statements.length;i++) {
+        const [rows,fields]=await conn.query(statements[i]);
+        resultSets.push({index:i+1,sql:statements[i],rows,columns:fields.map(f=>f.name),rowCount:Array.isArray(rows)?rows.length:0});
+      }
+      const first=resultSets[0]||{rows:[],columns:[],rowCount:0};
+      return sendSuccess(res,{multi:true,resultSets,rows:first.rows,columns:first.columns,rowCount:first.rowCount,executionMs:Date.now()-started});
     } finally { conn.release(); }
   } catch(e){console.error('SQL Lab execute error:',e);return sendError(res,e.sqlMessage||e.message||'SQL execution failed.',400);}
 });
