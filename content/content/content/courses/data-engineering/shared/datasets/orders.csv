@@ -1,0 +1,7 @@
+order_id,customer_id,order_date,amount,status
+101,1,2026-01-05,1200,Completed
+102,2,2026-01-07,3500,Completed
+103,1,2026-01-15,2200,Pending
+104,3,2026-02-02,5100,Completed
+105,4,2026-02-10,1800,Cancelled
+106,5,2026-02-14,4200,Completed

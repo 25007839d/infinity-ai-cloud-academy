@@ -1,0 +1,155 @@
+{
+  "moduleNumber": 15,
+  "title": "Databricks & Lakehouse Engineering",
+  "slug": "databricks-lakehouse-engineering",
+  "presentation": "15-databricks-lakehouse-engineering.qmd",
+  "presentationHtml": "15-databricks-lakehouse-engineering.html",
+  "practice": "practice/practice.md",
+  "assignment": "assignments/module-assignment.md",
+  "lab": "lab/lab.sql",
+  "lessons": [
+    {
+      "title": "Lakehouse Architecture and Databricks Workspace",
+      "slug": "lakehouse-architecture-and-databricks-workspace",
+      "description": "Industry-ready lesson on Lakehouse Architecture and Databricks Workspace.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Lakehouse Architecture and Databricks Workspace \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/01-lakehouse-architecture-and-databricks-workspace/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Delta Lake Concepts and ACID Transactions",
+      "slug": "delta-lake-concepts-and-acid-transactions",
+      "description": "Industry-ready lesson on Delta Lake Concepts and ACID Transactions.",
+      "lessonType": "PYSPARK",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Delta Lake Concepts and ACID Transactions \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/02-delta-lake-concepts-and-acid-transactions/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Bronze, Silver and Gold in Databricks",
+      "slug": "bronze-silver-and-gold-in-databricks",
+      "description": "Industry-ready lesson on Bronze, Silver and Gold in Databricks.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Bronze, Silver and Gold in Databricks \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/03-bronze-silver-and-gold-in-databricks/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Spark SQL and Delta Table Operations",
+      "slug": "spark-sql-and-delta-table-operations",
+      "description": "Industry-ready lesson on Spark SQL and Delta Table Operations.",
+      "lessonType": "SQL",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Spark SQL and Delta Table Operations \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/04-spark-sql-and-delta-table-operations/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "MERGE, CDC and Slowly Changing Dimensions",
+      "slug": "merge-cdc-and-slowly-changing-dimensions",
+      "description": "Industry-ready lesson on MERGE, CDC and Slowly Changing Dimensions.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "MERGE, CDC and Slowly Changing Dimensions \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/05-merge-cdc-and-slowly-changing-dimensions/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Performance: OPTIMIZE, Z-ORDER and File Management",
+      "slug": "performance-optimize-z-order-and-file-management",
+      "description": "Industry-ready lesson on Performance: OPTIMIZE, Z-ORDER and File Management.",
+      "lessonType": "PYTHON",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Performance: OPTIMIZE, Z-ORDER and File Management \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/06-performance-optimize-z-order-and-file-management/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Unity Catalog and Governance Concepts",
+      "slug": "unity-catalog-and-governance-concepts",
+      "description": "Industry-ready lesson on Unity Catalog and Governance Concepts.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Unity Catalog and Governance Concepts \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/07-unity-catalog-and-governance-concepts/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Lakehouse Project: Batch + Incremental Pipeline",
+      "slug": "lakehouse-project-batch-incremental-pipeline",
+      "description": "Industry-ready lesson on Lakehouse Project: Batch + Incremental Pipeline.",
+      "lessonType": "PROJECT",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Lakehouse Project: Batch + Incremental Pipeline \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/08-lakehouse-project-batch-incremental-pipeline/lesson.html"
+        }
+      ],
+      "labs": [
+        {
+          "labType": "COLAB_PYSPARK",
+          "title": "Delta Lake / Databricks Lab",
+          "instructions": "Complete the Databricks & Lakehouse Engineering hands-on lab. Use the repository lab starter and document your validation and failure handling.",
+          "datasetUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lab/lab.sql"
+        }
+      ]
+    }
+  ]
+}
