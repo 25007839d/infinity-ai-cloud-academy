@@ -978,47 +978,250 @@ function inferLessonType(title='') {
 }
 
 async function replaceCourseChildren(executor, courseId, body) {
+  // IMPORTANT: Course CMS saves must NOT delete learning-experience rows.
+  // The old implementation deleted all modules, which cascaded into lessons,
+  // visuals, practice, quizzes, quiz questions and assignments. Updating a
+  // Colab URL therefore made those sections disappear from the student page.
+  //
+  // This implementation preserves module/lesson IDs when they are present in
+  // the admin payload. Only modules/lessons that were intentionally removed
+  // from the curriculum are deleted.
+
   await executor.query('DELETE FROM course_technologies WHERE course_id = ?', [courseId]);
-  await executor.query('DELETE FROM course_modules WHERE course_id = ?', [courseId]);
   const technologies = Array.isArray(body.technologies) ? body.technologies : parseJsonOrCsv(body.technologies);
   for (let i = 0; i < technologies.length; i++) {
     const technology = String(technologies[i] || '').trim();
     if (!technology) continue;
-    await executor.query('INSERT INTO course_technologies (id, course_id, technology, display_order) VALUES (?, ?, ?, ?)', [crypto.randomUUID(), courseId, technology, i]);
+    await executor.query(
+      'INSERT INTO course_technologies (id, course_id, technology, display_order) VALUES (?, ?, ?, ?)',
+      [crypto.randomUUID(), courseId, technology, i]
+    );
   }
+
+  const [existingModules] = await executor.query(
+    'SELECT id FROM course_modules WHERE course_id = ?',
+    [courseId]
+  );
+  const existingModuleIds = new Set(existingModules.map((r) => String(r.id)));
+
+  const [existingLessons] = await executor.query(
+    `SELECT cl.id, cl.module_id
+       FROM course_lessons cl
+       JOIN course_modules cm ON cm.id = cl.module_id
+      WHERE cm.course_id = ?`,
+    [courseId]
+  );
+  const existingLessonIds = new Set(existingLessons.map((r) => String(r.id)));
+  const existingLessonModule = new Map(existingLessons.map((r) => [String(r.id), String(r.module_id)]));
+
+  const keptModuleIds = new Set();
+  const keptLessonIds = new Set();
+
   const curriculum = Array.isArray(body.curriculum) ? body.curriculum : [];
+
   for (let i = 0; i < curriculum.length; i++) {
     const module = curriculum[i] || {};
     const moduleName = String(module.module || module.module_name || '').trim();
     if (!moduleName) continue;
-    const moduleId = crypto.randomUUID();
-    await executor.query('INSERT INTO course_modules (id, course_id, module_name, description, display_order) VALUES (?, ?, ?, ?, ?)', [moduleId, courseId, moduleName, String(module.description || '').trim() || null, i]);
+
+    let moduleId = String(module.id || '');
+    const canReuseModule = moduleId && existingModuleIds.has(moduleId);
+
+    if (!canReuseModule) {
+      moduleId = crypto.randomUUID();
+      await executor.query(
+        'INSERT INTO course_modules (id, course_id, module_name, description, display_order) VALUES (?, ?, ?, ?, ?)',
+        [moduleId, courseId, moduleName, String(module.description || '').trim() || null, i]
+      );
+    } else {
+      await executor.query(
+        'UPDATE course_modules SET module_name=?, description=?, display_order=? WHERE id=? AND course_id=?',
+        [moduleName, String(module.description || '').trim() || null, i, moduleId, courseId]
+      );
+    }
+    keptModuleIds.add(moduleId);
+
+    // Topics are editor-owned curriculum metadata, so replace only these.
+    await executor.query('DELETE FROM course_module_topics WHERE module_id = ?', [moduleId]);
     const topics = Array.isArray(module.topics) ? module.topics : [];
     for (let j = 0; j < topics.length; j++) {
       const topic = String(topics[j] || '').trim();
       if (!topic) continue;
-      await executor.query('INSERT INTO course_module_topics (id, module_id, topic, display_order) VALUES (?, ?, ?, ?)', [crypto.randomUUID(), moduleId, topic, j]);
+      await executor.query(
+        'INSERT INTO course_module_topics (id, module_id, topic, display_order) VALUES (?, ?, ?, ?)',
+        [crypto.randomUUID(), moduleId, topic, j]
+      );
     }
-    const lessons = Array.isArray(module.lessons) && module.lessons.length ? module.lessons : topics.map((topic) => ({ title: topic, slug: slugify(topic), lessonType: inferLessonType(topic), description: '', durationMinutes: 0, isPreview: false, status: 'published', content: [], labs: [] }));
+
+    const lessons = Array.isArray(module.lessons) && module.lessons.length
+      ? module.lessons
+      : topics.map((topic) => ({
+          title: topic,
+          slug: slugify(topic),
+          lessonType: inferLessonType(topic),
+          description: '',
+          durationMinutes: 0,
+          isPreview: false,
+          status: 'published',
+          content: [],
+          labs: []
+        }));
+
     for (let j = 0; j < lessons.length; j++) {
       const lesson = lessons[j] || {};
       const title = String(lesson.title || lesson.topic || '').trim();
       if (!title) continue;
-      const lessonId = crypto.randomUUID();
-      const slug = slugify(lesson.slug || title) || `lesson-${j+1}`;
-      const lessonType = ['THEORY','SLIDES','VIDEO','SQL','PYTHON','PYSPARK','QUIZ','ASSIGNMENT','PROJECT','LIVE','RESOURCE'].includes(lesson.lessonType) ? lesson.lessonType : inferLessonType(title);
-      await executor.query(`INSERT INTO course_lessons (id,module_id,title,slug,description,lesson_type,duration_minutes,is_preview,status,display_order) VALUES (?,?,?,?,?,?,?,?,?,?)`, [lessonId,moduleId,title,slug,String(lesson.description||'').trim()||null,lessonType,Number(lesson.durationMinutes||0),lesson.isPreview?1:0,['draft','published','archived'].includes(lesson.status)?lesson.status:'published',j]);
+
+      let lessonId = String(lesson.id || '');
+      const canReuseLesson =
+        lessonId &&
+        existingLessonIds.has(lessonId) &&
+        existingLessonModule.get(lessonId) === moduleId;
+
+      const slug = slugify(lesson.slug || title) || `lesson-${j + 1}`;
+      const lessonType = [
+        'THEORY','SLIDES','VIDEO','SQL','PYTHON','PYSPARK',
+        'QUIZ','ASSIGNMENT','PROJECT','LIVE','RESOURCE'
+      ].includes(lesson.lessonType)
+        ? lesson.lessonType
+        : inferLessonType(title);
+
+      if (!canReuseLesson) {
+        lessonId = crypto.randomUUID();
+        await executor.query(
+          `INSERT INTO course_lessons
+            (id,module_id,title,slug,description,lesson_type,duration_minutes,is_preview,status,display_order)
+           VALUES (?,?,?,?,?,?,?,?,?,?)`,
+          [
+            lessonId,
+            moduleId,
+            title,
+            slug,
+            String(lesson.description || '').trim() || null,
+            lessonType,
+            Number(lesson.durationMinutes || 0),
+            lesson.isPreview ? 1 : 0,
+            ['draft','published','archived'].includes(lesson.status) ? lesson.status : 'published',
+            j
+          ]
+        );
+      } else {
+        await executor.query(
+          `UPDATE course_lessons
+              SET module_id=?, title=?, slug=?, description=?, lesson_type=?,
+                  duration_minutes=?, is_preview=?, status=?, display_order=?
+            WHERE id=?`,
+          [
+            moduleId,
+            title,
+            slug,
+            String(lesson.description || '').trim() || null,
+            lessonType,
+            Number(lesson.durationMinutes || 0),
+            lesson.isPreview ? 1 : 0,
+            ['draft','published','archived'].includes(lesson.status) ? lesson.status : 'published',
+            j,
+            lessonId
+          ]
+        );
+      }
+
+      keptLessonIds.add(lessonId);
+
+      // Content and labs are editor-owned rows, so replace only these two sets.
+      // Learning-experience rows (visual/practice/quiz/assignment) are deliberately
+      // NOT deleted here.
+      await executor.query('DELETE FROM lesson_content WHERE lesson_id = ?', [lessonId]);
       const contents = Array.isArray(lesson.content) ? lesson.content : [];
-      for (let k=0;k<contents.length;k++) { const c=contents[k]||{}; if(!c.contentType) continue; await executor.query(`INSERT INTO lesson_content (id,lesson_id,content_type,title,content_url,content_html,display_order) VALUES (?,?,?,?,?,?,?)`,[crypto.randomUUID(),lessonId,c.contentType,c.title||null,c.contentUrl||null,sanitizeHtml(c.contentHtml||''),k]); }
+      for (let k = 0; k < contents.length; k++) {
+        const c = contents[k] || {};
+        if (!c.contentType) continue;
+        await executor.query(
+          `INSERT INTO lesson_content
+            (id,lesson_id,content_type,title,content_url,content_html,display_order)
+           VALUES (?,?,?,?,?,?,?)`,
+          [
+            crypto.randomUUID(),
+            lessonId,
+            c.contentType,
+            c.title || null,
+            c.contentUrl || null,
+            sanitizeHtml(c.contentHtml || ''),
+            k
+          ]
+        );
+      }
+
+      await executor.query('DELETE FROM lesson_labs WHERE lesson_id = ?', [lessonId]);
       const labs = Array.isArray(lesson.labs) ? lesson.labs : [];
-      for (let k=0;k<labs.length;k++) { const lab=labs[k]||{}; if(!lab.labType||!lab.title) continue; await executor.query(`INSERT INTO lesson_labs (id,lesson_id,lab_type,title,external_url,instructions,dataset_url,config_json,display_order) VALUES (?,?,?,?,?,?,?,?,?)`,[crypto.randomUUID(),lessonId,lab.labType,lab.title,lab.externalUrl||null,lab.instructions||null,lab.datasetUrl||null,lab.config?JSON.stringify(lab.config):null,k]); }
+      for (let k = 0; k < labs.length; k++) {
+        const lab = labs[k] || {};
+        if (!lab.labType || !lab.title) continue;
+        await executor.query(
+          `INSERT INTO lesson_labs
+            (id,lesson_id,lab_type,title,external_url,instructions,dataset_url,config_json,display_order)
+           VALUES (?,?,?,?,?,?,?,?,?)`,
+          [
+            crypto.randomUUID(),
+            lessonId,
+            lab.labType,
+            lab.title,
+            lab.externalUrl || null,
+            lab.instructions || null,
+            lab.datasetUrl || null,
+            lab.config ? JSON.stringify(lab.config) : null,
+            k
+          ]
+        );
+      }
     }
   }
+
+  // Remove curriculum items that the admin actually deleted.
+  // Cascades will clean their lesson-owned learning experience safely.
+  for (const lessonId of existingLessonIds) {
+    if (!keptLessonIds.has(lessonId)) {
+      await executor.query('DELETE FROM course_lessons WHERE id=?', [lessonId]);
+    }
+  }
+  for (const moduleId of existingModuleIds) {
+    if (!keptModuleIds.has(moduleId)) {
+      await executor.query('DELETE FROM course_modules WHERE id=? AND course_id=?', [moduleId, courseId]);
+    }
+  }
+
   const seo = normalizeSeoInput(body.seo || {});
-  await executor.query(`INSERT INTO course_seo (id, course_id, meta_title, meta_description, focus_keyword, keywords, canonical_url, og_title, og_description, og_image, robots, schema_json)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ON DUPLICATE KEY UPDATE meta_title=VALUES(meta_title), meta_description=VALUES(meta_description), focus_keyword=VALUES(focus_keyword), keywords=VALUES(keywords), canonical_url=VALUES(canonical_url), og_title=VALUES(og_title), og_description=VALUES(og_description), og_image=VALUES(og_image), robots=VALUES(robots), schema_json=VALUES(schema_json)`,
-    [crypto.randomUUID(), courseId, seo.meta_title, seo.meta_description, seo.focus_keyword, seo.keywords, seo.canonical_url, seo.og_title, seo.og_description, seo.og_image, seo.robots, seo.schema_json]);
+  await executor.query(
+    `INSERT INTO course_seo
+      (id, course_id, meta_title, meta_description, focus_keyword, keywords,
+       canonical_url, og_title, og_description, og_image, robots, schema_json)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE
+       meta_title=VALUES(meta_title),
+       meta_description=VALUES(meta_description),
+       focus_keyword=VALUES(focus_keyword),
+       keywords=VALUES(keywords),
+       canonical_url=VALUES(canonical_url),
+       og_title=VALUES(og_title),
+       og_description=VALUES(og_description),
+       og_image=VALUES(og_image),
+       robots=VALUES(robots),
+       schema_json=VALUES(schema_json)`,
+    [
+      crypto.randomUUID(),
+      courseId,
+      seo.meta_title,
+      seo.meta_description,
+      seo.focus_keyword,
+      seo.keywords,
+      seo.canonical_url,
+      seo.og_title,
+      seo.og_description,
+      seo.og_image,
+      seo.robots,
+      seo.schema_json
+    ]
+  );
 }
 
 function mapPost(row, seo) {
