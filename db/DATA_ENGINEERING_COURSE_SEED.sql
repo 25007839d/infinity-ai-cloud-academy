@@ -1,19 +1,8 @@
 -- Generated code-managed seed for Data Engineering course.
 -- Requires COURSE_CMS_MIGRATION.sql + LMS_V1_MIGRATION.sql to have been applied.
 START TRANSACTION;
-INSERT INTO courses (id,slug,title,tagline,short_description,overview,thumbnail,banner,category,duration,level,mode,language,certificate_available,certificate_title,featured,students,rating,projects,modules_count,icon,theme_color,display_order,coming_soon,popular,enrollment_open,last_updated,version,access_type,price,currency,status) VALUES ('6028d1a8-a99b-5e23-8526-045d619bbae7','data-engineering','Data Engineering — Industry Ready Program','From SQL & Python fundamentals to cloud-scale data platforms, streaming, lakehouse and system design.','A practical industry-oriented Data Engineering program built around SQL, Python, PySpark, GCP, Airflow, dbt, Dataflow, Databricks, DevOps and real-world projects.','Students learn to design, build, test, deploy and operate production-style data pipelines using modern cloud and open-source technologies.',NULL,NULL,'Data Engineering','6–9 months','Beginner to Advanced','Online / Hybrid','English + Hinglish',1,'Infinity AI Cloud Academy — Data Engineering Program',1,NULL,NULL,6,19,NULL,NULL,1,0,0,1,NULL,NULL,'free',0,'INR','draft') ON DUPLICATE KEY UPDATE title=VALUES(title),tagline=VALUES(tagline),short_description=VALUES(short_description),overview=VALUES(overview),modules_count=VALUES(modules_count),status=VALUES(status),updated_at=NOW();
-
--- Resolve the actual existing course ID by slug.
--- This fixes FK errors when the course already exists with a different UUID.
-SET @course_id = (
-    SELECT id
-    FROM courses
-    WHERE slug = 'data-engineering'
-    LIMIT 1
-);
-
--- All child records below use @course_id.
-
+SET @course_id = COALESCE((SELECT id FROM courses WHERE slug='data-engineering' LIMIT 1), UUID());
+INSERT INTO courses (id,slug,title,tagline,short_description,overview,thumbnail,banner,category,duration,level,mode,language,certificate_available,certificate_title,featured,students,rating,projects,modules_count,icon,theme_color,display_order,coming_soon,popular,enrollment_open,last_updated,version,access_type,price,currency,status) VALUES (@course_id,'data-engineering','Data Engineering — Industry Ready Program','From SQL & Python fundamentals to cloud-scale data platforms, streaming, lakehouse and system design.','A practical industry-oriented Data Engineering program built around SQL, Python, PySpark, GCP, Airflow, dbt, Dataflow, Databricks, DevOps and real-world projects.','Students learn to design, build, test, deploy and operate production-style data pipelines using modern cloud and open-source technologies.',NULL,NULL,'Data Engineering','6–9 months','Beginner to Advanced','Online / Hybrid','English + Hinglish',1,'Infinity AI Cloud Academy — Data Engineering Program',1,NULL,NULL,6,19,NULL,NULL,1,0,0,1,NULL,NULL,'free',0,'INR','published') ON DUPLICATE KEY UPDATE title=VALUES(title),tagline=VALUES(tagline),short_description=VALUES(short_description),overview=VALUES(overview),modules_count=VALUES(modules_count),status=VALUES(status),updated_at=NOW();
 DELETE FROM course_modules WHERE course_id=@course_id;
 DELETE FROM course_technologies WHERE course_id=@course_id;
 INSERT INTO course_technologies (id,course_id,technology,display_order) VALUES ('0faa092f-99c3-59a5-8ab7-569b5cbec708',@course_id,'SQL',0);
@@ -501,23 +490,4 @@ INSERT INTO course_lessons (id,module_id,title,slug,description,lesson_type,dura
 INSERT INTO lesson_content (id,lesson_id,content_type,title,content_url,content_html,display_order) VALUES ('d167691f-d659-589a-a218-26985a48057f','58d33c3c-60a4-5a7c-9a64-ca0754b1d853','NOTES','Mock Interview and Job Readiness Plan — Notes','/content/courses/data-engineering/modules/19-data-engineer-career-interview-preparation/lessons/08-mock-interview-and-job-readiness-plan/lesson.html',NULL,0);
 INSERT INTO lesson_labs (id,lesson_id,lab_type,title,external_url,instructions,dataset_url,config_json,display_order) VALUES ('96e52b9d-e5ed-54ef-ba1f-7bf603207957','58d33c3c-60a4-5a7c-9a64-ca0754b1d853','COLAB_PYTHON','Data Engineer Career & Interview Preparation — Hands-on Lab',NULL,'Complete the module lab from the repository. Submit code/design and validation evidence.','/content/courses/data-engineering/modules/19-data-engineer-career-interview-preparation/lab/lab.md',NULL,0);
 INSERT INTO course_seo (id,course_id,meta_title,meta_description,focus_keyword,keywords,canonical_url,og_title,og_description,og_image,robots,schema_json) VALUES ('34adc4b3-ce3c-5657-906b-dc37837995b4',@course_id,'Data Engineering Industry Ready Program | Infinity AI Cloud Academy','Learn SQL, Python, PySpark, GCP, Airflow, Dataflow, dbt, Databricks, DevOps and production data engineering through hands-on projects.','data engineering course','["data engineering", "SQL", "Python", "PySpark", "GCP", "BigQuery", "Airflow", "Dataflow", "Databricks"]',NULL,NULL,NULL,NULL,'index,follow',NULL) ON DUPLICATE KEY UPDATE meta_title=VALUES(meta_title),meta_description=VALUES(meta_description),focus_keyword=VALUES(focus_keyword),keywords=VALUES(keywords),updated_at=NOW();
-
--- Validation
-SELECT id, slug, title
-FROM courses
-WHERE id = @course_id;
-
-SELECT COUNT(*) AS technologies_loaded
-FROM course_technologies
-WHERE course_id = @course_id;
-
-SELECT COUNT(*) AS modules_loaded
-FROM course_modules
-WHERE course_id = @course_id;
-
-SELECT COUNT(*) AS lessons_loaded
-FROM course_lessons cl
-JOIN course_modules cm ON cm.id = cl.module_id
-WHERE cm.course_id = @course_id;
-
 COMMIT;

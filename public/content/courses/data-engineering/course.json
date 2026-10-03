@@ -18,7 +18,7 @@
   "accessType": "free",
   "price": 0,
   "currency": "INR",
-  "status": "draft",
+  "status": "published",
   "technologies": [
     "SQL",
     "Python",

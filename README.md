@@ -36,3 +36,18 @@ Course authoring is version-controlled under `content/courses/<course-slug>/`. E
 ### Data Engineering content
 
 The repository now includes a 19-module Data Engineering program with module presentations, lesson notes, coding/architecture labs, assignments, 20-question practice sets and shared datasets. Uploaded teaching resources were used as reference material for Python, Apache Beam/Dataflow and Dataproc/PySpark coverage.
+
+## Learning Experience V2
+
+Every published lesson can now expose the full learning loop:
+
+1. Concept visual / diagram
+2. Practice tasks
+3. Concept-check quiz with multiple-choice options and explanations
+4. Hands-on lab (SQL uses the isolated SQL Lab database; Python/PySpark labs use the course starter assets)
+5. Industry assignment with student submission
+6. Lesson progress
+
+Run `db/LEARNING_EXPERIENCE_V2_MIGRATION.sql` once in the Academy database after `LMS_V1_MIGRATION.sql`. Then run `npm run content:sync -- --course data-engineering` to populate the 142-lesson learning experience. The SQL Lab database remains separate and is seeded with `db/SQL_LAB_SEED.sql`.
+
+Visual assets are code-managed under `content/courses/data-engineering/visuals/` and are copied into the deployable `/public/content/courses/` tree during build preparation.

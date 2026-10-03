@@ -715,6 +715,70 @@ app.get('/api/learn/courses/:slug/lessons/:lessonSlug', requireAuth('student'), 
   } catch (error) { console.error('Lesson error:', error); return sendError(res, 'Unable to load lesson.', 500); }
 });
 
+
+
+app.get('/api/learn/courses/:slug/lessons/:lessonSlug/experience', requireAuth('student'), async (req,res)=>{
+  try {
+    const [rows]=await pool.query(`SELECT cl.*,cm.course_id,c.slug AS course_slug,c.title AS course_title
+      FROM course_lessons cl JOIN course_modules cm ON cm.id=cl.module_id JOIN courses c ON c.id=cm.course_id
+      WHERE c.slug=? AND cl.slug=? AND cl.status='published' LIMIT 1`,[req.params.slug,req.params.lessonSlug]);
+    if(!rows.length) return sendError(res,'Lesson not found.',404);
+    const lesson=rows[0];
+    const enrollment=await getCourseAccess(lesson.course_id,req.user.id);
+    if(!enrollment || enrollment.status!=='ACTIVE') return sendError(res,'You are not enrolled in this course.',403);
+    const [visuals]=await pool.query(`SELECT id,title,image_url,alt_text,caption,display_order FROM lesson_visuals WHERE lesson_id=? ORDER BY display_order,title`,[lesson.id]).catch(()=>[[]]);
+    const [practice]=await pool.query(`SELECT id,title,instructions,tasks_json FROM lesson_practice WHERE lesson_id=? AND status='published' ORDER BY display_order LIMIT 1`,[lesson.id]).catch(()=>[[]]);
+    const [quizzes]=await pool.query(`SELECT id,title,passing_percent FROM course_quizzes WHERE lesson_id=? AND status='published' ORDER BY created_at DESC LIMIT 1`,[lesson.id]).catch(()=>[[]]);
+    let questions=[];
+    if(quizzes[0]){
+      const [qs]=await pool.query(`SELECT id,question_text,options_json,difficulty,display_order FROM quiz_questions WHERE quiz_id=? AND status='published' ORDER BY display_order`,[quizzes[0].id]).catch(()=>[[]]);
+      questions=qs.map(q=>({id:q.id,questionText:q.question_text,options:parseJsonSafe(q.options_json)||[],difficulty:q.difficulty}));
+    }
+    const [assignments]=await pool.query(`SELECT id,title,instructions,submission_type,status FROM course_assignments WHERE lesson_id=? AND status='published' ORDER BY created_at DESC LIMIT 1`,[lesson.id]).catch(()=>[[]]);
+    const assignment=assignments[0]||null;
+    let submission=null;
+    if(assignment){
+      const [sub]=await pool.query(`SELECT id,status,submission_type,submission_text,file_url,trainer_feedback,score,submitted_at FROM assignment_submissions WHERE assignment_id=? AND user_id=? ORDER BY submitted_at DESC LIMIT 1`,[assignment.id,req.user.id]).catch(()=>[[]]);
+      submission=sub[0]||null;
+    }
+    return sendSuccess(res,{
+      visuals:visuals.map(v=>({id:v.id,title:v.title,imageUrl:v.image_url,altText:v.alt_text||'',caption:v.caption||''})),
+      practice:practice[0]?{id:practice[0].id,title:practice[0].title,instructions:practice[0].instructions||'',tasks:parseJsonSafe(practice[0].tasks_json)||[]}:null,
+      quiz:quizzes[0]?{id:quizzes[0].id,title:quizzes[0].title,passingPercent:Number(quizzes[0].passing_percent||60),questions}:null,
+      assignment:assignment?{id:assignment.id,title:assignment.title,instructions:assignment.instructions||'',submissionType:assignment.submission_type,submission}:null
+    });
+  } catch(e){ console.error('Learning experience error:',e); return sendError(res,'Unable to load lesson learning experience.',500); }
+});
+
+app.post('/api/learn/quizzes/:quizId/attempts', requireAuth('student'), async (req,res)=>{
+  try{
+    const answers=Array.isArray(req.body.answers)?req.body.answers:[];
+    const [quizRows]=await pool.query(`SELECT q.*,cm.course_id FROM course_quizzes q LEFT JOIN course_lessons cl ON cl.id=q.lesson_id LEFT JOIN course_modules cm ON cm.id=cl.module_id WHERE q.id=? AND q.status='published' LIMIT 1`,[req.params.quizId]);
+    if(!quizRows.length) return sendError(res,'Quiz not found.',404);
+    const quiz=quizRows[0]; const enrollment=await getCourseAccess(quiz.course_id,req.user.id); if(!enrollment||enrollment.status!=='ACTIVE') return sendError(res,'Course enrollment required.',403);
+    const [qs]=await pool.query(`SELECT id,correct_option,explanation FROM quiz_questions WHERE quiz_id=? AND status='published' ORDER BY display_order`,[quiz.id]);
+    if(!qs.length) return sendError(res,'Quiz has no questions.',400);
+    let correct=0; const results=qs.map((q,i)=>{const selected=Number(answers[i]);const ok=selected===Number(q.correct_option);if(ok)correct++;return {questionId:q.id,selected,correct:ok,explanation:q.explanation||''};});
+    const score=Math.round(correct*100/qs.length); const passed=score>=Number(quiz.passing_percent||60)?1:0;
+    await pool.query(`INSERT INTO quiz_attempts (id,quiz_id,user_id,score_percent,passed,answers_json) VALUES (?,?,?,?,?,?)`,[crypto.randomUUID(),quiz.id,req.user.id,score,passed,JSON.stringify(answers)]).catch(()=>{});
+    return sendSuccess(res,{scorePercent:score,passed:Boolean(passed),correctCount:correct,totalQuestions:qs.length,results});
+  }catch(e){console.error('Quiz attempt error:',e);return sendError(res,'Unable to submit quiz.',500);}
+});
+
+app.post('/api/learn/assignments/:assignmentId/submissions', requireAuth('student'), async (req,res)=>{
+  try{
+    const [rows]=await pool.query(`SELECT a.*,c.id course_id FROM course_assignments a JOIN courses c ON c.id=a.course_id WHERE a.id=? AND a.status='published' LIMIT 1`,[req.params.assignmentId]);
+    if(!rows.length) return sendError(res,'Assignment not found.',404);
+    const a=rows[0]; const enrollment=await getCourseAccess(a.course_id,req.user.id); if(!enrollment||enrollment.status!=='ACTIVE') return sendError(res,'Course enrollment required.',403);
+    const type=['TEXT','LINK','CODE','FILE'].includes(String(req.body.submissionType||a.submission_type))?String(req.body.submissionType||a.submission_type):a.submission_type;
+    const text=String(req.body.submissionText||'').trim(); const fileUrl=String(req.body.fileUrl||'').trim()||null;
+    if(!text && !fileUrl) return sendError(res,'Please add your submission before sending.',400);
+    const id=crypto.randomUUID();
+    await pool.query(`INSERT INTO assignment_submissions (id,assignment_id,user_id,submission_type,submission_text,file_url) VALUES (?,?,?,?,?,?)`,[id,a.id,req.user.id,type,text||null,fileUrl]);
+    return sendSuccess(res,{id,status:'SUBMITTED'});
+  }catch(e){console.error('Assignment submission error:',e);return sendError(res,'Unable to submit assignment.',500);}
+});
+
 app.post('/api/learn/lessons/:lessonId/progress', requireAuth('student'), async (req, res) => {
   try {
     const percent=Math.max(0,Math.min(100,Number(req.body.progressPercent||0)));

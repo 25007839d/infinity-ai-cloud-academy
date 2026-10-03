@@ -14,7 +14,7 @@ async function copyDeployable(src, dst) {
     return;
   }
   const ext = path.extname(src).toLowerCase();
-  const allowed = new Set(['.html', '.md', '.sql', '.py', '.sh', '.yaml', '.yml', '.json', '.csv', '.txt', '.ipynb']);
+  const allowed = new Set(['.html', '.md', '.sql', '.py', '.sh', '.yaml', '.yml', '.json', '.csv', '.txt', '.ipynb', '.svg']);
   if (allowed.has(ext)) {
     await fs.mkdir(path.dirname(dst), { recursive: true });
     await fs.copyFile(src, dst);
