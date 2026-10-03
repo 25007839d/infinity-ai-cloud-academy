@@ -41,6 +41,17 @@ gcloud storage ls gs://demo-bucket/raw/
 - **Failure:** What happens if input is invalid or the job is retried?
 - **Evidence:** Which test, metric or log proves it worked?
 
+
+## Coding Syntax to Memorize
+
+> **Syntax card:** Memorize the pattern first; then understand where and why to use it.
+
+```bash
+gcloud storage cp orders.csv gs://data-lake/raw/orders/
+```
+
+**Remember:** identify the **input → operation → output** before writing production code.
+
 ## 5. Production checklist
 
 - [ ] Input schema / contract is explicit

@@ -44,6 +44,19 @@ high_stream = (x for x in amounts if x >= 100)  # lazy
 - **Failure:** What happens if input is invalid or the job is retried?
 - **Evidence:** Which test, metric or log proves it worked?
 
+
+## Coding Syntax to Memorize
+
+> **Syntax card:** Memorize the pattern first; then understand where and why to use it.
+
+```python
+squares = [x * x for x in numbers if x > 0]
+for value in squares:
+    print(value)
+```
+
+**Remember:** identify the **input → operation → output** before writing production code.
+
 ## 5. Production checklist
 
 - [ ] Input schema / contract is explicit

@@ -48,6 +48,19 @@ HAVING AVG(salary) > 60000;
 - **Failure:** What happens if input is invalid or the job is retried?
 - **Evidence:** Which test, metric or log proves it worked?
 
+
+## Coding Syntax to Memorize
+
+> **Syntax card:** Memorize the pattern first; then understand where and why to use it.
+
+```sql
+SELECT employee_id, salary,
+       RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) AS dept_rank
+FROM employees;
+```
+
+**Remember:** identify the **input → operation → output** before writing production code.
+
 ## 5. Production checklist
 
 - [ ] Input schema / contract is explicit

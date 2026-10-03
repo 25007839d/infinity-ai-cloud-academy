@@ -45,6 +45,18 @@ date_id     → date
 - **Failure:** What happens if input is invalid or the job is retried?
 - **Evidence:** Which test, metric or log proves it worked?
 
+
+## Coding Syntax to Memorize
+
+> **Syntax card:** Memorize the pattern first; then understand where and why to use it.
+
+```text
+DEFINE → IMPLEMENT → VALIDATE
+Keep the syntax small enough to explain in an interview.
+```
+
+**Remember:** identify the **input → operation → output** before writing production code.
+
 ## 5. Production checklist
 
 - [ ] Input schema / contract is explicit

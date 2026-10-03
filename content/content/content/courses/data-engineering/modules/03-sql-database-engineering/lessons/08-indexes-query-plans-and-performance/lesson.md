@@ -44,6 +44,18 @@ WHERE customer_id = 101 AND order_date >= '2026-01-01';
 - **Failure:** What happens if input is invalid or the job is retried?
 - **Evidence:** Which test, metric or log proves it worked?
 
+
+## Coding Syntax to Memorize
+
+> **Syntax card:** Memorize the pattern first; then understand where and why to use it.
+
+```sql
+CREATE INDEX idx_orders_customer ON orders(customer_id);
+EXPLAIN SELECT * FROM orders WHERE customer_id = 101;
+```
+
+**Remember:** identify the **input → operation → output** before writing production code.
+
 ## 5. Production checklist
 
 - [ ] Input schema / contract is explicit

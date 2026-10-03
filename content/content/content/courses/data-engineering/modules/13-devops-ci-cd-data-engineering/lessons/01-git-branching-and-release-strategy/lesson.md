@@ -42,6 +42,20 @@ def run_pipeline(rows):
 - **Failure:** What happens if input is invalid or the job is retried?
 - **Evidence:** Which test, metric or log proves it worked?
 
+
+## Coding Syntax to Memorize
+
+> **Syntax card:** Memorize the pattern first; then understand where and why to use it.
+
+```bash
+git checkout -b feature/orders
+git add .
+git commit -m "Add orders pipeline"
+git push -u origin feature/orders
+```
+
+**Remember:** identify the **input → operation → output** before writing production code.
+
 ## 5. Production checklist
 
 - [ ] Input schema / contract is explicit

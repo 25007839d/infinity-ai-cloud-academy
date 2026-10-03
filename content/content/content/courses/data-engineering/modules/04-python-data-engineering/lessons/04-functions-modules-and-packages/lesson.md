@@ -48,6 +48,18 @@ amount = normalize_amount(" 1250.50 ")
 - **Failure:** What happens if input is invalid or the job is retried?
 - **Evidence:** Which test, metric or log proves it worked?
 
+
+## Coding Syntax to Memorize
+
+> **Syntax card:** Memorize the pattern first; then understand where and why to use it.
+
+```python
+def transform_order(order: dict) -> dict:
+    return {"id": order["id"], "amount": order["amount"] * 1.18}
+```
+
+**Remember:** identify the **input → operation → output** before writing production code.
+
 ## 5. Production checklist
 
 - [ ] Input schema / contract is explicit

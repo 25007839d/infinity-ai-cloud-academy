@@ -42,6 +42,17 @@ gcloud dataflow flex-template build gs://templates/orders.json   --image-gcr-pat
 - **Failure:** What happens if input is invalid or the job is retried?
 - **Evidence:** Which test, metric or log proves it worked?
 
+
+## Coding Syntax to Memorize
+
+> **Syntax card:** Memorize the pattern first; then understand where and why to use it.
+
+```python
+orders | "Parse" >> beam.Map(parse_order) | "Filter" >> beam.Filter(valid) | "Write" >> beam.io.WriteToText(output)
+```
+
+**Remember:** identify the **input → operation → output** before writing production code.
+
 ## 5. Production checklist
 
 - [ ] Input schema / contract is explicit

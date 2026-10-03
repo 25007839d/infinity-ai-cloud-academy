@@ -40,6 +40,20 @@ Airflow → Stage → dbt transform → dbt tests → Publish → Alert
 - **Failure:** What happens if input is invalid or the job is retried?
 - **Evidence:** Which test, metric or log proves it worked?
 
+
+## Coding Syntax to Memorize
+
+> **Syntax card:** Memorize the pattern first; then understand where and why to use it.
+
+```python
+with DAG("daily_orders", schedule="0 2 * * *", catchup=False) as dag:
+    extract = PythonOperator(task_id="extract", python_callable=extract_orders)
+    load = PythonOperator(task_id="load", python_callable=load_orders)
+    extract >> load
+```
+
+**Remember:** identify the **input → operation → output** before writing production code.
+
 ## 5. Production checklist
 
 - [ ] Input schema / contract is explicit

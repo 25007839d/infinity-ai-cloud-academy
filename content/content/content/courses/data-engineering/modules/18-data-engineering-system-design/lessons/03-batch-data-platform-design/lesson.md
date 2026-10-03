@@ -40,6 +40,19 @@ Sources → Landing → Batch Compute → Curated → Warehouse → BI
 - **Failure:** What happens if input is invalid or the job is retried?
 - **Evidence:** Which test, metric or log proves it worked?
 
+
+## Coding Syntax to Memorize
+
+> **Syntax card:** Memorize the pattern first; then understand where and why to use it.
+
+```text
+daily_data = records_per_day × avg_record_size
+peak_rate = daily_records / peak_seconds
+storage = daily_data × retention_days
+```
+
+**Remember:** identify the **input → operation → output** before writing production code.
+
 ## 5. Production checklist
 
 - [ ] Input schema / contract is explicit

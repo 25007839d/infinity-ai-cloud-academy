@@ -44,6 +44,20 @@ ORDER BY amount DESC;
 - **Failure:** What happens if input is invalid or the job is retried?
 - **Evidence:** Which test, metric or log proves it worked?
 
+
+## Coding Syntax to Memorize
+
+> **Syntax card:** Memorize the pattern first; then understand where and why to use it.
+
+```sql
+SELECT customer_id, COUNT(*) AS order_count
+FROM orders
+WHERE order_date >= CURRENT_DATE - INTERVAL 30 DAY
+GROUP BY customer_id;
+```
+
+**Remember:** identify the **input → operation → output** before writing production code.
+
 ## 5. Production checklist
 
 - [ ] Input schema / contract is explicit
