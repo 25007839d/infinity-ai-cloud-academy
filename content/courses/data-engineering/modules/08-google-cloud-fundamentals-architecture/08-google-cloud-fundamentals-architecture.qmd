@@ -1,0 +1,131 @@
+---
+title: "Module 08 — Google Cloud Fundamentals & Architecture"
+subtitle: "Infinity AI Cloud Academy"
+author: "Infinity AI Cloud Academy"
+format:
+  revealjs:
+    theme: [default]
+    slide-number: true
+    chalkboard: true
+    transition: fade
+execute:
+  echo: true
+---
+
+
+---
+
+<div class="ia-section">
+
+<div class="module-no">Module 08</div>
+
+# Google Cloud Fundamentals & Architecture
+
+**Learn • Build • Deploy • Innovate • Grow**
+
+</div>
+
+
+
+---
+
+## Outcomes
+
+- Understand google cloud fundamentals & architecture in a production data platform.
+- Build a hands-on implementation or architecture.
+- Validate quality, reliability and operational behavior.
+- Prepare for project and interview discussions.
+
+
+
+---
+
+## Where this fits
+
+```mermaid
+flowchart LR
+A[Source Systems] --> B[Ingestion]
+B --> C[Storage]
+C --> D[Processing]
+D --> E[Quality]
+E --> F[Serving]
+F --> G[Analytics / ML]
+```
+
+
+
+---
+
+## Module roadmap
+
+- 1. GCP Projects, Regions and Resource Hierarchy
+- 2. IAM, Service Accounts and Least Privilege
+- 3. Cloud SDK, APIs and Infrastructure Automation
+- 4. Networking Basics for Data Platforms
+- 5. Observability, Budgets and Cost Controls
+- 6. Architecture Patterns for Data Engineering
+
+
+
+---
+
+## Industry pattern
+
+**Design for:** idempotency, schema evolution, observability, security, cost control and safe retries.
+
+A production pipeline is not complete when the code runs once; it is complete when the team can operate it repeatedly and explain its behavior under failure.
+
+
+
+---
+
+## Hands-on workflow
+
+1. Understand the requirement
+2. Inspect source data
+3. Design the pipeline
+4. Implement
+5. Validate
+6. Observe
+7. Document
+8. Review
+
+
+
+---
+
+## Common mistakes
+
+- Hard-coded credentials
+- No schema or data contract
+- Non-idempotent loads
+- Missing validation
+- Unbounded retries
+- No alerting/runbook
+- Optimizing before measuring
+
+
+
+---
+
+## Assessment
+
+Complete the module lab, module assignment and practice set. Explain your design choices as if you were presenting the solution during a code review.
+
+
+
+---
+
+## Interview focus
+
+Be ready to explain the **why**, not only the syntax: scale, reliability, data correctness, cost, security and maintainability.
+
+
+
+---
+
+## Next step
+
+Use this module as a building block for the end-to-end capstone.
+
+**Infinity AI Cloud Academy — Industry Ready Data Engineering**

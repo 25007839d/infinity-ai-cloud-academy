@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/generate-sitemap.js && vite build",
+    "build": "node scripts/prepare-course-content.mjs && node scripts/generate-sitemap.js && vite build",
     "generate:sitemap": "node scripts/generate-sitemap.js",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -13,7 +13,9 @@
     "server": "node app.js",
     "dev:api": "node server.js",
     "seed:admin": "node db/seed-admin.js",
-    "seed:courses": "node db/seed-courses.js"
+    "seed:courses": "node db/seed-courses.js",
+    "content:prepare": "node scripts/prepare-course-content.mjs",
+    "content:sync": "node scripts/sync-course-content.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",

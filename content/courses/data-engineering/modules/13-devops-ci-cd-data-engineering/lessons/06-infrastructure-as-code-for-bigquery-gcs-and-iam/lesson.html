@@ -1,0 +1,51 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Infinity AI Cloud Academy</title><style>body{margin:0;background:#07111f;color:#dce8f7;font:16px/1.7 Inter,Segoe UI,Arial,sans-serif}.wrap{max-width:980px;margin:auto;padding:48px 28px}h1{font-size:42px;line-height:1.15}h2{font-size:28px;margin-top:42px}h3{font-size:21px}p,li{color:#b9c8dc;font-size:18px}pre{background:#020817;border:1px solid #263751;border-radius:14px;padding:18px;overflow:auto;color:#b7f7dd}li{margin:8px 0}.brand{color:#4fd1c5;font-weight:700;text-transform:uppercase;letter-spacing:.14em;font-size:12px}.card{background:#0d1a2b;border:1px solid #243653;border-radius:22px;padding:30px}</style></head><body><main class="wrap"><div class="brand">Infinity AI Cloud Academy • Industry Ready</div><div class="card"><h1>Infrastructure as Code for BigQuery, GCS and IAM</h1>
+<h2>Learning objectives</h2>
+<li>Explain the core concepts behind infrastructure as code for bigquery, gcs and iam.</li>
+<li>Apply the concept to a realistic data engineering scenario.</li>
+<li>Identify common production failure modes and trade-offs.</li>
+<li>Communicate the implementation clearly in code or architecture documentation.</li>
+<h2>Industry context</h2>
+<p>**Infrastructure as Code for BigQuery, GCS and IAM** is taught here as an engineering capability rather than a syntax-only topic. The goal is to understand where the capability fits in a production data platform, what can fail, and how engineers make reliable trade-offs.</p>
+<h2>Core concepts</h2>
+<li>**Problem definition** — identify the source, consumer, freshness requirement, volume, quality expectations and operational constraints.</li>
+<li>**Design** — separate ingestion, transformation, storage, validation and serving responsibilities.</li>
+<li>**Implementation** — use repeatable, version-controlled code and explicit configuration.</li>
+<li>**Validation** — test correctness, schema, edge cases and failure handling before release.</li>
+<li>**Operations** — expose logs, metrics, alerts and runbook information so the pipeline can be supported.</li>
+<h2>Architecture lens</h2>
+<pre><code>flowchart LR
+  A[Source] --&gt; B[Ingestion]
+  B --&gt; C[Raw / Bronze]
+  C --&gt; D[Transform / Silver]
+  D --&gt; E[Curated / Gold]
+  E --&gt; F[Analytics / ML / Apps]
+  D --&gt; G[Quality Checks]
+  G --&gt; H[Observability]</code></pre>
+<h2>Worked example</h2>
+<p>Suppose a retail company receives customer orders every hour. The engineering team needs to land raw records, standardize types, remove invalid rows, calculate business metrics and publish a curated dataset for analysts. The implementation should be **idempotent**, observable and safe to rerun.</p>
+<h3>Engineering checklist</h3>
+<li>Define the data contract and ownership.</li>
+<li>Choose the appropriate batch or streaming pattern.</li>
+<li>Make transformations deterministic and testable.</li>
+<li>Design for retries without duplicate business effects.</li>
+<li>Capture rejected records instead of silently dropping them.</li>
+<li>Document assumptions and operational runbooks.</li>
+<h2>Hands-on</h2>
+<li>Create a small input dataset.</li>
+<li>Implement the transformation or design requested in the lab.</li>
+<li>Add at least three validation checks.</li>
+<li>Produce an output that a downstream analyst or application could consume.</li>
+<li>Document how the job behaves when input is missing, malformed or duplicated.</li>
+<h2>Interview checkpoint</h2>
+<li>What problem does this capability solve in a production data platform?</li>
+<li>What happens when the job is retried?</li>
+<li>How would you monitor correctness and freshness?</li>
+<li>What trade-off would you make if data volume increased 100x?</li>
+<h2>Practice</h2>
+<li>Explain the concept in your own words.</li>
+<li>Give one batch use case and one streaming use case.</li>
+<li>Identify one failure mode and one mitigation.</li>
+<li>Write or sketch the smallest production-safe implementation.</li>
+<li>State two metrics you would monitor.</li>
+<h2>Assignment</h2>
+<p>Build a small production-style example for **Infrastructure as Code for BigQuery, GCS and IAM**. Submit source code or architecture, sample input/output, validation evidence, and a short README containing assumptions, failure handling and how to run the solution.</p></div></main></body></html>

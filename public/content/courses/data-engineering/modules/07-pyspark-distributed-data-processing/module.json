@@ -1,0 +1,172 @@
+{
+  "moduleNumber": 7,
+  "title": "PySpark & Distributed Data Processing",
+  "slug": "pyspark-distributed-data-processing",
+  "presentation": "07-pyspark-distributed-data-processing.qmd",
+  "presentationHtml": "07-pyspark-distributed-data-processing.html",
+  "practice": "practice/practice.md",
+  "assignment": "assignments/module-assignment.md",
+  "lab": "lab/lab.py",
+  "lessons": [
+    {
+      "title": "Spark Architecture and Execution Model",
+      "slug": "spark-architecture-and-execution-model",
+      "description": "Industry-ready lesson on Spark Architecture and Execution Model.",
+      "lessonType": "PYSPARK",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Spark Architecture and Execution Model \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/01-spark-architecture-and-execution-model/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "RDDs and Functional Transformations",
+      "slug": "rdds-and-functional-transformations",
+      "description": "Industry-ready lesson on RDDs and Functional Transformations.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "RDDs and Functional Transformations \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/02-rdds-and-functional-transformations/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "DataFrames and Spark SQL",
+      "slug": "dataframes-and-spark-sql",
+      "description": "Industry-ready lesson on DataFrames and Spark SQL.",
+      "lessonType": "SQL",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "DataFrames and Spark SQL \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/03-dataframes-and-spark-sql/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Transformations, Actions and Lazy Evaluation",
+      "slug": "transformations-actions-and-lazy-evaluation",
+      "description": "Industry-ready lesson on Transformations, Actions and Lazy Evaluation.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Transformations, Actions and Lazy Evaluation \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/04-transformations-actions-and-lazy-evaluation/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Joins, Aggregations and Window Functions",
+      "slug": "joins-aggregations-and-window-functions",
+      "description": "Industry-ready lesson on Joins, Aggregations and Window Functions.",
+      "lessonType": "SQL",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Joins, Aggregations and Window Functions \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/05-joins-aggregations-and-window-functions/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Partitions, Shuffle, Repartition and Coalesce",
+      "slug": "partitions-shuffle-repartition-and-coalesce",
+      "description": "Industry-ready lesson on Partitions, Shuffle, Repartition and Coalesce.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Partitions, Shuffle, Repartition and Coalesce \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/06-partitions-shuffle-repartition-and-coalesce/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Caching, Broadcast Joins and Performance",
+      "slug": "caching-broadcast-joins-and-performance",
+      "description": "Industry-ready lesson on Caching, Broadcast Joins and Performance.",
+      "lessonType": "SQL",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Caching, Broadcast Joins and Performance \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/07-caching-broadcast-joins-and-performance/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Reading and Writing CSV, JSON and Parquet",
+      "slug": "reading-and-writing-csv-json-and-parquet",
+      "description": "Industry-ready lesson on Reading and Writing CSV, JSON and Parquet.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Reading and Writing CSV, JSON and Parquet \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/08-reading-and-writing-csv-json-and-parquet/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "PySpark ETL Project: Bronze to Silver to Gold",
+      "slug": "pyspark-etl-project-bronze-to-silver-to-gold",
+      "description": "Industry-ready lesson on PySpark ETL Project: Bronze to Silver to Gold.",
+      "lessonType": "PYSPARK",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "PySpark ETL Project: Bronze to Silver to Gold \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/09-pyspark-etl-project-bronze-to-silver-to-gold/lesson.html"
+        }
+      ],
+      "labs": [
+        {
+          "labType": "COLAB_PYSPARK",
+          "title": "PySpark Distributed ETL Lab",
+          "instructions": "Complete the PySpark & Distributed Data Processing hands-on lab. Use the repository lab starter and document your validation and failure handling.",
+          "datasetUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lab/lab.py"
+        }
+      ]
+    }
+  ]
+}

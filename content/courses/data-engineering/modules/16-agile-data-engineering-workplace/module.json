@@ -1,0 +1,138 @@
+{
+  "moduleNumber": 16,
+  "title": "Agile & Data Engineering Workplace",
+  "slug": "agile-data-engineering-workplace",
+  "presentation": "16-agile-data-engineering-workplace.qmd",
+  "presentationHtml": "16-agile-data-engineering-workplace.html",
+  "practice": "practice/practice.md",
+  "assignment": "assignments/module-assignment.md",
+  "lab": "lab/lab.md",
+  "lessons": [
+    {
+      "title": "Agile, Scrum and Data Team Roles",
+      "slug": "agile-scrum-and-data-team-roles",
+      "description": "Industry-ready lesson on Agile, Scrum and Data Team Roles.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Agile, Scrum and Data Team Roles \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lessons/01-agile-scrum-and-data-team-roles/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "User Stories, Acceptance Criteria and Estimation",
+      "slug": "user-stories-acceptance-criteria-and-estimation",
+      "description": "Industry-ready lesson on User Stories, Acceptance Criteria and Estimation.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "User Stories, Acceptance Criteria and Estimation \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lessons/02-user-stories-acceptance-criteria-and-estimation/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Sprint Planning and Technical Design Docs",
+      "slug": "sprint-planning-and-technical-design-docs",
+      "description": "Industry-ready lesson on Sprint Planning and Technical Design Docs.",
+      "lessonType": "PROJECT",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Sprint Planning and Technical Design Docs \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lessons/03-sprint-planning-and-technical-design-docs/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Code Review and Engineering Standards",
+      "slug": "code-review-and-engineering-standards",
+      "description": "Industry-ready lesson on Code Review and Engineering Standards.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Code Review and Engineering Standards \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lessons/04-code-review-and-engineering-standards/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Incident Management and Postmortems",
+      "slug": "incident-management-and-postmortems",
+      "description": "Industry-ready lesson on Incident Management and Postmortems.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Incident Management and Postmortems \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lessons/05-incident-management-and-postmortems/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Stakeholder Communication and Data Product Thinking",
+      "slug": "stakeholder-communication-and-data-product-thinking",
+      "description": "Industry-ready lesson on Stakeholder Communication and Data Product Thinking.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Stakeholder Communication and Data Product Thinking \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lessons/06-stakeholder-communication-and-data-product-thinking/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Working with Product, Analytics, ML and Platform Teams",
+      "slug": "working-with-product-analytics-ml-and-platform-teams",
+      "description": "Industry-ready lesson on Working with Product, Analytics, ML and Platform Teams.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Working with Product, Analytics, ML and Platform Teams \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lessons/07-working-with-product-analytics-ml-and-platform-teams/lesson.html"
+        }
+      ],
+      "labs": [
+        {
+          "labType": "COLAB_PYTHON",
+          "title": "Agile & Data Engineering Workplace \u2014 Hands-on Lab",
+          "instructions": "Complete the module lab from the repository. Submit code/design and validation evidence.",
+          "datasetUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lab/lab.md"
+        }
+      ]
+    }
+  ]
+}

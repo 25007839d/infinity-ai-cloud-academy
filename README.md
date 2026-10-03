@@ -27,3 +27,12 @@ This application is now designed as a full-stack Node.js application for Hosting
 - Admin CRM APIs for demo registrations
 
 See `HOSTINGER_MYSQL_MIGRATION.md` for the database and hPanel setup.
+
+
+## Course content architecture
+
+Course authoring is version-controlled under `content/courses/<course-slug>/`. Every course can still be created/edited from the Admin Course CMS. For code-managed courses, add/update `course.json` and run `npm run content:sync -- --course <slug>`. Quarto `.qmd` files are the presentation source; committed `.html` files are static deployable artifacts.
+
+### Data Engineering content
+
+The repository now includes a 19-module Data Engineering program with module presentations, lesson notes, coding/architecture labs, assignments, 20-question practice sets and shared datasets. Uploaded teaching resources were used as reference material for Python, Apache Beam/Dataflow and Dataproc/PySpark coverage.

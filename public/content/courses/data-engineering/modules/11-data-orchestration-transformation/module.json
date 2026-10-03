@@ -1,0 +1,155 @@
+{
+  "moduleNumber": 11,
+  "title": "Data Orchestration & Transformation",
+  "slug": "data-orchestration-transformation",
+  "presentation": "11-data-orchestration-transformation.qmd",
+  "presentationHtml": "11-data-orchestration-transformation.html",
+  "practice": "practice/practice.md",
+  "assignment": "assignments/module-assignment.md",
+  "lab": "lab/lab.py",
+  "lessons": [
+    {
+      "title": "Airflow Concepts: DAGs, Tasks and Scheduling",
+      "slug": "airflow-concepts-dags-tasks-and-scheduling",
+      "description": "Industry-ready lesson on Airflow Concepts: DAGs, Tasks and Scheduling.",
+      "lessonType": "PYTHON",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Airflow Concepts: DAGs, Tasks and Scheduling \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/01-airflow-concepts-dags-tasks-and-scheduling/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Operators, Sensors, XCom and Variables",
+      "slug": "operators-sensors-xcom-and-variables",
+      "description": "Industry-ready lesson on Operators, Sensors, XCom and Variables.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Operators, Sensors, XCom and Variables \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/02-operators-sensors-xcom-and-variables/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Dependencies, Retries, Backfills and SLAs",
+      "slug": "dependencies-retries-backfills-and-slas",
+      "description": "Industry-ready lesson on Dependencies, Retries, Backfills and SLAs.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Dependencies, Retries, Backfills and SLAs \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/03-dependencies-retries-backfills-and-slas/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Composer Architecture and Production Practices",
+      "slug": "composer-architecture-and-production-practices",
+      "description": "Industry-ready lesson on Composer Architecture and Production Practices.",
+      "lessonType": "THEORY",
+      "durationMinutes": 50,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Composer Architecture and Production Practices \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/04-composer-architecture-and-production-practices/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "ELT with dbt: Models, Tests and Documentation",
+      "slug": "elt-with-dbt-models-tests-and-documentation",
+      "description": "Industry-ready lesson on ELT with dbt: Models, Tests and Documentation.",
+      "lessonType": "PYTHON",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "ELT with dbt: Models, Tests and Documentation \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/05-elt-with-dbt-models-tests-and-documentation/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Incremental dbt Models and Snapshots",
+      "slug": "incremental-dbt-models-and-snapshots",
+      "description": "Industry-ready lesson on Incremental dbt Models and Snapshots.",
+      "lessonType": "PYTHON",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Incremental dbt Models and Snapshots \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/06-incremental-dbt-models-and-snapshots/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "Orchestrating Spark, Dataflow and BigQuery",
+      "slug": "orchestrating-spark-dataflow-and-bigquery",
+      "description": "Industry-ready lesson on Orchestrating Spark, Dataflow and BigQuery.",
+      "lessonType": "SQL",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "Orchestrating Spark, Dataflow and BigQuery \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/07-orchestrating-spark-dataflow-and-bigquery/lesson.html"
+        }
+      ],
+      "labs": []
+    },
+    {
+      "title": "End-to-End Airflow + dbt Pipeline",
+      "slug": "end-to-end-airflow-dbt-pipeline",
+      "description": "Industry-ready lesson on End-to-End Airflow + dbt Pipeline.",
+      "lessonType": "PYTHON",
+      "durationMinutes": 60,
+      "isPreview": false,
+      "status": "published",
+      "content": [
+        {
+          "contentType": "NOTES",
+          "title": "End-to-End Airflow + dbt Pipeline \u2014 Notes",
+          "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/08-end-to-end-airflow-dbt-pipeline/lesson.html"
+        }
+      ],
+      "labs": [
+        {
+          "labType": "COLAB_PYTHON",
+          "title": "Airflow Orchestration Lab",
+          "instructions": "Complete the Data Orchestration & Transformation hands-on lab. Use the repository lab starter and document your validation and failure handling.",
+          "datasetUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lab/lab.py"
+        }
+      ]
+    }
+  ]
+}

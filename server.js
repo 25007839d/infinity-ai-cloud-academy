@@ -25,16 +25,21 @@ if (!JWT_SECRET) {
   console.warn('WARNING: JWT_SECRET is not configured. Set it in Hostinger Environment Variables.');
 }
 
-const pool = mysql.createPool({
+const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
   port: Number(process.env.DB_PORT || 3306),
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: Number(process.env.DB_CONNECTION_LIMIT || 10),
   queueLimit: 0,
   charset: 'utf8mb4',
+};
+
+// Main Academy/LMS database connection. Keep this isolated from the SQL Lab database.
+const pool = mysql.createPool({
+  ...dbConfig,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 async function hasDbColumn(tableName, columnName) {
@@ -550,7 +555,20 @@ app.post('/api/courses/:slug/view', requireAuth('student'), async (req, res) => 
 });
 
 // ---------- SQL Lab (read-only practice database) ----------
+// SQL Lab deliberately uses a separate MySQL user/database. The fallback to the
+// Academy credentials keeps older deployments compatible until the dedicated
+// SQL_LAB_USER / SQL_LAB_PASSWORD variables are configured.
 const SQL_LAB_DATABASE = process.env.SQL_LAB_DATABASE || '';
+const SQL_LAB_USER = process.env.SQL_LAB_USER || process.env.DB_USER || '';
+const SQL_LAB_PASSWORD = process.env.SQL_LAB_PASSWORD || process.env.DB_PASSWORD || '';
+const sqlLabPool = mysql.createPool({
+  ...dbConfig,
+  user: SQL_LAB_USER,
+  password: SQL_LAB_PASSWORD,
+  database: SQL_LAB_DATABASE || undefined,
+  connectionLimit: Number(process.env.SQL_LAB_CONNECTION_LIMIT || 5),
+});
+
 function isSafeSql(sql='') {
   const normalized = String(sql).trim().replace(/;+\s*$/,'').trim();
   if (!normalized || normalized.length > 10000) return false;
@@ -561,7 +579,7 @@ function isSafeSql(sql='') {
 app.get('/api/labs/sql/schema', requireAuth('student'), async (req,res)=>{
   try {
     if(!SQL_LAB_DATABASE) return sendSuccess(res,{configured:false,tables:[]});
-    const [tables]=await pool.query(`SELECT TABLE_NAME AS name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=? AND TABLE_TYPE='BASE TABLE' ORDER BY TABLE_NAME`,[SQL_LAB_DATABASE]);
+    const [tables]=await sqlLabPool.query(`SELECT TABLE_NAME AS name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=? AND TABLE_TYPE='BASE TABLE' ORDER BY TABLE_NAME`,[SQL_LAB_DATABASE]);
     return sendSuccess(res,{configured:true,database:SQL_LAB_DATABASE,tables:tables.map(t=>t.name)});
   } catch(e){console.error('SQL schema error:',e);return sendError(res,'Unable to load SQL Lab schema.',500);}
 });
@@ -571,7 +589,7 @@ app.post('/api/labs/sql/execute', sqlLabLimiter, requireAuth('student'), async (
     const sql=String(req.body.sql||'').trim();
     if(!isSafeSql(sql)) return sendError(res,'Only single read-only SELECT/CTE/SHOW/DESCRIBE/EXPLAIN queries are allowed in the Academy SQL Lab.');
     const started=Date.now();
-    const conn=await pool.getConnection();
+    const conn=await sqlLabPool.getConnection();
     try {
       await conn.query(`USE \`${SQL_LAB_DATABASE.replace(/`/g,'') }\``);
       const [rows,fields]=await conn.query(sql);

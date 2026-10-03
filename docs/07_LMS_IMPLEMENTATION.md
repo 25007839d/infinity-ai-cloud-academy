@@ -57,3 +57,8 @@ The existing public course CMS remains compatible with the old topic curriculum 
 ## Student workflow
 
 Create Account → Login → Course Page → Enroll → Student Dashboard → Course Player → Lesson → Slides/Lab → Complete Lesson → Progress.
+
+
+### SQL Lab database isolation
+
+The SQL Lab uses a dedicated MySQL connection. Configure `SQL_LAB_DATABASE`, `SQL_LAB_USER` and `SQL_LAB_PASSWORD`. Do not change `DB_NAME`: the main Academy connection must continue pointing to the LMS database.

@@ -1,0 +1,2860 @@
+{
+  "schemaVersion": "1.0",
+  "slug": "data-engineering",
+  "title": "Data Engineering \u2014 Industry Ready Program",
+  "tagline": "From SQL & Python fundamentals to cloud-scale data platforms, streaming, lakehouse and system design.",
+  "shortDescription": "A practical industry-oriented Data Engineering program built around SQL, Python, PySpark, GCP, Airflow, dbt, Dataflow, Databricks, DevOps and real-world projects.",
+  "overview": "Students learn to design, build, test, deploy and operate production-style data pipelines using modern cloud and open-source technologies.",
+  "category": "Data Engineering",
+  "duration": "6\u20139 months",
+  "level": "Beginner to Advanced",
+  "mode": "Online / Hybrid",
+  "language": "English + Hinglish",
+  "certificateAvailable": true,
+  "certificateTitle": "Infinity AI Cloud Academy \u2014 Data Engineering Program",
+  "featured": true,
+  "projects": 6,
+  "displayOrder": 1,
+  "accessType": "free",
+  "price": 0,
+  "currency": "INR",
+  "status": "draft",
+  "technologies": [
+    "SQL",
+    "Python",
+    "PySpark",
+    "Apache Spark",
+    "GCP",
+    "BigQuery",
+    "Cloud Storage",
+    "Pub/Sub",
+    "Dataflow",
+    "Apache Beam",
+    "Dataproc",
+    "Airflow / Composer",
+    "dbt",
+    "Docker",
+    "Terraform",
+    "GitHub Actions",
+    "Databricks",
+    "Delta Lake",
+    "Iceberg",
+    "Dremio"
+  ],
+  "sourceAlignment": {
+    "python": [
+      "python/python syllabous.md",
+      "python/session wise questions.txt",
+      "python/session1..session8 examples and assignments"
+    ],
+    "apache_beam": [
+      "apache_beam/code_stuff/apache_beam.md",
+      "apache_beam/code_stuff/*.py",
+      "apache_beam/gcp_dataflow_template/*",
+      "apache_beam/data/employees.csv"
+    ],
+    "gcp_dataproc": [
+      "gcp_dataproc/README.md",
+      "gcp_dataproc/data/*.csv",
+      "gcp_dataproc/jars/app.py",
+      "gcp_dataproc/airflow_dag/dags/*.py"
+    ],
+    "modules_template": [
+      "modules/module_name/01_module_name.qmd",
+      "modules/* module placeholders and existing SQL/PySpark demos"
+    ]
+  },
+  "modules": [
+    {
+      "moduleNumber": 1,
+      "title": "Data Engineering Program Kickoff & Industry Foundations",
+      "slug": "data-engineering-foundations",
+      "presentation": "01-data-engineering-foundations.qmd",
+      "presentationHtml": "01-data-engineering-foundations.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.md",
+      "lessons": [
+        {
+          "title": "What Data Engineering Solves",
+          "slug": "what-data-engineering-solves",
+          "description": "Industry-ready lesson on What Data Engineering Solves.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": true,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "What Data Engineering Solves \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/01-data-engineering-foundations/lessons/01-what-data-engineering-solves/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "OLTP vs OLAP and Analytical Workloads",
+          "slug": "oltp-vs-olap-and-analytical-workloads",
+          "description": "Industry-ready lesson on OLTP vs OLAP and Analytical Workloads.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "OLTP vs OLAP and Analytical Workloads \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/01-data-engineering-foundations/lessons/02-oltp-vs-olap-and-analytical-workloads/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Batch vs Streaming Data",
+          "slug": "batch-vs-streaming-data",
+          "description": "Industry-ready lesson on Batch vs Streaming Data.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Batch vs Streaming Data \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/01-data-engineering-foundations/lessons/03-batch-vs-streaming-data/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Modern Data Platform Architecture",
+          "slug": "modern-data-platform-architecture",
+          "description": "Industry-ready lesson on Modern Data Platform Architecture.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Modern Data Platform Architecture \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/01-data-engineering-foundations/lessons/04-modern-data-platform-architecture/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Medallion Architecture and Data Lifecycle",
+          "slug": "medallion-architecture-and-data-lifecycle",
+          "description": "Industry-ready lesson on Medallion Architecture and Data Lifecycle.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Medallion Architecture and Data Lifecycle \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/01-data-engineering-foundations/lessons/05-medallion-architecture-and-data-lifecycle/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Industry Roles, SDLC and Project Workflow",
+          "slug": "industry-roles-sdlc-and-project-workflow",
+          "description": "Industry-ready lesson on Industry Roles, SDLC and Project Workflow.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Industry Roles, SDLC and Project Workflow \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/01-data-engineering-foundations/lessons/06-industry-roles-sdlc-and-project-workflow/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Data Engineering Program Kickoff & Industry Foundations \u2014 Hands-on Lab",
+              "instructions": "Complete the module lab from the repository. Submit code/design and validation evidence.",
+              "datasetUrl": "/content/courses/data-engineering/modules/01-data-engineering-foundations/lab/lab.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 2,
+      "title": "Data Engineering Foundation",
+      "slug": "data-engineering-foundation",
+      "presentation": "02-data-engineering-foundation.qmd",
+      "presentationHtml": "02-data-engineering-foundation.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.md",
+      "lessons": [
+        {
+          "title": "Data Engineering Concepts and Terminology",
+          "slug": "data-engineering-concepts-and-terminology",
+          "description": "Industry-ready lesson on Data Engineering Concepts and Terminology.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": true,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Data Engineering Concepts and Terminology \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/02-data-engineering-foundation/lessons/01-data-engineering-concepts-and-terminology/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Data Sources and Data Formats",
+          "slug": "data-sources-and-data-formats",
+          "description": "Industry-ready lesson on Data Sources and Data Formats.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Data Sources and Data Formats \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/02-data-engineering-foundation/lessons/02-data-sources-and-data-formats/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "ETL vs ELT",
+          "slug": "etl-vs-elt",
+          "description": "Industry-ready lesson on ETL vs ELT.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "ETL vs ELT \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/02-data-engineering-foundation/lessons/03-etl-vs-elt/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Data Pipelines and Dependency Graphs",
+          "slug": "data-pipelines-and-dependency-graphs",
+          "description": "Industry-ready lesson on Data Pipelines and Dependency Graphs.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Data Pipelines and Dependency Graphs \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/02-data-engineering-foundation/lessons/04-data-pipelines-and-dependency-graphs/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Data Warehouses, Data Lakes and Lakehouses",
+          "slug": "data-warehouses-data-lakes-and-lakehouses",
+          "description": "Industry-ready lesson on Data Warehouses, Data Lakes and Lakehouses.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Data Warehouses, Data Lakes and Lakehouses \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/02-data-engineering-foundation/lessons/05-data-warehouses-data-lakes-and-lakehouses/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Designing a Production-Ready Data Flow",
+          "slug": "designing-a-production-ready-data-flow",
+          "description": "Industry-ready lesson on Designing a Production-Ready Data Flow.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Designing a Production-Ready Data Flow \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/02-data-engineering-foundation/lessons/06-designing-a-production-ready-data-flow/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Data Engineering Foundation \u2014 Hands-on Lab",
+              "instructions": "Complete the module lab from the repository. Submit code/design and validation evidence.",
+              "datasetUrl": "/content/courses/data-engineering/modules/02-data-engineering-foundation/lab/lab.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 3,
+      "title": "SQL & Database Engineering",
+      "slug": "sql-database-engineering",
+      "presentation": "03-sql-database-engineering.qmd",
+      "presentationHtml": "03-sql-database-engineering.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.sql",
+      "lessons": [
+        {
+          "title": "SQL Fundamentals and Relational Modeling",
+          "slug": "sql-fundamentals-and-relational-modeling",
+          "description": "Industry-ready lesson on SQL Fundamentals and Relational Modeling.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "SQL Fundamentals and Relational Modeling \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/03-sql-database-engineering/lessons/01-sql-fundamentals-and-relational-modeling/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Filtering, Sorting and Conditional Logic",
+          "slug": "filtering-sorting-and-conditional-logic",
+          "description": "Industry-ready lesson on Filtering, Sorting and Conditional Logic.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Filtering, Sorting and Conditional Logic \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/03-sql-database-engineering/lessons/02-filtering-sorting-and-conditional-logic/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Joins and Relationship Design",
+          "slug": "joins-and-relationship-design",
+          "description": "Industry-ready lesson on Joins and Relationship Design.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Joins and Relationship Design \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/03-sql-database-engineering/lessons/03-joins-and-relationship-design/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Aggregations, GROUP BY and HAVING",
+          "slug": "aggregations-group-by-and-having",
+          "description": "Industry-ready lesson on Aggregations, GROUP BY and HAVING.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Aggregations, GROUP BY and HAVING \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/03-sql-database-engineering/lessons/04-aggregations-group-by-and-having/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "CTEs, Subqueries and Set Operations",
+          "slug": "ctes-subqueries-and-set-operations",
+          "description": "Industry-ready lesson on CTEs, Subqueries and Set Operations.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "CTEs, Subqueries and Set Operations \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/03-sql-database-engineering/lessons/05-ctes-subqueries-and-set-operations/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Window Functions and Analytical SQL",
+          "slug": "window-functions-and-analytical-sql",
+          "description": "Industry-ready lesson on Window Functions and Analytical SQL.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Window Functions and Analytical SQL \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/03-sql-database-engineering/lessons/06-window-functions-and-analytical-sql/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "DML, Transactions and ACID",
+          "slug": "dml-transactions-and-acid",
+          "description": "Industry-ready lesson on DML, Transactions and ACID.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "DML, Transactions and ACID \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/03-sql-database-engineering/lessons/07-dml-transactions-and-acid/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Indexes, Query Plans and Performance",
+          "slug": "indexes-query-plans-and-performance",
+          "description": "Industry-ready lesson on Indexes, Query Plans and Performance.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Indexes, Query Plans and Performance \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/03-sql-database-engineering/lessons/08-indexes-query-plans-and-performance/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Data Modeling and Slowly Changing Dimensions",
+          "slug": "data-modeling-and-slowly-changing-dimensions",
+          "description": "Industry-ready lesson on Data Modeling and Slowly Changing Dimensions.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Data Modeling and Slowly Changing Dimensions \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/03-sql-database-engineering/lessons/09-data-modeling-and-slowly-changing-dimensions/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "SQL Lab: Sales Analytics Case Study",
+          "slug": "sql-lab-sales-analytics-case-study",
+          "description": "Industry-ready lesson on SQL Lab: Sales Analytics Case Study.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "SQL Lab: Sales Analytics Case Study \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/03-sql-database-engineering/lessons/10-sql-lab-sales-analytics-case-study/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "SQL",
+              "title": "Interactive SQL Lab \u2014 Sales Analytics",
+              "instructions": "Complete the SQL & Database Engineering hands-on lab. Use the repository lab starter and document your validation and failure handling.",
+              "datasetUrl": "/content/courses/data-engineering/modules/03-sql-database-engineering/lab/lab.sql"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 4,
+      "title": "Python for Data Engineering",
+      "slug": "python-data-engineering",
+      "presentation": "04-python-data-engineering.qmd",
+      "presentationHtml": "04-python-data-engineering.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.py",
+      "lessons": [
+        {
+          "title": "Python Runtime, Types and Core Syntax",
+          "slug": "python-runtime-types-and-core-syntax",
+          "description": "Industry-ready lesson on Python Runtime, Types and Core Syntax.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Python Runtime, Types and Core Syntax \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/04-python-data-engineering/lessons/01-python-runtime-types-and-core-syntax/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Collections, Operators and Control Flow",
+          "slug": "collections-operators-and-control-flow",
+          "description": "Industry-ready lesson on Collections, Operators and Control Flow.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Collections, Operators and Control Flow \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/04-python-data-engineering/lessons/02-collections-operators-and-control-flow/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Loops, Comprehensions and Generators",
+          "slug": "loops-comprehensions-and-generators",
+          "description": "Industry-ready lesson on Loops, Comprehensions and Generators.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Loops, Comprehensions and Generators \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/04-python-data-engineering/lessons/03-loops-comprehensions-and-generators/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Functions, Modules and Packages",
+          "slug": "functions-modules-and-packages",
+          "description": "Industry-ready lesson on Functions, Modules and Packages.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Functions, Modules and Packages \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/04-python-data-engineering/lessons/04-functions-modules-and-packages/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Object-Oriented Programming for Pipelines",
+          "slug": "object-oriented-programming-for-pipelines",
+          "description": "Industry-ready lesson on Object-Oriented Programming for Pipelines.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Object-Oriented Programming for Pipelines \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/04-python-data-engineering/lessons/05-object-oriented-programming-for-pipelines/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Files, CSV, JSON and ETL Transformations",
+          "slug": "files-csv-json-and-etl-transformations",
+          "description": "Industry-ready lesson on Files, CSV, JSON and ETL Transformations.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Files, CSV, JSON and ETL Transformations \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/04-python-data-engineering/lessons/06-files-csv-json-and-etl-transformations/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Exceptions, Logging, Decorators and CLI Tools",
+          "slug": "exceptions-logging-decorators-and-cli-tools",
+          "description": "Industry-ready lesson on Exceptions, Logging, Decorators and CLI Tools.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Exceptions, Logging, Decorators and CLI Tools \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/04-python-data-engineering/lessons/07-exceptions-logging-decorators-and-cli-tools/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "NumPy and Pandas for Data Work",
+          "slug": "numpy-and-pandas-for-data-work",
+          "description": "Industry-ready lesson on NumPy and Pandas for Data Work.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "NumPy and Pandas for Data Work \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/04-python-data-engineering/lessons/08-numpy-and-pandas-for-data-work/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Python ETL Coding Lab",
+              "instructions": "Complete the Python for Data Engineering hands-on lab. Use the repository lab starter and document your validation and failure handling.",
+              "datasetUrl": "/content/courses/data-engineering/modules/04-python-data-engineering/lab/lab.py"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 5,
+      "title": "Linux & Development Tools",
+      "slug": "linux-development-tools",
+      "presentation": "05-linux-development-tools.qmd",
+      "presentationHtml": "05-linux-development-tools.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.sh",
+      "lessons": [
+        {
+          "title": "Linux Filesystem and Shell Basics",
+          "slug": "linux-filesystem-and-shell-basics",
+          "description": "Industry-ready lesson on Linux Filesystem and Shell Basics.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Linux Filesystem and Shell Basics \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/05-linux-development-tools/lessons/01-linux-filesystem-and-shell-basics/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Files, Permissions, Users and Processes",
+          "slug": "files-permissions-users-and-processes",
+          "description": "Industry-ready lesson on Files, Permissions, Users and Processes.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Files, Permissions, Users and Processes \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/05-linux-development-tools/lessons/02-files-permissions-users-and-processes/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "grep, sed, awk and Text Processing",
+          "slug": "grep-sed-awk-and-text-processing",
+          "description": "Industry-ready lesson on grep, sed, awk and Text Processing.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "grep, sed, awk and Text Processing \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/05-linux-development-tools/lessons/03-grep-sed-awk-and-text-processing/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Shell Scripting for Data Jobs",
+          "slug": "shell-scripting-for-data-jobs",
+          "description": "Industry-ready lesson on Shell Scripting for Data Jobs.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Shell Scripting for Data Jobs \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/05-linux-development-tools/lessons/04-shell-scripting-for-data-jobs/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Git Fundamentals and Branching Strategy",
+          "slug": "git-fundamentals-and-branching-strategy",
+          "description": "Industry-ready lesson on Git Fundamentals and Branching Strategy.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Git Fundamentals and Branching Strategy \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/05-linux-development-tools/lessons/05-git-fundamentals-and-branching-strategy/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "GitHub Workflow, Pull Requests and Code Review",
+          "slug": "github-workflow-pull-requests-and-code-review",
+          "description": "Industry-ready lesson on GitHub Workflow, Pull Requests and Code Review.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "GitHub Workflow, Pull Requests and Code Review \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/05-linux-development-tools/lessons/06-github-workflow-pull-requests-and-code-review/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Python Environments, Package Management and CLI Debugging",
+          "slug": "python-environments-package-management-and-cli-debugging",
+          "description": "Industry-ready lesson on Python Environments, Package Management and CLI Debugging.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Python Environments, Package Management and CLI Debugging \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/05-linux-development-tools/lessons/07-python-environments-package-management-and-cli-debugging/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Linux & Development Tools \u2014 Hands-on Lab",
+              "instructions": "Complete the module lab from the repository. Submit code/design and validation evidence.",
+              "datasetUrl": "/content/courses/data-engineering/modules/05-linux-development-tools/lab/lab.sh"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 6,
+      "title": "Data Engineering Core",
+      "slug": "data-engineering-core",
+      "presentation": "06-data-engineering-core.qmd",
+      "presentationHtml": "06-data-engineering-core.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.md",
+      "lessons": [
+        {
+          "title": "Data Modeling Fundamentals",
+          "slug": "data-modeling-fundamentals",
+          "description": "Industry-ready lesson on Data Modeling Fundamentals.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Data Modeling Fundamentals \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/06-data-engineering-core/lessons/01-data-modeling-fundamentals/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Dimensional Modeling: Facts and Dimensions",
+          "slug": "dimensional-modeling-facts-and-dimensions",
+          "description": "Industry-ready lesson on Dimensional Modeling: Facts and Dimensions.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Dimensional Modeling: Facts and Dimensions \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/06-data-engineering-core/lessons/02-dimensional-modeling-facts-and-dimensions/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Star and Snowflake Schemas",
+          "slug": "star-and-snowflake-schemas",
+          "description": "Industry-ready lesson on Star and Snowflake Schemas.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Star and Snowflake Schemas \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/06-data-engineering-core/lessons/03-star-and-snowflake-schemas/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Data Ingestion Patterns",
+          "slug": "data-ingestion-patterns",
+          "description": "Industry-ready lesson on Data Ingestion Patterns.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Data Ingestion Patterns \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/06-data-engineering-core/lessons/04-data-ingestion-patterns/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Incremental Loads and CDC Concepts",
+          "slug": "incremental-loads-and-cdc-concepts",
+          "description": "Industry-ready lesson on Incremental Loads and CDC Concepts.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Incremental Loads and CDC Concepts \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/06-data-engineering-core/lessons/05-incremental-loads-and-cdc-concepts/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Partitioning, Clustering and File Layout",
+          "slug": "partitioning-clustering-and-file-layout",
+          "description": "Industry-ready lesson on Partitioning, Clustering and File Layout.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Partitioning, Clustering and File Layout \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/06-data-engineering-core/lessons/06-partitioning-clustering-and-file-layout/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Data Contracts and Schema Evolution",
+          "slug": "data-contracts-and-schema-evolution",
+          "description": "Industry-ready lesson on Data Contracts and Schema Evolution.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Data Contracts and Schema Evolution \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/06-data-engineering-core/lessons/07-data-contracts-and-schema-evolution/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Lakehouse Table Formats and Metadata",
+          "slug": "lakehouse-table-formats-and-metadata",
+          "description": "Industry-ready lesson on Lakehouse Table Formats and Metadata.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Lakehouse Table Formats and Metadata \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/06-data-engineering-core/lessons/08-lakehouse-table-formats-and-metadata/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Data Engineering Core \u2014 Hands-on Lab",
+              "instructions": "Complete the module lab from the repository. Submit code/design and validation evidence.",
+              "datasetUrl": "/content/courses/data-engineering/modules/06-data-engineering-core/lab/lab.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 7,
+      "title": "PySpark & Distributed Data Processing",
+      "slug": "pyspark-distributed-data-processing",
+      "presentation": "07-pyspark-distributed-data-processing.qmd",
+      "presentationHtml": "07-pyspark-distributed-data-processing.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.py",
+      "lessons": [
+        {
+          "title": "Spark Architecture and Execution Model",
+          "slug": "spark-architecture-and-execution-model",
+          "description": "Industry-ready lesson on Spark Architecture and Execution Model.",
+          "lessonType": "PYSPARK",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Spark Architecture and Execution Model \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/01-spark-architecture-and-execution-model/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "RDDs and Functional Transformations",
+          "slug": "rdds-and-functional-transformations",
+          "description": "Industry-ready lesson on RDDs and Functional Transformations.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "RDDs and Functional Transformations \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/02-rdds-and-functional-transformations/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "DataFrames and Spark SQL",
+          "slug": "dataframes-and-spark-sql",
+          "description": "Industry-ready lesson on DataFrames and Spark SQL.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "DataFrames and Spark SQL \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/03-dataframes-and-spark-sql/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Transformations, Actions and Lazy Evaluation",
+          "slug": "transformations-actions-and-lazy-evaluation",
+          "description": "Industry-ready lesson on Transformations, Actions and Lazy Evaluation.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Transformations, Actions and Lazy Evaluation \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/04-transformations-actions-and-lazy-evaluation/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Joins, Aggregations and Window Functions",
+          "slug": "joins-aggregations-and-window-functions",
+          "description": "Industry-ready lesson on Joins, Aggregations and Window Functions.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Joins, Aggregations and Window Functions \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/05-joins-aggregations-and-window-functions/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Partitions, Shuffle, Repartition and Coalesce",
+          "slug": "partitions-shuffle-repartition-and-coalesce",
+          "description": "Industry-ready lesson on Partitions, Shuffle, Repartition and Coalesce.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Partitions, Shuffle, Repartition and Coalesce \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/06-partitions-shuffle-repartition-and-coalesce/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Caching, Broadcast Joins and Performance",
+          "slug": "caching-broadcast-joins-and-performance",
+          "description": "Industry-ready lesson on Caching, Broadcast Joins and Performance.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Caching, Broadcast Joins and Performance \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/07-caching-broadcast-joins-and-performance/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Reading and Writing CSV, JSON and Parquet",
+          "slug": "reading-and-writing-csv-json-and-parquet",
+          "description": "Industry-ready lesson on Reading and Writing CSV, JSON and Parquet.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Reading and Writing CSV, JSON and Parquet \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/08-reading-and-writing-csv-json-and-parquet/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "PySpark ETL Project: Bronze to Silver to Gold",
+          "slug": "pyspark-etl-project-bronze-to-silver-to-gold",
+          "description": "Industry-ready lesson on PySpark ETL Project: Bronze to Silver to Gold.",
+          "lessonType": "PYSPARK",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "PySpark ETL Project: Bronze to Silver to Gold \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lessons/09-pyspark-etl-project-bronze-to-silver-to-gold/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYSPARK",
+              "title": "PySpark Distributed ETL Lab",
+              "instructions": "Complete the PySpark & Distributed Data Processing hands-on lab. Use the repository lab starter and document your validation and failure handling.",
+              "datasetUrl": "/content/courses/data-engineering/modules/07-pyspark-distributed-data-processing/lab/lab.py"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 8,
+      "title": "Google Cloud Fundamentals & Architecture",
+      "slug": "google-cloud-fundamentals-architecture",
+      "presentation": "08-google-cloud-fundamentals-architecture.qmd",
+      "presentationHtml": "08-google-cloud-fundamentals-architecture.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.md",
+      "lessons": [
+        {
+          "title": "GCP Projects, Regions and Resource Hierarchy",
+          "slug": "gcp-projects-regions-and-resource-hierarchy",
+          "description": "Industry-ready lesson on GCP Projects, Regions and Resource Hierarchy.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "GCP Projects, Regions and Resource Hierarchy \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/08-google-cloud-fundamentals-architecture/lessons/01-gcp-projects-regions-and-resource-hierarchy/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "IAM, Service Accounts and Least Privilege",
+          "slug": "iam-service-accounts-and-least-privilege",
+          "description": "Industry-ready lesson on IAM, Service Accounts and Least Privilege.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "IAM, Service Accounts and Least Privilege \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/08-google-cloud-fundamentals-architecture/lessons/02-iam-service-accounts-and-least-privilege/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Cloud SDK, APIs and Infrastructure Automation",
+          "slug": "cloud-sdk-apis-and-infrastructure-automation",
+          "description": "Industry-ready lesson on Cloud SDK, APIs and Infrastructure Automation.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Cloud SDK, APIs and Infrastructure Automation \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/08-google-cloud-fundamentals-architecture/lessons/03-cloud-sdk-apis-and-infrastructure-automation/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Networking Basics for Data Platforms",
+          "slug": "networking-basics-for-data-platforms",
+          "description": "Industry-ready lesson on Networking Basics for Data Platforms.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Networking Basics for Data Platforms \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/08-google-cloud-fundamentals-architecture/lessons/04-networking-basics-for-data-platforms/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Observability, Budgets and Cost Controls",
+          "slug": "observability-budgets-and-cost-controls",
+          "description": "Industry-ready lesson on Observability, Budgets and Cost Controls.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Observability, Budgets and Cost Controls \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/08-google-cloud-fundamentals-architecture/lessons/05-observability-budgets-and-cost-controls/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Architecture Patterns for Data Engineering",
+          "slug": "architecture-patterns-for-data-engineering",
+          "description": "Industry-ready lesson on Architecture Patterns for Data Engineering.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Architecture Patterns for Data Engineering \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/08-google-cloud-fundamentals-architecture/lessons/06-architecture-patterns-for-data-engineering/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Google Cloud Fundamentals & Architecture \u2014 Hands-on Lab",
+              "instructions": "Complete the module lab from the repository. Submit code/design and validation evidence.",
+              "datasetUrl": "/content/courses/data-engineering/modules/08-google-cloud-fundamentals-architecture/lab/lab.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 9,
+      "title": "GCP Data Storage & Analytics",
+      "slug": "gcp-data-storage-analytics",
+      "presentation": "09-gcp-data-storage-analytics.qmd",
+      "presentationHtml": "09-gcp-data-storage-analytics.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.md",
+      "lessons": [
+        {
+          "title": "Cloud Storage and Object Lifecycle",
+          "slug": "cloud-storage-and-object-lifecycle",
+          "description": "Industry-ready lesson on Cloud Storage and Object Lifecycle.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Cloud Storage and Object Lifecycle \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lessons/01-cloud-storage-and-object-lifecycle/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "BigQuery Architecture and Storage Model",
+          "slug": "bigquery-architecture-and-storage-model",
+          "description": "Industry-ready lesson on BigQuery Architecture and Storage Model.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "BigQuery Architecture and Storage Model \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lessons/02-bigquery-architecture-and-storage-model/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "BigQuery Datasets, Tables and External Data",
+          "slug": "bigquery-datasets-tables-and-external-data",
+          "description": "Industry-ready lesson on BigQuery Datasets, Tables and External Data.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "BigQuery Datasets, Tables and External Data \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lessons/03-bigquery-datasets-tables-and-external-data/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Partitioning, Clustering and Query Optimization",
+          "slug": "partitioning-clustering-and-query-optimization",
+          "description": "Industry-ready lesson on Partitioning, Clustering and Query Optimization.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Partitioning, Clustering and Query Optimization \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lessons/04-partitioning-clustering-and-query-optimization/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "BigLake, Dataplex and Governance Concepts",
+          "slug": "biglake-dataplex-and-governance-concepts",
+          "description": "Industry-ready lesson on BigLake, Dataplex and Governance Concepts.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "BigLake, Dataplex and Governance Concepts \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lessons/05-biglake-dataplex-and-governance-concepts/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Analytical Data Modeling in BigQuery",
+          "slug": "analytical-data-modeling-in-bigquery",
+          "description": "Industry-ready lesson on Analytical Data Modeling in BigQuery.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Analytical Data Modeling in BigQuery \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lessons/06-analytical-data-modeling-in-bigquery/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "BigQuery Security and Cost Management",
+          "slug": "bigquery-security-and-cost-management",
+          "description": "Industry-ready lesson on BigQuery Security and Cost Management.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "BigQuery Security and Cost Management \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lessons/07-bigquery-security-and-cost-management/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "GCP Data Storage & Analytics \u2014 Hands-on Lab",
+              "instructions": "Complete the module lab from the repository. Submit code/design and validation evidence.",
+              "datasetUrl": "/content/courses/data-engineering/modules/09-gcp-data-storage-analytics/lab/lab.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 10,
+      "title": "GCP Data Processing & Streaming",
+      "slug": "gcp-data-processing-streaming",
+      "presentation": "10-gcp-data-processing-streaming.qmd",
+      "presentationHtml": "10-gcp-data-processing-streaming.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.py",
+      "lessons": [
+        {
+          "title": "Dataproc and Managed Spark",
+          "slug": "dataproc-and-managed-spark",
+          "description": "Industry-ready lesson on Dataproc and Managed Spark.",
+          "lessonType": "PYSPARK",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Dataproc and Managed Spark \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/10-gcp-data-processing-streaming/lessons/01-dataproc-and-managed-spark/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Dataflow and Apache Beam Programming Model",
+          "slug": "dataflow-and-apache-beam-programming-model",
+          "description": "Industry-ready lesson on Dataflow and Apache Beam Programming Model.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Dataflow and Apache Beam Programming Model \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/10-gcp-data-processing-streaming/lessons/02-dataflow-and-apache-beam-programming-model/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Beam Element-wise and Aggregation Transforms",
+          "slug": "beam-element-wise-and-aggregation-transforms",
+          "description": "Industry-ready lesson on Beam Element-wise and Aggregation Transforms.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Beam Element-wise and Aggregation Transforms \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/10-gcp-data-processing-streaming/lessons/03-beam-element-wise-and-aggregation-transforms/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Beam I/O, Composite Transforms and Side Inputs",
+          "slug": "beam-i-o-composite-transforms-and-side-inputs",
+          "description": "Industry-ready lesson on Beam I/O, Composite Transforms and Side Inputs.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Beam I/O, Composite Transforms and Side Inputs \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/10-gcp-data-processing-streaming/lessons/04-beam-i-o-composite-transforms-and-side-inputs/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Streaming Windowing, Triggers and Watermarks",
+          "slug": "streaming-windowing-triggers-and-watermarks",
+          "description": "Industry-ready lesson on Streaming Windowing, Triggers and Watermarks.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Streaming Windowing, Triggers and Watermarks \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/10-gcp-data-processing-streaming/lessons/05-streaming-windowing-triggers-and-watermarks/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Pub/Sub Event Ingestion",
+          "slug": "pub-sub-event-ingestion",
+          "description": "Industry-ready lesson on Pub/Sub Event Ingestion.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Pub/Sub Event Ingestion \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/10-gcp-data-processing-streaming/lessons/06-pub-sub-event-ingestion/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Batch + Streaming Architecture on GCP",
+          "slug": "batch-streaming-architecture-on-gcp",
+          "description": "Industry-ready lesson on Batch + Streaming Architecture on GCP.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Batch + Streaming Architecture on GCP \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/10-gcp-data-processing-streaming/lessons/07-batch-streaming-architecture-on-gcp/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Production Dataflow Template Project",
+          "slug": "production-dataflow-template-project",
+          "description": "Industry-ready lesson on Production Dataflow Template Project.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Production Dataflow Template Project \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/10-gcp-data-processing-streaming/lessons/08-production-dataflow-template-project/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Apache Beam / Dataflow Lab",
+              "instructions": "Complete the GCP Data Processing & Streaming hands-on lab. Use the repository lab starter and document your validation and failure handling.",
+              "datasetUrl": "/content/courses/data-engineering/modules/10-gcp-data-processing-streaming/lab/lab.py"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 11,
+      "title": "Data Orchestration & Transformation",
+      "slug": "data-orchestration-transformation",
+      "presentation": "11-data-orchestration-transformation.qmd",
+      "presentationHtml": "11-data-orchestration-transformation.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.py",
+      "lessons": [
+        {
+          "title": "Airflow Concepts: DAGs, Tasks and Scheduling",
+          "slug": "airflow-concepts-dags-tasks-and-scheduling",
+          "description": "Industry-ready lesson on Airflow Concepts: DAGs, Tasks and Scheduling.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Airflow Concepts: DAGs, Tasks and Scheduling \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/01-airflow-concepts-dags-tasks-and-scheduling/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Operators, Sensors, XCom and Variables",
+          "slug": "operators-sensors-xcom-and-variables",
+          "description": "Industry-ready lesson on Operators, Sensors, XCom and Variables.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Operators, Sensors, XCom and Variables \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/02-operators-sensors-xcom-and-variables/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Dependencies, Retries, Backfills and SLAs",
+          "slug": "dependencies-retries-backfills-and-slas",
+          "description": "Industry-ready lesson on Dependencies, Retries, Backfills and SLAs.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Dependencies, Retries, Backfills and SLAs \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/03-dependencies-retries-backfills-and-slas/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Composer Architecture and Production Practices",
+          "slug": "composer-architecture-and-production-practices",
+          "description": "Industry-ready lesson on Composer Architecture and Production Practices.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Composer Architecture and Production Practices \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/04-composer-architecture-and-production-practices/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "ELT with dbt: Models, Tests and Documentation",
+          "slug": "elt-with-dbt-models-tests-and-documentation",
+          "description": "Industry-ready lesson on ELT with dbt: Models, Tests and Documentation.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "ELT with dbt: Models, Tests and Documentation \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/05-elt-with-dbt-models-tests-and-documentation/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Incremental dbt Models and Snapshots",
+          "slug": "incremental-dbt-models-and-snapshots",
+          "description": "Industry-ready lesson on Incremental dbt Models and Snapshots.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Incremental dbt Models and Snapshots \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/06-incremental-dbt-models-and-snapshots/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Orchestrating Spark, Dataflow and BigQuery",
+          "slug": "orchestrating-spark-dataflow-and-bigquery",
+          "description": "Industry-ready lesson on Orchestrating Spark, Dataflow and BigQuery.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Orchestrating Spark, Dataflow and BigQuery \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/07-orchestrating-spark-dataflow-and-bigquery/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "End-to-End Airflow + dbt Pipeline",
+          "slug": "end-to-end-airflow-dbt-pipeline",
+          "description": "Industry-ready lesson on End-to-End Airflow + dbt Pipeline.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "End-to-End Airflow + dbt Pipeline \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lessons/08-end-to-end-airflow-dbt-pipeline/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Airflow Orchestration Lab",
+              "instructions": "Complete the Data Orchestration & Transformation hands-on lab. Use the repository lab starter and document your validation and failure handling.",
+              "datasetUrl": "/content/courses/data-engineering/modules/11-data-orchestration-transformation/lab/lab.py"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 12,
+      "title": "Data Quality & Testing",
+      "slug": "data-quality-testing",
+      "presentation": "12-data-quality-testing.qmd",
+      "presentationHtml": "12-data-quality-testing.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.md",
+      "lessons": [
+        {
+          "title": "Data Quality Dimensions and Failure Modes",
+          "slug": "data-quality-dimensions-and-failure-modes",
+          "description": "Industry-ready lesson on Data Quality Dimensions and Failure Modes.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Data Quality Dimensions and Failure Modes \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/12-data-quality-testing/lessons/01-data-quality-dimensions-and-failure-modes/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Unit Testing Data Transformation Code",
+          "slug": "unit-testing-data-transformation-code",
+          "description": "Industry-ready lesson on Unit Testing Data Transformation Code.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Unit Testing Data Transformation Code \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/12-data-quality-testing/lessons/02-unit-testing-data-transformation-code/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "SQL and dbt Tests",
+          "slug": "sql-and-dbt-tests",
+          "description": "Industry-ready lesson on SQL and dbt Tests.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "SQL and dbt Tests \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/12-data-quality-testing/lessons/03-sql-and-dbt-tests/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Schema, Null, Uniqueness and Referential Checks",
+          "slug": "schema-null-uniqueness-and-referential-checks",
+          "description": "Industry-ready lesson on Schema, Null, Uniqueness and Referential Checks.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Schema, Null, Uniqueness and Referential Checks \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/12-data-quality-testing/lessons/04-schema-null-uniqueness-and-referential-checks/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Great Expectations and Data Validation Patterns",
+          "slug": "great-expectations-and-data-validation-patterns",
+          "description": "Industry-ready lesson on Great Expectations and Data Validation Patterns.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Great Expectations and Data Validation Patterns \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/12-data-quality-testing/lessons/05-great-expectations-and-data-validation-patterns/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Data Observability, Freshness and Volume Checks",
+          "slug": "data-observability-freshness-and-volume-checks",
+          "description": "Industry-ready lesson on Data Observability, Freshness and Volume Checks.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Data Observability, Freshness and Volume Checks \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/12-data-quality-testing/lessons/06-data-observability-freshness-and-volume-checks/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "CI Data Tests and Production Incident Response",
+          "slug": "ci-data-tests-and-production-incident-response",
+          "description": "Industry-ready lesson on CI Data Tests and Production Incident Response.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "CI Data Tests and Production Incident Response \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/12-data-quality-testing/lessons/07-ci-data-tests-and-production-incident-response/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Data Quality & Testing \u2014 Hands-on Lab",
+              "instructions": "Complete the module lab from the repository. Submit code/design and validation evidence.",
+              "datasetUrl": "/content/courses/data-engineering/modules/12-data-quality-testing/lab/lab.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 13,
+      "title": "DevOps & CI/CD for Data Engineering",
+      "slug": "devops-ci-cd-data-engineering",
+      "presentation": "13-devops-ci-cd-data-engineering.qmd",
+      "presentationHtml": "13-devops-ci-cd-data-engineering.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.yaml",
+      "lessons": [
+        {
+          "title": "Git Branching and Release Strategy",
+          "slug": "git-branching-and-release-strategy",
+          "description": "Industry-ready lesson on Git Branching and Release Strategy.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Git Branching and Release Strategy \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/13-devops-ci-cd-data-engineering/lessons/01-git-branching-and-release-strategy/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "CI Pipelines with GitHub Actions",
+          "slug": "ci-pipelines-with-github-actions",
+          "description": "Industry-ready lesson on CI Pipelines with GitHub Actions.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "CI Pipelines with GitHub Actions \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/13-devops-ci-cd-data-engineering/lessons/02-ci-pipelines-with-github-actions/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Testing, Linting and Build Automation",
+          "slug": "testing-linting-and-build-automation",
+          "description": "Industry-ready lesson on Testing, Linting and Build Automation.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Testing, Linting and Build Automation \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/13-devops-ci-cd-data-engineering/lessons/03-testing-linting-and-build-automation/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Docker for Data Engineering",
+          "slug": "docker-for-data-engineering",
+          "description": "Industry-ready lesson on Docker for Data Engineering.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Docker for Data Engineering \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/13-devops-ci-cd-data-engineering/lessons/04-docker-for-data-engineering/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Terraform Fundamentals for GCP",
+          "slug": "terraform-fundamentals-for-gcp",
+          "description": "Industry-ready lesson on Terraform Fundamentals for GCP.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Terraform Fundamentals for GCP \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/13-devops-ci-cd-data-engineering/lessons/05-terraform-fundamentals-for-gcp/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Infrastructure as Code for BigQuery, GCS and IAM",
+          "slug": "infrastructure-as-code-for-bigquery-gcs-and-iam",
+          "description": "Industry-ready lesson on Infrastructure as Code for BigQuery, GCS and IAM.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Infrastructure as Code for BigQuery, GCS and IAM \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/13-devops-ci-cd-data-engineering/lessons/06-infrastructure-as-code-for-bigquery-gcs-and-iam/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Secrets, Environments and Deployment Promotion",
+          "slug": "secrets-environments-and-deployment-promotion",
+          "description": "Industry-ready lesson on Secrets, Environments and Deployment Promotion.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Secrets, Environments and Deployment Promotion \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/13-devops-ci-cd-data-engineering/lessons/07-secrets-environments-and-deployment-promotion/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Production Release Workflow",
+          "slug": "production-release-workflow",
+          "description": "Industry-ready lesson on Production Release Workflow.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Production Release Workflow \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/13-devops-ci-cd-data-engineering/lessons/08-production-release-workflow/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Airflow Orchestration Lab",
+              "instructions": "Complete the DevOps & CI/CD for Data Engineering hands-on lab. Use the repository lab starter and document your validation and failure handling.",
+              "datasetUrl": "/content/courses/data-engineering/modules/13-devops-ci-cd-data-engineering/lab/lab.yaml"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 14,
+      "title": "Security & Production Engineering",
+      "slug": "security-production-engineering",
+      "presentation": "14-security-production-engineering.qmd",
+      "presentationHtml": "14-security-production-engineering.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.md",
+      "lessons": [
+        {
+          "title": "Identity, Authentication and Authorization",
+          "slug": "identity-authentication-and-authorization",
+          "description": "Industry-ready lesson on Identity, Authentication and Authorization.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Identity, Authentication and Authorization \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/14-security-production-engineering/lessons/01-identity-authentication-and-authorization/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Secrets Management and Credential Hygiene",
+          "slug": "secrets-management-and-credential-hygiene",
+          "description": "Industry-ready lesson on Secrets Management and Credential Hygiene.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Secrets Management and Credential Hygiene \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/14-security-production-engineering/lessons/02-secrets-management-and-credential-hygiene/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Network and Data Security",
+          "slug": "network-and-data-security",
+          "description": "Industry-ready lesson on Network and Data Security.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Network and Data Security \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/14-security-production-engineering/lessons/03-network-and-data-security/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Encryption, KMS and Key Management",
+          "slug": "encryption-kms-and-key-management",
+          "description": "Industry-ready lesson on Encryption, KMS and Key Management.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Encryption, KMS and Key Management \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/14-security-production-engineering/lessons/04-encryption-kms-and-key-management/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "PII, Masking and Data Access Policies",
+          "slug": "pii-masking-and-data-access-policies",
+          "description": "Industry-ready lesson on PII, Masking and Data Access Policies.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "PII, Masking and Data Access Policies \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/14-security-production-engineering/lessons/05-pii-masking-and-data-access-policies/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Production Logging and Monitoring",
+          "slug": "production-logging-and-monitoring",
+          "description": "Industry-ready lesson on Production Logging and Monitoring.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Production Logging and Monitoring \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/14-security-production-engineering/lessons/06-production-logging-and-monitoring/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Reliability, Backups, Disaster Recovery and Incident Management",
+          "slug": "reliability-backups-disaster-recovery-and-incident-management",
+          "description": "Industry-ready lesson on Reliability, Backups, Disaster Recovery and Incident Management.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Reliability, Backups, Disaster Recovery and Incident Management \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/14-security-production-engineering/lessons/07-reliability-backups-disaster-recovery-and-incident-management/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Security & Production Engineering \u2014 Hands-on Lab",
+              "instructions": "Complete the module lab from the repository. Submit code/design and validation evidence.",
+              "datasetUrl": "/content/courses/data-engineering/modules/14-security-production-engineering/lab/lab.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 15,
+      "title": "Databricks & Lakehouse Engineering",
+      "slug": "databricks-lakehouse-engineering",
+      "presentation": "15-databricks-lakehouse-engineering.qmd",
+      "presentationHtml": "15-databricks-lakehouse-engineering.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.sql",
+      "lessons": [
+        {
+          "title": "Lakehouse Architecture and Databricks Workspace",
+          "slug": "lakehouse-architecture-and-databricks-workspace",
+          "description": "Industry-ready lesson on Lakehouse Architecture and Databricks Workspace.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Lakehouse Architecture and Databricks Workspace \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/01-lakehouse-architecture-and-databricks-workspace/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Delta Lake Concepts and ACID Transactions",
+          "slug": "delta-lake-concepts-and-acid-transactions",
+          "description": "Industry-ready lesson on Delta Lake Concepts and ACID Transactions.",
+          "lessonType": "PYSPARK",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Delta Lake Concepts and ACID Transactions \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/02-delta-lake-concepts-and-acid-transactions/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Bronze, Silver and Gold in Databricks",
+          "slug": "bronze-silver-and-gold-in-databricks",
+          "description": "Industry-ready lesson on Bronze, Silver and Gold in Databricks.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Bronze, Silver and Gold in Databricks \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/03-bronze-silver-and-gold-in-databricks/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Spark SQL and Delta Table Operations",
+          "slug": "spark-sql-and-delta-table-operations",
+          "description": "Industry-ready lesson on Spark SQL and Delta Table Operations.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Spark SQL and Delta Table Operations \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/04-spark-sql-and-delta-table-operations/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "MERGE, CDC and Slowly Changing Dimensions",
+          "slug": "merge-cdc-and-slowly-changing-dimensions",
+          "description": "Industry-ready lesson on MERGE, CDC and Slowly Changing Dimensions.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "MERGE, CDC and Slowly Changing Dimensions \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/05-merge-cdc-and-slowly-changing-dimensions/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Performance: OPTIMIZE, Z-ORDER and File Management",
+          "slug": "performance-optimize-z-order-and-file-management",
+          "description": "Industry-ready lesson on Performance: OPTIMIZE, Z-ORDER and File Management.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Performance: OPTIMIZE, Z-ORDER and File Management \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/06-performance-optimize-z-order-and-file-management/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Unity Catalog and Governance Concepts",
+          "slug": "unity-catalog-and-governance-concepts",
+          "description": "Industry-ready lesson on Unity Catalog and Governance Concepts.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Unity Catalog and Governance Concepts \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/07-unity-catalog-and-governance-concepts/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Lakehouse Project: Batch + Incremental Pipeline",
+          "slug": "lakehouse-project-batch-incremental-pipeline",
+          "description": "Industry-ready lesson on Lakehouse Project: Batch + Incremental Pipeline.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Lakehouse Project: Batch + Incremental Pipeline \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lessons/08-lakehouse-project-batch-incremental-pipeline/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYSPARK",
+              "title": "Delta Lake / Databricks Lab",
+              "instructions": "Complete the Databricks & Lakehouse Engineering hands-on lab. Use the repository lab starter and document your validation and failure handling.",
+              "datasetUrl": "/content/courses/data-engineering/modules/15-databricks-lakehouse-engineering/lab/lab.sql"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 16,
+      "title": "Agile & Data Engineering Workplace",
+      "slug": "agile-data-engineering-workplace",
+      "presentation": "16-agile-data-engineering-workplace.qmd",
+      "presentationHtml": "16-agile-data-engineering-workplace.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.md",
+      "lessons": [
+        {
+          "title": "Agile, Scrum and Data Team Roles",
+          "slug": "agile-scrum-and-data-team-roles",
+          "description": "Industry-ready lesson on Agile, Scrum and Data Team Roles.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Agile, Scrum and Data Team Roles \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lessons/01-agile-scrum-and-data-team-roles/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "User Stories, Acceptance Criteria and Estimation",
+          "slug": "user-stories-acceptance-criteria-and-estimation",
+          "description": "Industry-ready lesson on User Stories, Acceptance Criteria and Estimation.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "User Stories, Acceptance Criteria and Estimation \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lessons/02-user-stories-acceptance-criteria-and-estimation/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Sprint Planning and Technical Design Docs",
+          "slug": "sprint-planning-and-technical-design-docs",
+          "description": "Industry-ready lesson on Sprint Planning and Technical Design Docs.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Sprint Planning and Technical Design Docs \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lessons/03-sprint-planning-and-technical-design-docs/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Code Review and Engineering Standards",
+          "slug": "code-review-and-engineering-standards",
+          "description": "Industry-ready lesson on Code Review and Engineering Standards.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Code Review and Engineering Standards \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lessons/04-code-review-and-engineering-standards/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Incident Management and Postmortems",
+          "slug": "incident-management-and-postmortems",
+          "description": "Industry-ready lesson on Incident Management and Postmortems.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Incident Management and Postmortems \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lessons/05-incident-management-and-postmortems/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Stakeholder Communication and Data Product Thinking",
+          "slug": "stakeholder-communication-and-data-product-thinking",
+          "description": "Industry-ready lesson on Stakeholder Communication and Data Product Thinking.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Stakeholder Communication and Data Product Thinking \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lessons/06-stakeholder-communication-and-data-product-thinking/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Working with Product, Analytics, ML and Platform Teams",
+          "slug": "working-with-product-analytics-ml-and-platform-teams",
+          "description": "Industry-ready lesson on Working with Product, Analytics, ML and Platform Teams.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Working with Product, Analytics, ML and Platform Teams \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lessons/07-working-with-product-analytics-ml-and-platform-teams/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Agile & Data Engineering Workplace \u2014 Hands-on Lab",
+              "instructions": "Complete the module lab from the repository. Submit code/design and validation evidence.",
+              "datasetUrl": "/content/courses/data-engineering/modules/16-agile-data-engineering-workplace/lab/lab.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 17,
+      "title": "End-to-End Data Engineering Projects",
+      "slug": "end-to-end-data-engineering-projects",
+      "presentation": "17-end-to-end-data-engineering-projects.qmd",
+      "presentationHtml": "17-end-to-end-data-engineering-projects.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.py",
+      "lessons": [
+        {
+          "title": "Project 1: CSV to Cloud Warehouse",
+          "slug": "project-1-csv-to-cloud-warehouse",
+          "description": "Industry-ready lesson on Project 1: CSV to Cloud Warehouse.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Project 1: CSV to Cloud Warehouse \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/17-end-to-end-data-engineering-projects/lessons/01-project-1-csv-to-cloud-warehouse/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Project 2: API to Data Lake",
+          "slug": "project-2-api-to-data-lake",
+          "description": "Industry-ready lesson on Project 2: API to Data Lake.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Project 2: API to Data Lake \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/17-end-to-end-data-engineering-projects/lessons/02-project-2-api-to-data-lake/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Project 3: IoT Streaming Analytics",
+          "slug": "project-3-iot-streaming-analytics",
+          "description": "Industry-ready lesson on Project 3: IoT Streaming Analytics.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Project 3: IoT Streaming Analytics \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/17-end-to-end-data-engineering-projects/lessons/03-project-3-iot-streaming-analytics/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Project 4: Data Quality + Observability",
+          "slug": "project-4-data-quality-observability",
+          "description": "Industry-ready lesson on Project 4: Data Quality + Observability.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Project 4: Data Quality + Observability \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/17-end-to-end-data-engineering-projects/lessons/04-project-4-data-quality-observability/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Project 5: Spark + BigQuery Production Pipeline",
+          "slug": "project-5-spark-bigquery-production-pipeline",
+          "description": "Industry-ready lesson on Project 5: Spark + BigQuery Production Pipeline.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Project 5: Spark + BigQuery Production Pipeline \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/17-end-to-end-data-engineering-projects/lessons/05-project-5-spark-bigquery-production-pipeline/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Project 6: Complete Modern Data Platform Capstone",
+          "slug": "project-6-complete-modern-data-platform-capstone",
+          "description": "Industry-ready lesson on Project 6: Complete Modern Data Platform Capstone.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Project 6: Complete Modern Data Platform Capstone \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/17-end-to-end-data-engineering-projects/lessons/06-project-6-complete-modern-data-platform-capstone/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Delta Lake / Databricks Lab",
+              "instructions": "Complete the End-to-End Data Engineering Projects hands-on lab. Use the repository lab starter and document your validation and failure handling.",
+              "datasetUrl": "/content/courses/data-engineering/modules/17-end-to-end-data-engineering-projects/lab/lab.py"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 18,
+      "title": "Data Engineering System Design",
+      "slug": "data-engineering-system-design",
+      "presentation": "18-data-engineering-system-design.qmd",
+      "presentationHtml": "18-data-engineering-system-design.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.md",
+      "lessons": [
+        {
+          "title": "System Design Interview Framework",
+          "slug": "system-design-interview-framework",
+          "description": "Industry-ready lesson on System Design Interview Framework.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "System Design Interview Framework \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/18-data-engineering-system-design/lessons/01-system-design-interview-framework/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Requirements, SLAs and Capacity Estimation",
+          "slug": "requirements-slas-and-capacity-estimation",
+          "description": "Industry-ready lesson on Requirements, SLAs and Capacity Estimation.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Requirements, SLAs and Capacity Estimation \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/18-data-engineering-system-design/lessons/02-requirements-slas-and-capacity-estimation/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Batch Data Platform Design",
+          "slug": "batch-data-platform-design",
+          "description": "Industry-ready lesson on Batch Data Platform Design.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Batch Data Platform Design \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/18-data-engineering-system-design/lessons/03-batch-data-platform-design/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Real-Time Streaming Platform Design",
+          "slug": "real-time-streaming-platform-design",
+          "description": "Industry-ready lesson on Real-Time Streaming Platform Design.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Real-Time Streaming Platform Design \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/18-data-engineering-system-design/lessons/04-real-time-streaming-platform-design/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Data Lakehouse Architecture at Scale",
+          "slug": "data-lakehouse-architecture-at-scale",
+          "description": "Industry-ready lesson on Data Lakehouse Architecture at Scale.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Data Lakehouse Architecture at Scale \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/18-data-engineering-system-design/lessons/05-data-lakehouse-architecture-at-scale/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Reliability, Cost and Performance Trade-offs",
+          "slug": "reliability-cost-and-performance-trade-offs",
+          "description": "Industry-ready lesson on Reliability, Cost and Performance Trade-offs.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Reliability, Cost and Performance Trade-offs \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/18-data-engineering-system-design/lessons/06-reliability-cost-and-performance-trade-offs/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Security, Governance and Multi-Tenancy",
+          "slug": "security-governance-and-multi-tenancy",
+          "description": "Industry-ready lesson on Security, Governance and Multi-Tenancy.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Security, Governance and Multi-Tenancy \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/18-data-engineering-system-design/lessons/07-security-governance-and-multi-tenancy/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Design Review: Production Data Platform",
+          "slug": "design-review-production-data-platform",
+          "description": "Industry-ready lesson on Design Review: Production Data Platform.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Design Review: Production Data Platform \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/18-data-engineering-system-design/lessons/08-design-review-production-data-platform/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Data Engineering System Design \u2014 Hands-on Lab",
+              "instructions": "Complete the module lab from the repository. Submit code/design and validation evidence.",
+              "datasetUrl": "/content/courses/data-engineering/modules/18-data-engineering-system-design/lab/lab.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "moduleNumber": 19,
+      "title": "Data Engineer Career & Interview Preparation",
+      "slug": "data-engineer-career-interview-preparation",
+      "presentation": "19-data-engineer-career-interview-preparation.qmd",
+      "presentationHtml": "19-data-engineer-career-interview-preparation.html",
+      "practice": "practice/practice.md",
+      "assignment": "assignments/module-assignment.md",
+      "lab": "lab/lab.md",
+      "lessons": [
+        {
+          "title": "Data Engineering Resume and Portfolio",
+          "slug": "data-engineering-resume-and-portfolio",
+          "description": "Industry-ready lesson on Data Engineering Resume and Portfolio.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Data Engineering Resume and Portfolio \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/19-data-engineer-career-interview-preparation/lessons/01-data-engineering-resume-and-portfolio/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "SQL Interview Patterns",
+          "slug": "sql-interview-patterns",
+          "description": "Industry-ready lesson on SQL Interview Patterns.",
+          "lessonType": "SQL",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "SQL Interview Patterns \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/19-data-engineer-career-interview-preparation/lessons/02-sql-interview-patterns/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Python and PySpark Interview Patterns",
+          "slug": "python-and-pyspark-interview-patterns",
+          "description": "Industry-ready lesson on Python and PySpark Interview Patterns.",
+          "lessonType": "PYTHON",
+          "durationMinutes": 60,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Python and PySpark Interview Patterns \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/19-data-engineer-career-interview-preparation/lessons/03-python-and-pyspark-interview-patterns/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Cloud and Architecture Interview Patterns",
+          "slug": "cloud-and-architecture-interview-patterns",
+          "description": "Industry-ready lesson on Cloud and Architecture Interview Patterns.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Cloud and Architecture Interview Patterns \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/19-data-engineer-career-interview-preparation/lessons/04-cloud-and-architecture-interview-patterns/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Scenario-Based Pipeline Debugging",
+          "slug": "scenario-based-pipeline-debugging",
+          "description": "Industry-ready lesson on Scenario-Based Pipeline Debugging.",
+          "lessonType": "THEORY",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Scenario-Based Pipeline Debugging \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/19-data-engineer-career-interview-preparation/lessons/05-scenario-based-pipeline-debugging/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "System Design Interview Practice",
+          "slug": "system-design-interview-practice",
+          "description": "Industry-ready lesson on System Design Interview Practice.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "System Design Interview Practice \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/19-data-engineer-career-interview-preparation/lessons/06-system-design-interview-practice/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Project Storytelling with STAR",
+          "slug": "project-storytelling-with-star",
+          "description": "Industry-ready lesson on Project Storytelling with STAR.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Project Storytelling with STAR \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/19-data-engineer-career-interview-preparation/lessons/07-project-storytelling-with-star/lesson.html"
+            }
+          ],
+          "labs": []
+        },
+        {
+          "title": "Mock Interview and Job Readiness Plan",
+          "slug": "mock-interview-and-job-readiness-plan",
+          "description": "Industry-ready lesson on Mock Interview and Job Readiness Plan.",
+          "lessonType": "PROJECT",
+          "durationMinutes": 50,
+          "isPreview": false,
+          "status": "published",
+          "content": [
+            {
+              "contentType": "NOTES",
+              "title": "Mock Interview and Job Readiness Plan \u2014 Notes",
+              "contentUrl": "/content/courses/data-engineering/modules/19-data-engineer-career-interview-preparation/lessons/08-mock-interview-and-job-readiness-plan/lesson.html"
+            }
+          ],
+          "labs": [
+            {
+              "labType": "COLAB_PYTHON",
+              "title": "Data Engineer Career & Interview Preparation \u2014 Hands-on Lab",
+              "instructions": "Complete the module lab from the repository. Submit code/design and validation evidence.",
+              "datasetUrl": "/content/courses/data-engineering/modules/19-data-engineer-career-interview-preparation/lab/lab.md"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "seo": {
+    "metaTitle": "Data Engineering Industry Ready Program | Infinity AI Cloud Academy",
+    "metaDescription": "Learn SQL, Python, PySpark, GCP, Airflow, Dataflow, dbt, Databricks, DevOps and production data engineering through hands-on projects.",
+    "focusKeyword": "data engineering course",
+    "keywords": [
+      "data engineering",
+      "SQL",
+      "Python",
+      "PySpark",
+      "GCP",
+      "BigQuery",
+      "Airflow",
+      "Dataflow",
+      "Databricks"
+    ]
+  }
+}

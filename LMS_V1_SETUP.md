@@ -39,6 +39,8 @@ Then configure:
 
 ```env
 SQL_LAB_DATABASE=infinity_sql_lab
+SQL_LAB_USER=infinity_lab_user
+SQL_LAB_PASSWORD=change-me
 ```
 
 Do not point this variable at the production Academy database.
@@ -101,3 +103,8 @@ npm start
 ```
 
 Before production deployment, set all `.env` values in Hostinger Environment Variables. Never upload `.env` or `.git` from a local project archive.
+
+
+### SQL Lab database isolation
+
+The SQL Lab uses a dedicated MySQL connection. Configure `SQL_LAB_DATABASE`, `SQL_LAB_USER` and `SQL_LAB_PASSWORD`. Do not change `DB_NAME`: the main Academy connection must continue pointing to the LMS database.
