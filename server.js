@@ -615,6 +615,81 @@ function isSafeSql(sql='') {
   const forbidden = /\b(DROP|DELETE|UPDATE|INSERT|ALTER|TRUNCATE|CREATE|RENAME|GRANT|REVOKE|LOAD|INTO\s+OUTFILE|INTO\s+DUMPFILE|CALL|SET|USE|SLEEP|BENCHMARK|LOAD_FILE|HANDLER|LOCK|UNLOCK)\b/i;
   return /^(SELECT|WITH|SHOW|DESCRIBE|DESC|EXPLAIN)\b/i.test(normalized) && !forbidden.test(normalized);
 }
+const embedLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 40,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Embedded resource limit reached. Please try again later.' },
+});
+
+app.post('/api/labs/embed/github-tree', embedLimiter, requireAuth('student'), async (req, res) => {
+  try {
+    const input = String(req.body?.url || '').trim();
+    const parsed = new URL(input);
+    if (parsed.protocol !== 'https:' || parsed.hostname.toLowerCase() !== 'github.com') {
+      return sendError(res, 'Only GitHub repository/folder URLs are allowed.', 400);
+    }
+    const parts = parsed.pathname.split('/').filter(Boolean);
+    if (parts.length < 2) return sendError(res, 'Invalid GitHub repository URL.', 400);
+    const owner = parts[0];
+    const repo = parts[1];
+    if (!/^[A-Za-z0-9_.-]+$/.test(owner) || !/^[A-Za-z0-9_.-]+$/.test(repo)) return sendError(res, 'Invalid GitHub repository URL.', 400);
+    let ref = 'main';
+    let prefix = '';
+    if (parts[2]?.toLowerCase() === 'tree') {
+      ref = parts[3] || 'main';
+      prefix = parts.slice(4).join('/');
+    }
+    if (!/^[A-Za-z0-9_.-]+$/.test(ref)) return sendError(res, 'Use a standard GitHub branch/tag name for embedded repositories.', 400);
+    const upstream = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/trees/${encodeURIComponent(ref)}?recursive=1`;
+    const response = await fetch(upstream, { headers: { 'Accept': 'application/vnd.github+json', 'User-Agent': 'Infinity-AI-Cloud-Academy-LMS/1.0' }, signal: AbortSignal.timeout(10000) });
+    if (!response.ok) return sendError(res, 'GitHub repository could not be loaded.', 502);
+    const body = await response.json();
+    const prefixWithSlash = prefix ? `${prefix.replace(/\/+$/, '')}/` : '';
+    const entries = Array.isArray(body.tree) ? body.tree.filter(item => item.path.startsWith(prefixWithSlash) && item.path.length < 500).slice(0, 300).map(item => ({ path:item.path, type:item.type, size:Number(item.size||0) })) : [];
+    return sendSuccess(res, { owner, repo, ref, prefix, entries, truncated:Boolean(body.truncated) });
+  } catch (error) {
+    return sendError(res, 'Unable to embed the GitHub repository.', 400);
+  }
+});
+
+app.post('/api/labs/embed/github', embedLimiter, requireAuth('student'), async (req, res) => {
+  try {
+    const input = String(req.body?.url || '').trim();
+    const parsed = new URL(input);
+    if (parsed.protocol !== 'https:' || parsed.hostname.toLowerCase() !== 'github.com') {
+      return sendError(res, 'Only GitHub file URLs are allowed.', 400);
+    }
+    const parts = parsed.pathname.split('/').filter(Boolean);
+    if (parts.length < 5 || parts[2].toLowerCase() !== 'blob') {
+      return sendError(res, 'Use a GitHub file URL in /owner/repository/blob/branch/path format.', 400);
+    }
+    const owner = parts[0];
+    const repo = parts[1];
+    const ref = parts[3];
+    const filePath = parts.slice(4).join('/');
+    if (!/^[A-Za-z0-9_.-]+$/.test(owner) || !/^[A-Za-z0-9_.-]+$/.test(repo) || !/^[A-Za-z0-9_.-]+$/.test(ref) || !filePath) {
+      return sendError(res, 'Invalid GitHub file URL.', 400);
+    }
+    const upstream = `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${filePath}`;
+    const response = await fetch(upstream, {
+      headers: { 'User-Agent': 'Infinity-AI-Cloud-Academy-LMS/1.0' },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!response.ok) return sendError(res, 'GitHub file could not be loaded.', 502);
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType && !contentType.includes('text') && !contentType.includes('javascript') && !contentType.includes('json') && !contentType.includes('xml')) {
+      return sendError(res, 'Only text/code GitHub files are supported in the embedded viewer.', 415);
+    }
+    const code = await response.text();
+    if (code.length > 500000) return sendError(res, 'GitHub file is too large for the embedded viewer.', 413);
+    return sendSuccess(res, { code, fileName: filePath.split('/').pop() || '' });
+  } catch (error) {
+    return sendError(res, 'Unable to embed the GitHub file.', 400);
+  }
+});
+
 app.get('/api/labs/sql/schema', requireAuth('student'), async (req,res)=>{
   try {
     if(!SQL_LAB_DATABASE) return sendSuccess(res,{configured:false,tables:[]});

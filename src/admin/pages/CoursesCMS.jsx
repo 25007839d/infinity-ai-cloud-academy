@@ -6,7 +6,7 @@ import { Input, Textarea, Select, SeoFields, EditorIntro, emptySeo } from '../co
 
 const lessonTypes = ['THEORY','SLIDES','VIDEO','SQL','PYTHON','PYSPARK','QUIZ','ASSIGNMENT','PROJECT','LIVE','RESOURCE'];
 const labTypes = ['SQL','COLAB_PYTHON','COLAB_PYSPARK','GITHUB_CODE','TEXT_CODE','INTERNAL_PYTHON','INTERNAL_PYSPARK'];
-const resourceTypes = ['GITHUB','DRIVE','COLAB','LINK'];
+const resourceTypes = ['GITHUB','DRIVE','YOUTUBE','COLAB','LINK'];
 const contentTypes = ['SLIDES','VIDEO','NOTES','ARTICLE','PDF','EMBED'];
 
 const blankLesson = () => ({ title:'', slug:'', description:'', whatYouLearnHtml:'', lessonType:'THEORY', durationMinutes:30, isPreview:false, status:'published', videoEmbedUrl:'', videoEmbedType:'YOUTUBE', driveEmbedUrl:'', content:[], labs:[], assignment:{title:'',instructions:'',submissionType:'TEXT',status:'published'} });
