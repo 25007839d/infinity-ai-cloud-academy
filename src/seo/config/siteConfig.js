@@ -65,7 +65,7 @@ const siteConfig = {
   contact: {
     email: "infinityaicloudacademy@gmail.com",
 
-    phone: "+91-8126037298",
+    phone: "+91-7310707298",
   },
 
   // =====================================================
