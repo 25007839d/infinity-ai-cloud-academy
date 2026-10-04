@@ -690,6 +690,112 @@ app.post('/api/labs/embed/github', embedLimiter, requireAuth('student'), async (
   }
 });
 
+app.post('/api/labs/embed/github', embedLimiter, requireAuth('student'), async (req, res) => {
+  try {
+    const input = String(req.body?.url || '').trim();
+    const parsed = new URL(input);
+    if (parsed.protocol !== 'https:' || parsed.hostname.toLowerCase() !== 'github.com') {
+      return sendError(res, 'Only GitHub file URLs are allowed.', 400);
+    }
+    const parts = parsed.pathname.split('/').filter(Boolean);
+    if (parts.length < 5 || parts[2].toLowerCase() !== 'blob') {
+      return sendError(res, 'Use a GitHub file URL in /owner/repository/blob/branch/path format.', 400);
+    }
+    const owner = parts[0];
+    const repo = parts[1];
+    const ref = parts[3];
+    const filePath = parts.slice(4).join('/');
+    if (!/^[A-Za-z0-9_.-]+$/.test(owner) || !/^[A-Za-z0-9_.-]+$/.test(repo) || !/^[A-Za-z0-9_.-]+$/.test(ref) || !filePath) {
+      return sendError(res, 'Invalid GitHub file URL.', 400);
+    }
+    const upstream = `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${filePath}`;
+    const response = await fetch(upstream, {
+      headers: { 'User-Agent': 'Infinity-AI-Cloud-Academy-LMS/1.0' },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!response.ok) return sendError(res, 'GitHub file could not be loaded.', 502);
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType && !contentType.includes('text') && !contentType.includes('javascript') && !contentType.includes('json') && !contentType.includes('xml')) {
+      return sendError(res, 'Only text/code GitHub files are supported in the embedded viewer.', 415);
+    }
+    const code = await response.text();
+    if (code.length > 500000) return sendError(res, 'GitHub file is too large for the embedded viewer.', 413);
+    return sendSuccess(res, { code, fileName: filePath.split('/').pop() || '' });
+  } catch (error) {
+    return sendError(res, 'Unable to embed the GitHub file.', 400);
+  }
+});
+
+
+
+app.post('/api/labs/embed/drive-text', embedLimiter, requireAuth('student'), async (req, res) => {
+  try {
+    const input = String(req.body?.url || '').trim();
+    const parsed = new URL(input);
+    const host = parsed.hostname.toLowerCase();
+    if (parsed.protocol !== 'https:' || !['drive.google.com', 'docs.google.com'].includes(host)) {
+      return sendError(res, 'Only Google Drive / Google Docs URLs are allowed.', 400);
+    }
+
+    // Google Docs text export.
+    const docMatch = parsed.pathname.match(/\/document\/d\/([^/]+)/i);
+    if (docMatch) {
+      const exportUrl = `https://docs.google.com/document/d/${encodeURIComponent(docMatch[1])}/export?format=txt`;
+      const response = await fetch(exportUrl, { signal: AbortSignal.timeout(15000), redirect: 'follow' });
+      if (!response.ok) return sendError(res, 'Google Drive document could not be loaded.', 502);
+      const text = await response.text();
+      if (!text.trim()) return sendError(res, 'The Google document is empty.', 422);
+      if (text.length > 500000) return sendError(res, 'Source file is too large for the SQL editor.', 413);
+      return sendSuccess(res, { code: text, fileName: `${docMatch[1]}.txt`, sourceType: 'DRIVE_DOC' });
+    }
+
+    const fileMatch = parsed.pathname.match(/\/file\/d\/([^/]+)/i) || parsed.searchParams.get('id')?.match(/^(.+)$/);
+    const fileId = fileMatch ? (Array.isArray(fileMatch) ? fileMatch[1] : fileMatch[0]) : '';
+    if (!fileId) {
+      return sendError(res, 'Use a Google Drive file URL for executable SQL, or a Google Docs URL.', 400);
+    }
+
+    const downloadUrl = `https://drive.google.com/uc?export=download&id=${encodeURIComponent(fileId)}`;
+    const response = await fetch(downloadUrl, {
+      headers: { 'User-Agent': 'Infinity-AI-Cloud-Academy-LMS/1.0' },
+      signal: AbortSignal.timeout(15000),
+      redirect: 'follow',
+    });
+    if (!response.ok) return sendError(res, 'Google Drive file could not be downloaded. Check that the file is publicly viewable.', 502);
+
+    const contentType = (response.headers.get('content-type') || '').toLowerCase();
+    const contentDisposition = response.headers.get('content-disposition') || '';
+    const buffer = Buffer.from(await response.arrayBuffer());
+    if (buffer.length > 500000) return sendError(res, 'Source file is too large for the SQL editor.', 413);
+
+    // Do not try to execute binary PPT/PDF/image/archive files. Those remain embedded as reference material.
+    const sample = buffer.subarray(0, 512).toString('utf8');
+    if (sample.startsWith('%PDF') || sample.startsWith('PK\u0003\u0004') || /image\//i.test(contentType) || /application\/pdf/i.test(contentType)) {
+      return sendError(res, 'This Drive resource is a binary document. Use a .sql/.txt file for executable SQL; PPT/PDF stays in the embedded material viewer.', 415);
+    }
+    if (!contentType.startsWith('text/') && !/json|xml|javascript|sql|octet-stream/.test(contentType) && !/\.sql|\.txt/i.test(contentDisposition)) {
+      return sendError(res, 'This Drive resource is not a text/code file.', 415);
+    }
+
+    // Protect the SQL editor from accidental binary content.
+    if (buffer.includes(0)) return sendError(res, 'This Drive resource contains binary data and cannot be loaded as executable SQL.', 415);
+    const code = buffer.toString('utf8').replace(/^\uFEFF/, '');
+    if (!code.trim()) return sendError(res, 'The Drive source file is empty.', 422);
+    return sendSuccess(res, { code, fileName: extractDriveFilename(contentDisposition) || `${fileId}.sql`, sourceType: 'DRIVE_FILE' });
+  } catch (error) {
+    console.error('Drive executable source error:', error);
+    return sendError(res, 'Unable to load executable SQL from Google Drive.', 400);
+  }
+});
+
+function extractDriveFilename(contentDisposition = '') {
+  const utf = String(contentDisposition).match(/filename\*=UTF-8''([^;]+)/i);
+  if (utf) {
+    try { return decodeURIComponent(utf[1]); } catch {}
+  }
+  const plain = String(contentDisposition).match(/filename="?([^";]+)"?/i);
+  return plain ? plain[1] : '';
+}
 app.get('/api/labs/sql/schema', requireAuth('student'), async (req,res)=>{
   try {
     if(!SQL_LAB_DATABASE) return sendSuccess(res,{configured:false,tables:[]});

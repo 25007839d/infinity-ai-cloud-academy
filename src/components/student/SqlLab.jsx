@@ -8,6 +8,7 @@ export default function SqlLab({ lab }) {
     ? lab.config.resources.filter((r) => r?.url)
     : [];
   const fallback = getFallbackResource(lab, resources);
+  const executableSource = getExecutableSource(lab);
   const [sql, setSql] = useState(starter);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
@@ -15,18 +16,50 @@ export default function SqlLab({ lab }) {
   const [schema, setSchema] = useState(null);
   const [selection, setSelection] = useState('');
   const [activeTab, setActiveTab] = useState('SQL');
+  const [sourceStatus, setSourceStatus] = useState(starter.trim() ? 'ready' : 'idle');
+  const [sourceOrigin, setSourceOrigin] = useState('');
+  const [sourceResetSql, setSourceResetSql] = useState(starter);
 
   useEffect(() => {
     apiRequest('/labs/sql/schema').then(setSchema).catch(() => {});
   }, []);
 
   useEffect(() => {
+    let active = true;
     setSql(starter);
+    setSourceResetSql(starter);
+    setSourceOrigin(starter.trim() ? 'Admin CMS' : '');
+    setSourceStatus(starter.trim() ? 'ready' : 'idle');
     setSelection('');
     setResult(null);
     setError('');
     setActiveTab('SQL');
-  }, [starter, lab?.id]);
+
+    if (!starter.trim()) {
+      const source = executableSource;
+      if (source?.url) {
+        setSourceStatus('loading');
+        loadExecutableSource(source)
+          .then((code) => {
+            if (!active) return;
+            if (String(code || '').trim()) {
+              setSql(code);
+              setSourceResetSql(code);
+              setSourceOrigin(source.type === 'GITHUB' ? 'GitHub' : 'Google Drive');
+              setSourceStatus('ready');
+            } else {
+              setSourceStatus('unavailable');
+            }
+          })
+          .catch((e) => {
+            if (!active) return;
+            setSourceStatus('unavailable');
+            setError(e?.message || 'Unable to load executable SQL from the configured source.');
+          });
+      }
+    }
+    return () => { active = false; };
+  }, [starter, lab?.id, executableSource?.url, executableSource?.type]);
 
   const run = async () => {
     const payload = selection.trim() || sql.trim();
@@ -91,12 +124,12 @@ export default function SqlLab({ lab }) {
       {activeResource ? <ResourcePanel resource={activeResource} /> : (
         <div className="grid lg:grid-cols-[1fr_260px]">
           <div className="p-5">
-            {starter.trim() ? (
+            {sql.trim() ? (
               <>
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
                     <p className="text-xs uppercase tracking-wider text-slate-500">Practice SQL</p>
-                    <p className="text-xs text-slate-500 mt-1">Queries are loaded from the Admin CMS. Select part of the editor to run only that SQL.</p>
+                    <p className="text-xs text-slate-500 mt-1">{sourceOrigin ? `Loaded from ${sourceOrigin}.` : 'Queries are loaded from the Admin CMS.'} Select part of the editor to run only that SQL.</p>
                   </div>
                   <span className="text-xs text-slate-500">{sql.length.toLocaleString()} chars</span>
                 </div>
@@ -112,7 +145,7 @@ export default function SqlLab({ lab }) {
                   <button type="button" onClick={run} disabled={running} className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 font-semibold disabled:opacity-50">
                     <Play size={16}/>{running ? 'Running…' : selection.trim() ? 'Run Selected' : 'Run All Queries'}
                   </button>
-                  <button type="button" onClick={() => { setSql(starter); setSelection(''); setResult(null); setError(''); }} className="inline-flex items-center gap-2 rounded-xl bg-slate-800 px-4 py-3">
+                  <button type="button" onClick={() => { setSql(sourceResetSql); setSelection(''); setResult(null); setError(''); }} className="inline-flex items-center gap-2 rounded-xl bg-slate-800 px-4 py-3">
                     <RotateCcw size={15}/> Reset
                   </button>
                   {selection.trim() && <span className="self-center text-xs text-cyan-300">Selected SQL will run</span>}
@@ -120,7 +153,7 @@ export default function SqlLab({ lab }) {
                 {error && <div className="mt-4 rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-sm text-red-300">{error}</div>}
                 {result && <div className="mt-5 space-y-5"><div className="text-xs text-slate-500">{results.length} statement(s) · {result.executionMs} ms total</div>{results.map((r, i) => <ResultTable key={r.index || i} result={r} index={i}/>)}</div>}
               </>
-            ) : <FallbackPractice resource={fallback} />}
+            ) : (sourceStatus === 'loading' ? <div className="rounded-xl border border-slate-700 bg-slate-900 p-6 text-sm text-slate-400">Loading executable SQL from the configured GitHub / Drive source…</div> : <FallbackPractice resource={fallback} />)}
           </div>
           <aside className="border-l border-slate-800 p-5">
             <h4 className="font-semibold">Available Tables</h4>
@@ -132,6 +165,31 @@ export default function SqlLab({ lab }) {
       )}
     </section>
   );
+}
+
+function getExecutableSource(lab) {
+  const cfg = lab?.config || {};
+  const direct = String(cfg.githubPath || '').trim();
+  if (direct) {
+    const type = inferResourceType(direct);
+    if (type === 'GITHUB' || type === 'DRIVE') return { type, url: direct };
+  }
+  const resources = Array.isArray(cfg.resources) ? cfg.resources : [];
+  for (const r of resources) {
+    const url = String(r?.url || '').trim();
+    const type = String(r?.type || inferResourceType(url)).toUpperCase();
+    if (url && (type === 'GITHUB' || type === 'DRIVE')) return { type, url };
+  }
+  return null;
+}
+
+async function loadExecutableSource(source) {
+  const endpoint = source.type === 'GITHUB' ? '/labs/embed/github' : '/labs/embed/drive-text';
+  const data = await apiRequest(endpoint, {
+    method: 'POST',
+    body: JSON.stringify({ url: source.url }),
+  });
+  return String(data?.code || data?.text || '');
 }
 
 function getFallbackResource(lab, resources) {
