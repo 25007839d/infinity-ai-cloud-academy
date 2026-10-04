@@ -47,7 +47,11 @@ function videoPreviewUrl(url='',type='YOUTUBE') {
 }
 function SecureEmbed({title,src,allow='',className='w-full h-full'}){
  if(!src) return null;
- return <iframe title={title} src={src} className={`${className} border-0`} loading="lazy" referrerPolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation" allow={allow} />;
+ const isGoogleDocs = /^https:\/\/(?:drive|docs)\.google\.com\//i.test(String(src));
+ // Google Drive/Docs/Slides viewers do not reliably work inside a sandboxed iframe.
+ // Keep the LMS UI free of outbound source links, but let Google's own viewer run normally.
+ const sandbox = isGoogleDocs ? undefined : 'allow-scripts allow-same-origin allow-forms allow-presentation';
+ return <iframe title={title} src={src} className={`${className} border-0`} loading="lazy" referrerPolicy="strict-origin-when-cross-origin" {...(sandbox?{sandbox}:{})} allow={allow} allowFullScreen />;
 }
 function VideoEmbed({url,type}){
  const src=videoPreviewUrl(url,type); if(!src) return null;
@@ -58,8 +62,10 @@ function drivePreviewUrl(url='') {
  const u=String(url).trim(); if(!u) return '';
  const file=u.match(/drive\.google\.com\/file\/d\/([^/]+)/i);
  if(file) return `https://drive.google.com/file/d/${file[1]}/preview`;
+ const slidesPub=u.match(/docs\.google\.com\/presentation\/d\/([^/]+)\/pub(?:\?[^#]*)?/i);
+ if(slidesPub) return `https://docs.google.com/presentation/d/${slidesPub[1]}/pub?embedded=true`;
  const slides=u.match(/docs\.google\.com\/presentation\/d\/([^/]+)/i);
- if(slides) return `https://docs.google.com/presentation/d/${slides[1]}/embed`;
+ if(slides) return `https://docs.google.com/presentation/d/${slides[1]}/embed?rm=minimal`;
  const folder=u.match(/drive\.google\.com\/(?:drive\/)?folders\/([^?/#]+)/i);
  if(folder) return `https://drive.google.com/embeddedfolderview?id=${folder[1]}#list`;
  const doc=u.match(/docs\.google\.com\/document\/d\/([^/]+)/i);
@@ -89,7 +95,12 @@ function GitHubMaterial({url}){
  return <div className="rounded-xl border border-dashed border-red-500/20 bg-red-500/5 p-5 text-sm text-red-300">GitHub code could not be embedded.</div>;
 }
 function EmbeddedResource({title,url,type}){
- const t=String(type||inferEmbedType(url)).toUpperCase(); const u=String(url||'').trim(); if(!u) return null;
+ const u=String(url||'').trim(); if(!u) return null;
+ // The URL is authoritative. This allows the Admin's "GitHub / Drive Path"
+ // field to accept either a GitHub URL or a Google Drive URL, regardless of the
+ // selected lab type. An explicit type is used only when the URL cannot be detected.
+ const detected= inferEmbedType(u);
+ const t=(detected !== 'LINK' ? detected : String(type||'LINK')).toUpperCase();
  if(t==='COLAB' || /colab\.research\.google\.com/i.test(u)) return <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-5"><p className="font-semibold">Google Colab</p><a href={u} target="_blank" rel="noreferrer" className="inline-flex mt-4 rounded-xl bg-blue-600 px-5 py-3 font-semibold">Open in Colab</a></div>;
  if(t==='GITHUB') return <GitHubMaterial url={u}/>;
  if(t==='DRIVE'){const src=drivePreviewUrl(u);return src?<div className="rounded-xl overflow-hidden border border-slate-800 bg-black"><SecureEmbed title={title||'Embedded Drive resource'} src={src} className="w-full min-h-[700px]" allow="autoplay"/></div>:null;}
@@ -107,7 +118,7 @@ function Lab({lab}){
  const cfg=lab.config||{}; const external=lab.labType!=='SQL'&&lab.externalUrl; const isColabExternal=Boolean(external&&/colab\.research\.google\.com/i.test(external)); const github=cfg.githubPath; const code=cfg.codeText; const dataset=lab.datasetUrl;
  return <section className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6"><div className="flex items-start justify-between gap-4"><div><p className="text-xs text-cyan-400 uppercase tracking-wider">Hands-on Lab</p><h2 className="text-2xl font-bold mt-1">{lab.title}</h2></div><span className="rounded-full bg-slate-900 px-3 py-1 text-xs">{lab.labType}</span></div>
   {isColabExternal?<a href={external} target="_blank" rel="noreferrer" className="inline-flex mt-4 rounded-xl bg-blue-600 px-5 py-3 font-semibold">Open in Colab</a>:null}
-  {!external&&github?<div className="mt-5"><EmbeddedResource title="GitHub Code" url={github} type="GITHUB"/></div>:null}
+  {!external&&github?<div className="mt-5"><EmbeddedResource title={inferEmbedType(github)==='DRIVE'?'Drive Material':'GitHub Code'} url={github} type={inferEmbedType(github)}/></div>:null}
   {!external&&dataset?<div className="mt-5"><EmbeddedResource title="Dataset" url={dataset} type={inferEmbedType(dataset)}/></div>:null}
   {code&&<div className="mt-5"><div className="text-xs uppercase tracking-wider text-slate-500 mb-2">Starter / Editable Code</div><pre className="max-h-[520px] overflow-auto rounded-xl border border-slate-800 bg-[#020617] p-4 text-sm text-emerald-200 whitespace-pre-wrap"><code>{code}</code></pre></div>}
   {external&&!isColabExternal?<div className="mt-5"><EmbeddedResource title={lab.title||'Lab Resource'} url={external} type={inferEmbedType(external)}/></div>:null}
