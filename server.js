@@ -466,7 +466,7 @@ async function loadCourseFromDb(slug) {
   }
   for (const row of labRows) {
     if (!labsByLesson.has(row.lesson_id)) labsByLesson.set(row.lesson_id, []);
-    labsByLesson.get(row.lesson_id).push({ id: row.id, labType: row.lab_type, title: row.title, externalUrl: row.external_url || '', instructions: row.instructions || '', datasetUrl: row.dataset_url || '', config: parseJsonSafe(row.config_json) });
+    labsByLesson.get(row.lesson_id).push({ id: row.id, labType: row.lab_type, title: row.title, externalUrl: row.external_url || '', instructions: row.instructions || '', datasetUrl: row.dataset_url || '', config: effectiveLabConfig(row) });
   }
   for (const lesson of lessonRows) {
     if (!lessonsByModule.has(lesson.module_id)) lessonsByModule.set(lesson.module_id, []);
@@ -837,7 +837,7 @@ app.get('/api/learn/courses/:slug/lessons/:lessonSlug', requireAuth('student'), 
     const [progress] = await pool.query(`SELECT * FROM lesson_progress WHERE user_id=? AND lesson_id=? LIMIT 1`, [req.user.id,lesson.id]);
     const video = content.find(c=>c.content_type==='VIDEO' && c.title==='Course Video');
     const drive = content.find(c=>c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF');
-    return sendSuccess(res, { lesson:{ id:lesson.id,title:lesson.title,slug:lesson.slug,description:lesson.description||'',whatYouLearnHtml:lesson.what_you_learn_html||'',lessonType:lesson.lesson_type,durationMinutes:Number(lesson.duration_minutes||0),isPreview:Boolean(lesson.is_preview),videoEmbedUrl:video?.content_url||'',videoEmbedType:video?.content_html||'YOUTUBE',driveEmbedUrl:drive?.content_url||'',content:content.filter(c=>!((c.content_type==='VIDEO' && c.title==='Course Video') || (c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF'))).map(c=>({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''})),labs:labs.map(l=>({id:l.id,labType:l.lab_type,title:l.title,externalUrl:l.external_url||'',instructions:l.instructions||'',datasetUrl:l.dataset_url||'',config:parseJsonSafe(l.config_json)}))}, progress:progress[0]||null });
+    return sendSuccess(res, { lesson:{ id:lesson.id,title:lesson.title,slug:lesson.slug,description:lesson.description||'',whatYouLearnHtml:lesson.what_you_learn_html||'',lessonType:lesson.lesson_type,durationMinutes:Number(lesson.duration_minutes||0),isPreview:Boolean(lesson.is_preview),videoEmbedUrl:video?.content_url||'',videoEmbedType:video?.content_html||'YOUTUBE',driveEmbedUrl:drive?.content_url||'',content:content.filter(c=>!((c.content_type==='VIDEO' && c.title==='Course Video') || (c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF'))).map(c=>({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''})),labs:labs.map(l=>({id:l.id,labType:l.lab_type,title:l.title,externalUrl:l.external_url||'',instructions:l.instructions||'',datasetUrl:l.dataset_url||'',config:effectiveLabConfig(l)}))}, progress:progress[0]||null });
   } catch (error) { console.error('Lesson error:', error); return sendError(res, 'Unable to load lesson.', 500); }
 });
 
@@ -977,6 +977,17 @@ function parseJsonSafe(value) {
   if (typeof value === 'object') return value;
   try { return JSON.parse(value); } catch { return null; }
 }
+function effectiveLabConfig(row) {
+  const config = parseJsonSafe(row?.config_json) || {};
+  // Backward compatibility: older deployments stored the SQL starter query
+  // in lesson_labs.instructions. Treat that legacy value as SQL Practice when
+  // config_json.starterSql has not yet been populated.
+  if (String(row?.lab_type || '').toUpperCase() === 'SQL' && !String(config.starterSql || '').trim() && String(row?.instructions || '').trim()) {
+    config.starterSql = String(row.instructions).trim();
+  }
+  return config;
+}
+
 
 function sanitizeHtml(input = '') {
   return String(input)
@@ -1080,7 +1091,7 @@ async function getCourseForAdmin(id) {
   lessons.forEach((l) => { if (!lessonMap.has(l.module_id)) lessonMap.set(l.module_id, []); lessonMap.get(l.module_id).push({ id:l.id,title:l.title,slug:l.slug,description:l.description||'',whatYouLearnHtml:l.what_you_learn_html||'',lessonType:l.lesson_type,durationMinutes:Number(l.duration_minutes||0),isPreview:Boolean(l.is_preview),status:l.status,videoEmbedUrl:'',videoEmbedType:'YOUTUBE',driveEmbedUrl:'',content:[],labs:[] }); });
   contents.forEach((c) => { for (const list of lessonMap.values()) { const lesson=list.find(l=>l.id===c.lesson_id); if(lesson) { if(c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF') lesson.driveEmbedUrl=c.content_url||''; else if(c.content_type==='VIDEO' && c.title==='Course Video') { lesson.videoEmbedUrl=c.content_url||''; lesson.videoEmbedType=c.content_html||'YOUTUBE'; } else lesson.content.push({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''}); } } });
   assignments.forEach((a) => { for (const list of lessonMap.values()) { const lesson=list.find(l=>l.id===a.lesson_id); if(lesson && !lesson.assignment.title) lesson.assignment={title:a.title||'',instructions:a.instructions||'',submissionType:a.submission_type||'TEXT',status:a.status||'draft'}; } });
-  labs.forEach((lab) => { for (const list of lessonMap.values()) { const lesson=list.find(l=>l.id===lab.lesson_id); if(lesson) lesson.labs.push({id:lab.id,labType:lab.lab_type,title:lab.title,externalUrl:lab.external_url||'',instructions:lab.instructions||'',datasetUrl:lab.dataset_url||'',config:parseJsonSafe(lab.config_json)}); } });
+  labs.forEach((lab) => { for (const list of lessonMap.values()) { const lesson=list.find(l=>l.id===lab.lesson_id); if(lesson) lesson.labs.push({id:lab.id,labType:lab.lab_type,title:lab.title,externalUrl:lab.external_url||'',instructions:lab.instructions||'',datasetUrl:lab.dataset_url||'',config:effectiveLabConfig(lab)}); } });
   return {
     ...mapCourseRow(course, tech.map((t) => t.technology), mods.map((m) => ({ id:m.id, module: m.module_name, description: m.description || '', topics: (topicMap.get(m.id) || []).map((t) => t.topic), lessons: lessonMap.get(m.id) || [] })), mapSeoRow(seo[0])),
     id: course.id, status: course.status, accessType: course.access_type || 'free', price:Number(course.price||0), currency:course.currency||'INR',
@@ -1340,9 +1351,9 @@ async function replaceCourseChildren(executor, courseId, body) {
             lab.labType,
             lab.title,
             lab.externalUrl || null,
-            lab.instructions || null,
+            null,
             lab.datasetUrl || null,
-            lab.config ? JSON.stringify(lab.config) : null,
+            lab.config ? JSON.stringify({ ...lab.config, ...(lab.labType === 'SQL' ? { starterSql: String(lab.config.starterSql || '').trim() } : {}) }) : null,
             k
           ]
         );

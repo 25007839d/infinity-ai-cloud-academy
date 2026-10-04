@@ -136,7 +136,7 @@ export default function SqlLab({ lab }) {
 
 function getFallbackResource(lab, resources) {
   const cfg = lab?.config || {};
-  if (cfg.githubPath) return { type: 'GITHUB', title: 'GitHub Code', url: cfg.githubPath };
+  if (cfg.githubPath) return { type: inferResourceType(cfg.githubPath), title: inferResourceType(cfg.githubPath) === 'DRIVE' ? 'Drive Material' : inferResourceType(cfg.githubPath) === 'YOUTUBE' ? 'Video' : 'GitHub Code', url: cfg.githubPath };
   const preferred = resources.find((r) => ['GITHUB', 'DRIVE', 'YOUTUBE', 'LINK'].includes(String(r.type || inferResourceType(r?.url)).toUpperCase()));
   if (preferred) return preferred;
   if (lab?.datasetUrl) return { type: inferResourceType(lab.datasetUrl), title: 'Dataset', url: lab.datasetUrl };
@@ -157,7 +157,7 @@ function resourceLabel(type, index) {
 function inferResourceType(url = '') {
   const u = String(url).toLowerCase();
   if (u.includes('github.com/')) return 'GITHUB';
-  if (u.includes('drive.google.com/') || u.includes('docs.google.com/presentation/')) return 'DRIVE';
+  if (u.includes('drive.google.com/') || u.includes('docs.google.com/presentation/') || u.includes('docs.google.com/document/') || u.includes('docs.google.com/spreadsheets/') || u.includes('docs.google.com/')) return 'DRIVE';
   if (u.includes('youtube.com/') || u.includes('youtu.be/')) return 'YOUTUBE';
   if (u.includes('colab.research.google.com/')) return 'COLAB';
   return 'LINK';
@@ -203,8 +203,9 @@ function FallbackPractice({ resource }) {
 }
 
 function ResourcePanel({ resource }) {
-  const type = String(resource?.type || inferResourceType(resource?.url)).toUpperCase();
   const url = String(resource?.url || '').trim();
+  const detectedType = inferResourceType(url);
+  const type = (detectedType !== 'LINK' ? detectedType : String(resource?.type || 'LINK')).toUpperCase();
 
   if (type === 'COLAB' || /colab\.research\.google\.com/i.test(url)) {
     return <div className="p-5 rounded-xl border border-slate-800 bg-slate-900">

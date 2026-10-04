@@ -59,7 +59,7 @@ function WhatYouLearn({html}){return <section className="rounded-2xl border bord
 function inferEmbedType(url=''){
  const u=String(url).toLowerCase();
  if(u.includes('github.com/')) return 'GITHUB';
- if(u.includes('drive.google.com/file/') || u.includes('docs.google.com/presentation/')) return 'DRIVE';
+ if(u.includes('drive.google.com/') || u.includes('docs.google.com/')) return 'DRIVE';
  if(u.includes('youtube.com/') || u.includes('youtu.be/')) return 'YOUTUBE';
  return 'LINK';
 }
