@@ -758,7 +758,7 @@ app.get('/api/learn/courses/:slug/lessons/:lessonSlug', requireAuth('student'), 
     const [content] = await pool.query(`SELECT content_type,title,content_url,content_html,display_order FROM lesson_content WHERE lesson_id=? ORDER BY display_order,title`, [lesson.id]);
     const [labs] = await pool.query(`SELECT id,lab_type,title,external_url,instructions,dataset_url,config_json,display_order FROM lesson_labs WHERE lesson_id=? ORDER BY display_order,title`, [lesson.id]);
     const [progress] = await pool.query(`SELECT * FROM lesson_progress WHERE user_id=? AND lesson_id=? LIMIT 1`, [req.user.id,lesson.id]);
-    return sendSuccess(res, { lesson:{ id:lesson.id,title:lesson.title,slug:lesson.slug,description:lesson.description||'',lessonType:lesson.lesson_type,durationMinutes:Number(lesson.duration_minutes||0),isPreview:Boolean(lesson.is_preview),content:content.map(c=>({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''})),labs:labs.map(l=>({id:l.id,labType:l.lab_type,title:l.title,externalUrl:l.external_url||'',instructions:l.instructions||'',datasetUrl:l.dataset_url||'',config:parseJsonSafe(l.config_json)}))}, progress:progress[0]||null });
+    return sendSuccess(res, { lesson:{ id:lesson.id,title:lesson.title,slug:lesson.slug,description:lesson.description||'',lessonType:lesson.lesson_type,durationMinutes:Number(lesson.duration_minutes||0),isPreview:Boolean(lesson.is_preview),content:content.filter(c=>!(c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF')).map(c=>({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''})),driveEmbedUrl:(content.find(c=>c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF')?.content_url)||'',labs:labs.map(l=>({id:l.id,labType:l.lab_type,title:l.title,externalUrl:l.external_url||'',instructions:l.instructions||'',datasetUrl:l.dataset_url||'',config:parseJsonSafe(l.config_json)}))}, progress:progress[0]||null });
   } catch (error) { console.error('Lesson error:', error); return sendError(res, 'Unable to load lesson.', 500); }
 });
 
@@ -909,6 +909,17 @@ function sanitizeHtml(input = '') {
     .replace(/javascript:/gi, '');
 }
 
+function cleanLessonHtml(input = '', lessonTitle = '') {
+  let html = sanitizeHtml(input);
+  const title = String(lessonTitle || '').replace(/\s+/g, ' ').trim().toLowerCase();
+  // Remove only duplicate/repeated title headings; keep meaningful section headings.
+  html = html.replace(/<h[1-6]([^>]*)>([\s\S]*?)<\/h[1-6]>/gi, (m, attrs, inner) => {
+    const plain = String(inner).replace(/<[^>]+>/g, ' ').replace(/&nbsp;/gi, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+    return (plain === title || plain === 'lesson content' || plain === 'course content') ? '' : m;
+  });
+  return html.replace(/(?:<p>\s*<\/p>|<div>\s*<\/div>)/gi, '').trim();
+}
+
 function slugify(value = '') {
   return String(value).toLowerCase().trim()
     .replace(/[^a-z0-9\s-]/g, '')
@@ -964,13 +975,15 @@ async function getCourseForAdmin(id) {
   }
   const lessonIds = lessons.map((l) => l.id);
   const [contents] = lessonIds.length ? await pool.query(`SELECT lesson_id, content_type, title, content_url, content_html, display_order FROM lesson_content WHERE lesson_id IN (${lessonIds.map(() => '?').join(',')}) ORDER BY display_order, title`, lessonIds) : [[]];
+  const [assignments] = lessonIds.length ? await pool.query(`SELECT lesson_id,title,instructions,submission_type,status FROM course_assignments WHERE lesson_id IN (${lessonIds.map(() => '?').join(',')}) ORDER BY created_at DESC`, lessonIds).catch(()=>[[]]) : [[]];
   const [labs] = lessonIds.length ? await pool.query(`SELECT id, lesson_id, lab_type, title, external_url, instructions, dataset_url, config_json, display_order FROM lesson_labs WHERE lesson_id IN (${lessonIds.map(() => '?').join(',')}) ORDER BY display_order, title`, lessonIds) : [[]];
   const [seo] = await pool.query('SELECT * FROM course_seo WHERE course_id = ? LIMIT 1', [id]);
   const topicMap = new Map();
   topics.forEach((t) => { if (!topicMap.has(t.module_id)) topicMap.set(t.module_id, []); topicMap.get(t.module_id).push(t); });
   const lessonMap = new Map();
   lessons.forEach((l) => { if (!lessonMap.has(l.module_id)) lessonMap.set(l.module_id, []); lessonMap.get(l.module_id).push({ id:l.id,title:l.title,slug:l.slug,description:l.description||'',lessonType:l.lesson_type,durationMinutes:Number(l.duration_minutes||0),isPreview:Boolean(l.is_preview),status:l.status,content:[],labs:[] }); });
-  contents.forEach((c) => { for (const list of lessonMap.values()) { const lesson=list.find(l=>l.id===c.lesson_id); if(lesson) lesson.content.push({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''}); } });
+  contents.forEach((c) => { for (const list of lessonMap.values()) { const lesson=list.find(l=>l.id===c.lesson_id); if(lesson) { if(c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF') lesson.driveEmbedUrl=c.content_url||''; else lesson.content.push({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''}); } } });
+  assignments.forEach((a) => { for (const list of lessonMap.values()) { const lesson=list.find(l=>l.id===a.lesson_id); if(lesson && !lesson.assignment.title) lesson.assignment={title:a.title||'',instructions:a.instructions||'',submissionType:a.submission_type||'TEXT',status:a.status||'draft'}; } });
   labs.forEach((lab) => { for (const list of lessonMap.values()) { const lesson=list.find(l=>l.id===lab.lesson_id); if(lesson) lesson.labs.push({id:lab.id,labType:lab.lab_type,title:lab.title,externalUrl:lab.external_url||'',instructions:lab.instructions||'',datasetUrl:lab.dataset_url||'',config:parseJsonSafe(lab.config_json)}); } });
   return {
     ...mapCourseRow(course, tech.map((t) => t.technology), mods.map((m) => ({ id:m.id, module: m.module_name, description: m.description || '', topics: (topicMap.get(m.id) || []).map((t) => t.topic), lessons: lessonMap.get(m.id) || [] })), mapSeoRow(seo[0])),
@@ -1179,6 +1192,13 @@ async function replaceCourseChildren(executor, courseId, body) {
       // Learning-experience rows (visual/practice/quiz/assignment) are deliberately
       // NOT deleted here.
       await executor.query('DELETE FROM lesson_content WHERE lesson_id = ?', [lessonId]);
+      const driveEmbedUrl = String(lesson.driveEmbedUrl || '').trim();
+      if (driveEmbedUrl) {
+        await executor.query(
+          `INSERT INTO lesson_content (id,lesson_id,content_type,title,content_url,content_html,display_order) VALUES (?,?,?,?,?,?,?)`,
+          [crypto.randomUUID(), lessonId, 'EMBED', 'Google Drive PPT / PDF', driveEmbedUrl, null, -1]
+        );
+      }
       const contents = Array.isArray(lesson.content) ? lesson.content : [];
       for (let k = 0; k < contents.length; k++) {
         const c = contents[k] || {};
@@ -1193,7 +1213,7 @@ async function replaceCourseChildren(executor, courseId, body) {
             c.contentType,
             c.title || null,
             c.contentUrl || null,
-            sanitizeHtml(c.contentHtml || ''),
+            cleanLessonHtml(c.contentHtml || '', title),
             k
           ]
         );
@@ -1219,6 +1239,16 @@ async function replaceCourseChildren(executor, courseId, body) {
             lab.config ? JSON.stringify(lab.config) : null,
             k
           ]
+        );
+      }
+
+      // Assignment is lesson-owned and is intentionally replaced from the CMS payload.
+      await executor.query('DELETE FROM course_assignments WHERE lesson_id = ?', [lessonId]);
+      const assignment = lesson.assignment || null;
+      if (assignment && String(assignment.title || '').trim() && String(assignment.instructions || '').trim()) {
+        await executor.query(
+          `INSERT INTO course_assignments (id,course_id,lesson_id,title,instructions,submission_type,status) VALUES (?,?,?,?,?,?,?)`,
+          [crypto.randomUUID(), courseId, lessonId, String(assignment.title).trim(), String(assignment.instructions), ['TEXT','LINK','FILE','CODE'].includes(assignment.submissionType) ? assignment.submissionType : 'TEXT', ['draft','published'].includes(assignment.status) ? assignment.status : 'published']
         );
       }
     }
