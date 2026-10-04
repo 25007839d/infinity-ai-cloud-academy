@@ -434,7 +434,7 @@ async function loadCourseFromDb(slug) {
     );
   }
   const [lessonRows] = await pool.query(
-    `SELECT id, module_id, title, slug, description, lesson_type, duration_minutes, is_preview, status, display_order
+    `SELECT id, module_id, title, slug, description, what_you_learn_html, lesson_type, duration_minutes, is_preview, status, display_order
      FROM course_lessons WHERE module_id IN (${moduleRows.map(() => '?').join(',') || 'NULL'})
      ORDER BY display_order ASC, title ASC`,
     moduleRows.map((m) => m.id)
@@ -729,7 +729,9 @@ app.get('/api/courses/:slug/preview/:lessonSlug', async (req,res)=>{
     const [rows]=await pool.query(`SELECT cl.*,cm.course_id,c.title AS course_title,c.slug AS course_slug FROM course_lessons cl JOIN course_modules cm ON cm.id=cl.module_id JOIN courses c ON c.id=cm.course_id WHERE c.slug=? AND cl.slug=? AND cl.status='published' AND cl.is_preview=1 LIMIT 1`,[req.params.slug,req.params.lessonSlug]);
     if(!rows.length)return sendError(res,'Preview lesson not found.',404);
     const l=rows[0]; const [content]=await pool.query(`SELECT content_type,title,content_url,content_html,display_order FROM lesson_content WHERE lesson_id=? ORDER BY display_order,title`,[l.id]);
-    return sendSuccess(res,{lesson:{id:l.id,title:l.title,slug:l.slug,description:l.description||'',lessonType:l.lesson_type,durationMinutes:Number(l.duration_minutes||0),content:content.map(c=>({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''}))},course:{title:l.course_title,slug:l.course_slug}});
+    const video = content.find(c=>c.content_type==='VIDEO' && c.title==='Course Video');
+    const drive = content.find(c=>c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF');
+    return sendSuccess(res,{lesson:{id:l.id,title:l.title,slug:l.slug,description:l.description||'',whatYouLearnHtml:l.what_you_learn_html||'',lessonType:l.lesson_type,durationMinutes:Number(l.duration_minutes||0),videoEmbedUrl:video?.content_url||'',videoEmbedType:video?.content_html||'YOUTUBE',driveEmbedUrl:drive?.content_url||'',content:content.filter(c=>!((c.content_type==='VIDEO'&&c.title==='Course Video')||(c.content_type==='EMBED'&&c.title==='Google Drive PPT / PDF'))).map(c=>({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''}))},course:{title:l.course_title,slug:l.course_slug}});
   }catch(e){console.error('Preview lesson error:',e);return sendError(res,'Unable to load preview.',500);}
 });
 
@@ -758,7 +760,9 @@ app.get('/api/learn/courses/:slug/lessons/:lessonSlug', requireAuth('student'), 
     const [content] = await pool.query(`SELECT content_type,title,content_url,content_html,display_order FROM lesson_content WHERE lesson_id=? ORDER BY display_order,title`, [lesson.id]);
     const [labs] = await pool.query(`SELECT id,lab_type,title,external_url,instructions,dataset_url,config_json,display_order FROM lesson_labs WHERE lesson_id=? ORDER BY display_order,title`, [lesson.id]);
     const [progress] = await pool.query(`SELECT * FROM lesson_progress WHERE user_id=? AND lesson_id=? LIMIT 1`, [req.user.id,lesson.id]);
-    return sendSuccess(res, { lesson:{ id:lesson.id,title:lesson.title,slug:lesson.slug,description:lesson.description||'',lessonType:lesson.lesson_type,durationMinutes:Number(lesson.duration_minutes||0),isPreview:Boolean(lesson.is_preview),content:content.filter(c=>!(c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF')).map(c=>({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''})),driveEmbedUrl:(content.find(c=>c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF')?.content_url)||'',labs:labs.map(l=>({id:l.id,labType:l.lab_type,title:l.title,externalUrl:l.external_url||'',instructions:l.instructions||'',datasetUrl:l.dataset_url||'',config:parseJsonSafe(l.config_json)}))}, progress:progress[0]||null });
+    const video = content.find(c=>c.content_type==='VIDEO' && c.title==='Course Video');
+    const drive = content.find(c=>c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF');
+    return sendSuccess(res, { lesson:{ id:lesson.id,title:lesson.title,slug:lesson.slug,description:lesson.description||'',whatYouLearnHtml:lesson.what_you_learn_html||'',lessonType:lesson.lesson_type,durationMinutes:Number(lesson.duration_minutes||0),isPreview:Boolean(lesson.is_preview),videoEmbedUrl:video?.content_url||'',videoEmbedType:video?.content_html||'YOUTUBE',driveEmbedUrl:drive?.content_url||'',content:content.filter(c=>!((c.content_type==='VIDEO' && c.title==='Course Video') || (c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF'))).map(c=>({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''})),labs:labs.map(l=>({id:l.id,labType:l.lab_type,title:l.title,externalUrl:l.external_url||'',instructions:l.instructions||'',datasetUrl:l.dataset_url||'',config:parseJsonSafe(l.config_json)}))}, progress:progress[0]||null });
   } catch (error) { console.error('Lesson error:', error); return sendError(res, 'Unable to load lesson.', 500); }
 });
 
@@ -912,12 +916,29 @@ function sanitizeHtml(input = '') {
 function cleanLessonHtml(input = '', lessonTitle = '') {
   let html = sanitizeHtml(input);
   const title = String(lessonTitle || '').replace(/\s+/g, ' ').trim().toLowerCase();
-  // Remove only duplicate/repeated title headings; keep meaningful section headings.
+  const normalize = (value) => String(value || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/gi, ' ').replace(/&amp;/gi, '&').replace(/\s+/g, ' ').trim().toLowerCase();
+
+  // Remove known generated boilerplate sections entirely. The actual teaching content remains.
+  const removeSection = (source, headingPattern) => {
+    const re = new RegExp(`<h[1-6][^>]*>\\s*${headingPattern}\\s*<\\/h[1-6]>[\\s\\S]*?(?=<h[1-6][^>]*>|$)`, 'i');
+    return source.replace(re, '');
+  };
+  html = removeSection(html, 'what\\s+you\\s+will\\s+learn');
+  html = removeSection(html, 'industry\\s+perspective');
+  html = removeSection(html, 'hands[- ]on\\s+objective');
+  html = removeSection(html, 'interview\\s+checkpoint');
+
+  // Remove generated source/reference blocks from the lesson HTML; source links belong to LMS reference/lab fields.
+  html = html.replace(/<(?:div|p|section)[^>]*>\s*(?:<[^>]+>)*\s*source\s*:\s*[\s\S]*?<\/(?:div|p|section)>/gi, '');
+  html = html.replace(/<p[^>]*>\s*<strong>\s*module\s*:?\s*<\/strong>[\s\S]*?<\/p>/gi, '');
+  html = html.replace(/<p[^>]*>\s*this\s+lesson\s+is\s+part\s+of\s+the\s+infinity\s+ai\s+cloud\s+academy[\s\S]*?<\/p>/gi, '');
+
+  // Remove a duplicated lesson title only; keep meaningful headings.
   html = html.replace(/<h[1-6]([^>]*)>([\s\S]*?)<\/h[1-6]>/gi, (m, attrs, inner) => {
-    const plain = String(inner).replace(/<[^>]+>/g, ' ').replace(/&nbsp;/gi, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+    const plain = normalize(inner);
     return (plain === title || plain === 'lesson content' || plain === 'course content') ? '' : m;
   });
-  return html.replace(/(?:<p>\s*<\/p>|<div>\s*<\/div>)/gi, '').trim();
+  return html.replace(/(?:<p>\s*<\/p>|<div>\s*<\/div>|<section>\s*<\/section>)/gi, '').trim();
 }
 
 function slugify(value = '') {
@@ -971,7 +992,7 @@ async function getCourseForAdmin(id) {
   }
   let lessons = [];
   if (mods.length) {
-    [lessons] = await pool.query(`SELECT id, module_id, title, slug, description, lesson_type, duration_minutes, is_preview, status, display_order FROM course_lessons WHERE module_id IN (${mods.map(() => '?').join(',')}) ORDER BY display_order, title`, mods.map((m) => m.id));
+    [lessons] = await pool.query(`SELECT id, module_id, title, slug, description, what_you_learn_html, lesson_type, duration_minutes, is_preview, status, display_order FROM course_lessons WHERE module_id IN (${mods.map(() => '?').join(',')}) ORDER BY display_order, title`, mods.map((m) => m.id));
   }
   const lessonIds = lessons.map((l) => l.id);
   const [contents] = lessonIds.length ? await pool.query(`SELECT lesson_id, content_type, title, content_url, content_html, display_order FROM lesson_content WHERE lesson_id IN (${lessonIds.map(() => '?').join(',')}) ORDER BY display_order, title`, lessonIds) : [[]];
@@ -981,8 +1002,8 @@ async function getCourseForAdmin(id) {
   const topicMap = new Map();
   topics.forEach((t) => { if (!topicMap.has(t.module_id)) topicMap.set(t.module_id, []); topicMap.get(t.module_id).push(t); });
   const lessonMap = new Map();
-  lessons.forEach((l) => { if (!lessonMap.has(l.module_id)) lessonMap.set(l.module_id, []); lessonMap.get(l.module_id).push({ id:l.id,title:l.title,slug:l.slug,description:l.description||'',lessonType:l.lesson_type,durationMinutes:Number(l.duration_minutes||0),isPreview:Boolean(l.is_preview),status:l.status,content:[],labs:[] }); });
-  contents.forEach((c) => { for (const list of lessonMap.values()) { const lesson=list.find(l=>l.id===c.lesson_id); if(lesson) { if(c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF') lesson.driveEmbedUrl=c.content_url||''; else lesson.content.push({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''}); } } });
+  lessons.forEach((l) => { if (!lessonMap.has(l.module_id)) lessonMap.set(l.module_id, []); lessonMap.get(l.module_id).push({ id:l.id,title:l.title,slug:l.slug,description:l.description||'',whatYouLearnHtml:l.what_you_learn_html||'',lessonType:l.lesson_type,durationMinutes:Number(l.duration_minutes||0),isPreview:Boolean(l.is_preview),status:l.status,videoEmbedUrl:'',videoEmbedType:'YOUTUBE',driveEmbedUrl:'',content:[],labs:[] }); });
+  contents.forEach((c) => { for (const list of lessonMap.values()) { const lesson=list.find(l=>l.id===c.lesson_id); if(lesson) { if(c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF') lesson.driveEmbedUrl=c.content_url||''; else if(c.content_type==='VIDEO' && c.title==='Course Video') { lesson.videoEmbedUrl=c.content_url||''; lesson.videoEmbedType=c.content_html||'YOUTUBE'; } else lesson.content.push({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''}); } } });
   assignments.forEach((a) => { for (const list of lessonMap.values()) { const lesson=list.find(l=>l.id===a.lesson_id); if(lesson && !lesson.assignment.title) lesson.assignment={title:a.title||'',instructions:a.instructions||'',submissionType:a.submission_type||'TEXT',status:a.status||'draft'}; } });
   labs.forEach((lab) => { for (const list of lessonMap.values()) { const lesson=list.find(l=>l.id===lab.lesson_id); if(lesson) lesson.labs.push({id:lab.id,labType:lab.lab_type,title:lab.title,externalUrl:lab.external_url||'',instructions:lab.instructions||'',datasetUrl:lab.dataset_url||'',config:parseJsonSafe(lab.config_json)}); } });
   return {
@@ -1150,14 +1171,15 @@ async function replaceCourseChildren(executor, courseId, body) {
         lessonId = crypto.randomUUID();
         await executor.query(
           `INSERT INTO course_lessons
-            (id,module_id,title,slug,description,lesson_type,duration_minutes,is_preview,status,display_order)
-           VALUES (?,?,?,?,?,?,?,?,?,?)`,
+            (id,module_id,title,slug,description,what_you_learn_html,lesson_type,duration_minutes,is_preview,status,display_order)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
           [
             lessonId,
             moduleId,
             title,
             slug,
             String(lesson.description || '').trim() || null,
+            cleanLessonHtml(lesson.whatYouLearnHtml || '', ''),
             lessonType,
             Number(lesson.durationMinutes || 0),
             lesson.isPreview ? 1 : 0,
@@ -1168,7 +1190,7 @@ async function replaceCourseChildren(executor, courseId, body) {
       } else {
         await executor.query(
           `UPDATE course_lessons
-              SET module_id=?, title=?, slug=?, description=?, lesson_type=?,
+              SET module_id=?, title=?, slug=?, description=?, what_you_learn_html=?, lesson_type=?,
                   duration_minutes=?, is_preview=?, status=?, display_order=?
             WHERE id=?`,
           [
@@ -1176,6 +1198,7 @@ async function replaceCourseChildren(executor, courseId, body) {
             title,
             slug,
             String(lesson.description || '').trim() || null,
+            cleanLessonHtml(lesson.whatYouLearnHtml || '', ''),
             lessonType,
             Number(lesson.durationMinutes || 0),
             lesson.isPreview ? 1 : 0,
@@ -1192,6 +1215,14 @@ async function replaceCourseChildren(executor, courseId, body) {
       // Learning-experience rows (visual/practice/quiz/assignment) are deliberately
       // NOT deleted here.
       await executor.query('DELETE FROM lesson_content WHERE lesson_id = ?', [lessonId]);
+      const videoEmbedUrl = String(lesson.videoEmbedUrl || '').trim();
+      const videoEmbedType = ['YOUTUBE','GOOGLE_DRIVE'].includes(String(lesson.videoEmbedType || 'YOUTUBE')) ? String(lesson.videoEmbedType || 'YOUTUBE') : 'YOUTUBE';
+      if (videoEmbedUrl) {
+        await executor.query(
+          `INSERT INTO lesson_content (id,lesson_id,content_type,title,content_url,content_html,display_order) VALUES (?,?,?,?,?,?,?)`,
+          [crypto.randomUUID(), lessonId, 'VIDEO', 'Course Video', videoEmbedUrl, videoEmbedType, -2]
+        );
+      }
       const driveEmbedUrl = String(lesson.driveEmbedUrl || '').trim();
       if (driveEmbedUrl) {
         await executor.query(

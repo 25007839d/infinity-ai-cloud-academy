@@ -9,3 +9,7 @@ ALTER TABLE lesson_labs
 
 -- 3) Admin TXT assignment uploads are stored as course_assignments.instructions.
 -- The browser reads the .txt file and sends its text to the existing CMS API.
+
+-- 4) Admin-editable What You'll Learn block, kept separate from lesson HTML.
+ALTER TABLE course_lessons
+  ADD COLUMN IF NOT EXISTS what_you_learn_html MEDIUMTEXT NULL AFTER description;

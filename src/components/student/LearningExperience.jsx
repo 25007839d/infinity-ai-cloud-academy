@@ -10,15 +10,13 @@ export default function LearningExperience({ courseSlug, lessonSlug }){
       <Lightbulb size={19} className="text-amber-300"/>
       <div>
         <h2 className="font-bold text-amber-100">Learning Activities</h2>
-        <p className="text-sm text-slate-400 mt-1">Practice, quiz and assignment content could not be loaded right now.</p>
+        <p className="text-sm text-slate-400 mt-1">Test and assignment content could not be loaded right now.</p>
         <p className="text-xs text-slate-500 mt-2">{error}</p>
       </div>
     </div>
   </section>;
-  if(!data) return <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 text-slate-500">Loading practice, quiz, lab and assignment…</div>;
-  return <div className="mt-8 space-y-6">
-    <Visuals visuals={data.visuals||[]}/>
-    <Practice practice={data.practice}/>
+  if(!data) return <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 text-slate-500">Loading test and assignment…</div>;
+  return <div className="space-y-6">
     <Quiz quiz={data.quiz}/>
     <Assignment assignment={data.assignment}/>
   </div>;
