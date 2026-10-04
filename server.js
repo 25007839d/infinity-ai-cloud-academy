@@ -835,9 +835,35 @@ app.get('/api/learn/courses/:slug/lessons/:lessonSlug', requireAuth('student'), 
     const [content] = await pool.query(`SELECT content_type,title,content_url,content_html,display_order FROM lesson_content WHERE lesson_id=? ORDER BY display_order,title`, [lesson.id]);
     const [labs] = await pool.query(`SELECT id,lab_type,title,external_url,instructions,dataset_url,config_json,display_order FROM lesson_labs WHERE lesson_id=? ORDER BY display_order,title`, [lesson.id]);
     const [progress] = await pool.query(`SELECT * FROM lesson_progress WHERE user_id=? AND lesson_id=? LIMIT 1`, [req.user.id,lesson.id]);
+    // Build deterministic course navigation so the lesson player can expose Previous/Next
+    // across module boundaries using the same published lesson ordering as the course sidebar.
+    const [navigationRows] = await pool.query(`
+      SELECT cl.id, cl.title, cl.slug, cl.display_order, cl.module_id, cm.module_name, cm.display_order AS module_display_order
+      FROM course_lessons cl
+      JOIN course_modules cm ON cm.id=cl.module_id
+      WHERE cm.course_id=? AND cl.status='published'
+      ORDER BY cm.display_order ASC, cm.module_name ASC, cl.display_order ASC, cl.title ASC`, [lesson.course_id]);
+    const navIndex = navigationRows.findIndex(r => r.id === lesson.id);
+    const previous = navIndex > 0 ? navigationRows[navIndex - 1] : null;
+    const next = navIndex >= 0 && navIndex < navigationRows.length - 1 ? navigationRows[navIndex + 1] : null;
     const video = content.find(c=>c.content_type==='VIDEO' && c.title==='Course Video');
     const drive = content.find(c=>c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF');
-    return sendSuccess(res, { lesson:{ id:lesson.id,title:lesson.title,slug:lesson.slug,description:lesson.description||'',whatYouLearnHtml:lesson.what_you_learn_html||'',lessonType:lesson.lesson_type,durationMinutes:Number(lesson.duration_minutes||0),isPreview:Boolean(lesson.is_preview),videoEmbedUrl:video?.content_url||'',videoEmbedType:video?.content_html||'YOUTUBE',driveEmbedUrl:drive?.content_url||'',content:content.filter(c=>!((c.content_type==='VIDEO' && c.title==='Course Video') || (c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF'))).map(c=>({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''})),labs:labs.map(l=>({id:l.id,labType:l.lab_type,title:l.title,externalUrl:l.external_url||'',instructions:l.instructions||'',datasetUrl:l.dataset_url||'',config:effectiveLabConfig(l)}))}, progress:progress[0]||null });
+    return sendSuccess(res, { lesson:{
+      id:lesson.id,title:lesson.title,slug:lesson.slug,description:lesson.description||'',
+      moduleId:lesson.module_id,moduleName:lesson.module_name||'',
+      whatYouLearnHtml:lesson.what_you_learn_html||'',lessonType:lesson.lesson_type,
+      durationMinutes:Number(lesson.duration_minutes||0),isPreview:Boolean(lesson.is_preview),
+      videoEmbedUrl:video?.content_url||'',videoEmbedType:video?.content_html||'YOUTUBE',
+      driveEmbedUrl:drive?.content_url||'',
+      content:content.filter(c=>!((c.content_type==='VIDEO' && c.title==='Course Video') || (c.content_type==='EMBED' && c.title==='Google Drive PPT / PDF'))).map(c=>({contentType:c.content_type,title:c.title||'',contentUrl:c.content_url||'',contentHtml:c.content_html||''})),
+      labs:labs.map(l=>({id:l.id,labType:l.lab_type,title:l.title,externalUrl:l.external_url||'',instructions:l.instructions||'',datasetUrl:l.dataset_url||'',config:effectiveLabConfig(l)}))
+    }, progress:progress[0]||null,
+      navigation:{
+        currentIndex:navIndex>=0?navIndex:0,total:navigationRows.length,
+        previous:previous?{id:previous.id,title:previous.title,slug:previous.slug,moduleId:previous.module_id,moduleName:previous.module_name}:null,
+        next:next?{id:next.id,title:next.title,slug:next.slug,moduleId:next.module_id,moduleName:next.module_name}:null
+      }
+    });
   } catch (error) { console.error('Lesson error:', error); return sendError(res, 'Unable to load lesson.', 500); }
 });
 
