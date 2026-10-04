@@ -225,8 +225,12 @@ function drivePreview(url = '') {
   const u = String(url).trim();
   const file = u.match(/drive\.google\.com\/file\/d\/([^/]+)/i);
   if (file) return `https://drive.google.com/file/d/${file[1]}/preview`;
+  const slidesPub = u.match(/docs\.google\.com\/presentation\/d\/([^/]+)\/pub(?:\?[^#]*)?/i);
+  if (slidesPub) return `https://docs.google.com/presentation/d/${slidesPub[1]}/pub?embedded=true`;
+  const slidesPublished = u.match(/docs\.google\.com\/presentation\/d\/e\/([^/]+)\/(?:embed|pub)/i);
+  if (slidesPublished) return `https://docs.google.com/presentation/d/e/${slidesPublished[1]}/embed?start=false&loop=false`;
   const slides = u.match(/docs\.google\.com\/presentation\/d\/([^/]+)/i);
-  if (slides) return `https://docs.google.com/presentation/d/${slides[1]}/embed`;
+  if (slides) return `https://docs.google.com/presentation/d/${slides[1]}/preview?rm=minimal`;
   const folder = u.match(/drive\.google\.com\/(?:drive\/)?folders\/([^?/#]+)/i);
   if (folder) return `https://drive.google.com/embeddedfolderview?id=${folder[1]}#list`;
   const doc = u.match(/docs\.google\.com\/document\/d\/([^/]+)/i);
