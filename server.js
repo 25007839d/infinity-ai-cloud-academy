@@ -1835,45 +1835,22 @@ app.post('/api/admin/courses', requireAuth('admin'), async (req, res) => {
     const data = coursePayload(req.body);
     const id = crypto.randomUUID();
     await conn.beginTransaction();
+    // Keep the INSERT values and placeholders in lock-step.
+    // This prevents MariaDB syntax errors if the course payload gains/loses a field.
+    const courseColumns = [
+      'id','slug','title','tagline','short_description','overview','thumbnail','banner',
+      'category','duration','level','mode','language','certificate_available',
+      'certificate_title','featured','students','rating','projects','modules_count',
+      'icon','theme_color','display_order','coming_soon','popular','enrollment_open',
+      'last_updated','version','access_type','price','currency','status'
+    ];
+    const courseValues = [id, ...courseColumns.slice(1).map((column) => data[column])];
+    const coursePlaceholders = courseValues.map(() => '?').join(',');
+
     await conn.query(
-  `INSERT INTO courses (
-    id,
-    slug,
-    title,
-    tagline,
-    short_description,
-    overview,
-    thumbnail,
-    banner,
-    category,
-    duration,
-    level,
-    mode,
-    language,
-    certificate_available,
-    certificate_title,
-    featured,
-    students,
-    rating,
-    projects,
-    modules_count,
-    icon,
-    theme_color,
-    display_order,
-    coming_soon,
-    popular,
-    enrollment_open,
-    last_updated,
-    version,
-    access_type,
-    price,
-    currency,
-    status
-  ) VALUES (
-    ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
-  )`,
-  Object.values({ id, ...data })
-);
+      `INSERT INTO courses (${courseColumns.join(',')}) VALUES (${coursePlaceholders})`,
+      courseValues
+    );
     await replaceCourseChildren(conn, id, req.body);
     await conn.commit();
     return sendSuccess(res, await getCourseForAdmin(id), 201);
