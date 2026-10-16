@@ -1835,7 +1835,45 @@ app.post('/api/admin/courses', requireAuth('admin'), async (req, res) => {
     const data = coursePayload(req.body);
     const id = crypto.randomUUID();
     await conn.beginTransaction();
-    await conn.query(`INSERT INTO courses (id,slug,title,tagline,short_description,overview,thumbnail,banner,category,duration,level,mode,language,certificate_available,certificate_title,featured,students,rating,projects,modules_count,icon,theme_color,display_order,coming_soon,popular,enrollment_open,last_updated,version,access_type,price,currency,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, Object.values({id,...data}));
+    await conn.query(
+  `INSERT INTO courses (
+    id,
+    slug,
+    title,
+    tagline,
+    short_description,
+    overview,
+    thumbnail,
+    banner,
+    category,
+    duration,
+    level,
+    mode,
+    language,
+    certificate_available,
+    certificate_title,
+    featured,
+    students,
+    rating,
+    projects,
+    modules_count,
+    icon,
+    theme_color,
+    display_order,
+    coming_soon,
+    popular,
+    enrollment_open,
+    last_updated,
+    version,
+    access_type,
+    price,
+    currency,
+    status
+  ) VALUES (
+    ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
+  )`,
+  Object.values({ id, ...data })
+);
     await replaceCourseChildren(conn, id, req.body);
     await conn.commit();
     return sendSuccess(res, await getCourseForAdmin(id), 201);
