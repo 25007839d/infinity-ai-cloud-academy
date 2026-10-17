@@ -310,3 +310,287 @@ body.public-site select:focus-visible {
   outline: 3px solid rgba(37,99,235,.28);
   outline-offset: 3px;
 }
+
+
+/* ==========================================================================
+   PUBLIC SITE LIGHT THEME — FINAL CONTRAST FIX
+   The Home page has a root wrapper with its own dark background. The previous
+   theme correctly styled several child sections but could not override that
+   wrapper, so inherited dark styling remained in sections such as Courses.
+   ========================================================================== */
+
+/* The Home/public-site application canvas must be light. */
+body.public-site #root > div.overflow-x-hidden {
+  background: #f7f9fc !important;
+  color: #0f172a !important;
+}
+
+/* Public sections that explicitly requested the old dark canvas. */
+body.public-site #root .bg-\[\#030712\],
+body.public-site #root .bg-\[\#020617\],
+body.public-site #root .bg-\[\#07111f\],
+body.public-site #root .bg-\[\#08111F\],
+body.public-site #root .bg-\[\#08111f\],
+body.public-site #root .bg-\[\#050B18\],
+body.public-site #root .bg-\[\#0b1220\],
+body.public-site #root .bg-\[\#111827\] {
+  background-color: #f7f9fc !important;
+  color: #0f172a !important;
+}
+
+/* Sections without an explicit background inherit the light application canvas. */
+body.public-site #root main {
+  background: #f7f9fc;
+  color: #0f172a;
+}
+
+/* Cards used throughout the public site. */
+body.public-site #root .bg-slate-900,
+body.public-site #root .bg-slate-900\/60,
+body.public-site #root .bg-slate-900\/70,
+body.public-site #root .bg-slate-950\/50,
+body.public-site #root .bg-slate-950\/60,
+body.public-site #root .bg-slate-950\/80,
+body.public-site #root .bg-slate-950\/90,
+body.public-site #root .bg-slate-950\/95 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Public-site headings should never inherit the old dark-section white text. */
+body.public-site #root h1,
+body.public-site #root h2,
+body.public-site #root h3,
+body.public-site #root h4,
+body.public-site #root h5,
+body.public-site #root h6 {
+  color: #0f172a;
+}
+
+/* Restore readable body copy on the light canvas. */
+body.public-site #root p.text-slate-300,
+body.public-site #root p.text-slate-400,
+body.public-site #root div.text-slate-300,
+body.public-site #root div.text-slate-400 {
+  color: #475569 !important;
+}
+
+/* Existing white text classes become dark on normal public content. */
+body.public-site #root .text-white {
+  color: #0f172a !important;
+}
+
+/* But real CTA/button surfaces retain white text. */
+body.public-site #root a.bg-gradient-to-r.text-white,
+body.public-site #root button.bg-gradient-to-r.text-white,
+body.public-site #root a.bg-gradient-to-br.text-white,
+body.public-site #root button.bg-gradient-to-br.text-white,
+body.public-site #root a.bg-blue-600.text-white,
+body.public-site #root button.bg-blue-600.text-white,
+body.public-site #root a.bg-blue-700.text-white,
+body.public-site #root button.bg-blue-700.text-white,
+body.public-site #root a.bg-cyan-500.text-white,
+body.public-site #root button.bg-cyan-500.text-white,
+body.public-site #root a.bg-cyan-600.text-white,
+body.public-site #root button.bg-cyan-600.text-white {
+  color: #ffffff !important;
+}
+
+/* Gradient hero headings remain gradient text rather than becoming white. */
+body.public-site #root .bg-clip-text.text-transparent {
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  background-image: linear-gradient(90deg, #1d4ed8, #0891b2, #0284c7) !important;
+}
+
+/* Navigation remains readable over the light header. */
+body.public-site #root header a.text-slate-300,
+body.public-site #root header button.text-slate-300 {
+  color: #334155 !important;
+}
+body.public-site #root header h2.text-white {
+  color: #0f172a !important;
+}
+body.public-site #root header .text-slate-400 {
+  color: #64748b !important;
+}
+
+/* Keep footer intentionally dark; it is the visual anchor of the site. */
+body.public-site #root footer {
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+body.public-site #root footer h1,
+body.public-site #root footer h2,
+body.public-site #root footer h3,
+body.public-site #root footer h4,
+body.public-site #root footer .text-white {
+  color: #ffffff !important;
+}
+body.public-site #root footer .text-slate-300,
+body.public-site #root footer .text-slate-400,
+body.public-site #root footer .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+/* Prevent the long brand lockup from visually colliding with the navigation. */
+body.public-site #root header .mx-auto.flex.h-20 {
+  gap: 1.25rem;
+}
+body.public-site #root header .mx-auto.flex.h-20 > a[aria-label="Infinity AI Cloud Academy"] {
+  flex: 0 0 auto;
+  min-width: 205px;
+}
+body.public-site #root header .mx-auto.flex.h-20 > a[aria-label="Infinity AI Cloud Academy"] h2 {
+  line-height: 1.15;
+}
+
+
+/* ==========================================================================
+   SITE-WIDE BUTTON + TAB DESIGN SYSTEM
+   Consistent geometry, typography, focus and interaction across public pages.
+   Semantic colors (primary/success/danger) remain meaningful.
+   ========================================================================== */
+
+.site-btn,
+body.public-site #root button.rounded-xl,
+body.public-site #root a.rounded-xl,
+body.public-site #root button.rounded-lg,
+body.public-site #root a.rounded-lg {
+  min-height: 44px;
+  border-radius: 12px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease,
+              box-shadow .2s ease, transform .2s ease;
+}
+
+.site-btn:hover,
+body.public-site #root button.rounded-xl:hover,
+body.public-site #root a.rounded-xl:hover {
+  transform: translateY(-1px);
+}
+
+.site-btn:active,
+body.public-site #root button.rounded-xl:active,
+body.public-site #root a.rounded-xl:active {
+  transform: translateY(0);
+}
+
+.site-btn:focus-visible,
+body.public-site #root button.rounded-xl:focus-visible,
+body.public-site #root a.rounded-xl:focus-visible,
+.site-tab:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .18);
+  outline-offset: 2px;
+}
+
+/* Public-site primary actions */
+body.public-site #root button.bg-blue-600,
+body.public-site #root a.bg-blue-600,
+body.public-site #root button.bg-blue-700,
+body.public-site #root a.bg-blue-700,
+body.public-site #root button.bg-gradient-to-r,
+body.public-site #root a.bg-gradient-to-r {
+  color: #fff !important;
+}
+
+body.public-site #root button.bg-blue-600:hover,
+body.public-site #root a.bg-blue-600:hover,
+body.public-site #root button.bg-blue-700:hover,
+body.public-site #root a.bg-blue-700:hover {
+  background-color: #1d4ed8 !important;
+}
+
+/* Public-site secondary buttons */
+body.public-site #root button.bg-slate-800,
+body.public-site #root a.bg-slate-800 {
+  background: #fff !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+body.public-site #root button.bg-slate-800:hover,
+body.public-site #root a.bg-slate-800:hover {
+  background: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+}
+
+/* Public-site outline actions */
+body.public-site #root button.border-cyan-500,
+body.public-site #root a.border-cyan-500,
+body.public-site #root button.border-cyan-400,
+body.public-site #root a.border-cyan-400 {
+  background: #fff !important;
+  color: #0e7490 !important;
+  border-color: #0891b2 !important;
+}
+
+body.public-site #root button.border-cyan-500:hover,
+body.public-site #root a.border-cyan-500:hover,
+body.public-site #root button.border-cyan-400:hover,
+body.public-site #root a.border-cyan-400:hover {
+  background: #ecfeff !important;
+  color: #0e7490 !important;
+}
+
+/* Consistent pill/category tabs */
+body.public-site #root .site-tab {
+  min-height: 40px;
+  padding: 9px 18px;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  background: #fff;
+  color: #475569;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+body.public-site #root .site-tab:hover {
+  border-color: #2563eb;
+  color: #1d4ed8;
+  background: #eff6ff;
+}
+
+body.public-site #root .site-tab.is-active {
+  border-color: #2563eb !important;
+  background: #2563eb !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, .16);
+}
+
+/* Underline tabs inside learning tools retain their tab geometry while
+   sharing the same blue interaction language. */
+body.public-site #root .site-tab-underline,
+.learning-shell .site-tab-underline {
+  min-height: 40px;
+  border-radius: 8px 8px 0 0;
+}
+
+/* Student/Learning controls use the same action geometry. */
+.learning-shell button.rounded-xl,
+.learning-shell a.rounded-xl,
+.learning-shell button.rounded-lg,
+.learning-shell a.rounded-lg {
+  min-height: 44px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease,
+              box-shadow .2s ease, transform .2s ease;
+}
+
+.learning-shell button.rounded-xl:hover,
+.learning-shell a.rounded-xl:hover {
+  transform: translateY(-1px);
+}
+
+/* Keep destructive actions semantically red. */
+body.public-site #root button.bg-red-600,
+body.public-site #root a.bg-red-600,
+.learning-shell button.bg-red-600,
+.learning-shell a.bg-red-600 {
+  color: #fff !important;
+}

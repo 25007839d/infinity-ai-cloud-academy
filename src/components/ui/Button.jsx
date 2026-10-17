@@ -2,22 +2,25 @@ import { Link } from "react-router-dom";
 
 const variants = {
   primary:
-    "bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/30",
+    "site-btn site-btn-primary bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:shadow-lg hover:shadow-blue-500/20",
 
   secondary:
-    "bg-slate-800 text-white hover:bg-slate-700",
+    "site-btn site-btn-secondary bg-slate-800 text-white hover:bg-slate-700",
 
   outline:
-    "border border-cyan-500 text-cyan-400 hover:bg-cyan-500 hover:text-black",
+    "site-btn site-btn-outline border border-cyan-500 text-cyan-400 hover:bg-cyan-500 hover:text-white",
 
   success:
-    "bg-green-600 text-white hover:bg-green-700",
+    "site-btn site-btn-success bg-green-600 text-white hover:bg-green-700",
 
   danger:
-    "bg-red-600 text-white hover:bg-red-700",
+    "site-btn site-btn-danger bg-red-600 text-white hover:bg-red-700",
 
   ghost:
-    "text-slate-300 hover:bg-slate-800",
+    "site-btn site-btn-ghost text-slate-300 hover:bg-slate-800",
+
+  gray:
+    "site-btn site-btn-secondary bg-slate-100 text-slate-700 hover:bg-slate-200",
 };
 
 const sizes = {
@@ -45,7 +48,8 @@ export default function Button({
     rounded-xl
     font-semibold
     transition-all
-    duration-300
+    duration-200
+    focus-visible:outline-none
     ${variants[variant]}
     ${sizes[size]}
     ${className}

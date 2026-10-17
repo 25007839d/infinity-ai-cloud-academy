@@ -113,7 +113,7 @@ export default function SqlLab({ lab }) {
               key={tab.key}
               type="button"
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2.5 rounded-t-xl text-sm font-semibold border-b-2 ${activeTab === tab.key ? 'text-emerald-700 border-emerald-500 bg-emerald-50' : 'text-slate-500 border-transparent hover:text-slate-900'}`}
+              className={`site-tab site-tab-underline px-4 py-2.5 rounded-t-xl text-sm font-semibold border-b-2 ${activeTab === tab.key ? 'is-active text-emerald-700 border-emerald-500 bg-emerald-50' : 'text-slate-500 border-transparent hover:text-slate-900'}`}
             >
               {tab.label}
             </button>
