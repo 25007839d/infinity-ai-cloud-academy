@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 export default function StudentProtectedRoute({ children }) {
   const { user, loading } = useAuth();
   const location = useLocation();
-  if (loading) return <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">Loading your Academy…</div>;
+  if (loading) return <div className="min-h-screen bg-[#f7f9fc] text-slate-900 flex items-center justify-center">Loading your Academy…</div>;
   if (!user) return <Navigate to="/" replace state={{ from: location.pathname }} />;
   return children;
 }

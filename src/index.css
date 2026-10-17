@@ -200,14 +200,22 @@ body.public-site .border-slate-600 {
   border-color: var(--site-border) !important;
 }
 
-/* Preserve white text on primary action buttons and gradients. */
-body.public-site .bg-gradient-to-r,
-body.public-site .bg-gradient-to-br,
+/* Primary actions keep white text; gradient headline text must remain transparent
+   so its gradient fill is visible on the light canvas. */
+body.public-site a.bg-gradient-to-r,
+body.public-site button.bg-gradient-to-r,
+body.public-site a.bg-gradient-to-br,
+body.public-site button.bg-gradient-to-br,
 body.public-site .bg-blue-600,
 body.public-site .bg-blue-700,
 body.public-site .bg-cyan-500,
 body.public-site .bg-cyan-600 {
   color: #fff !important;
+}
+
+body.public-site .bg-clip-text.text-transparent {
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
 }
 
 /* Dark translucent cards -> white elevated cards. */
