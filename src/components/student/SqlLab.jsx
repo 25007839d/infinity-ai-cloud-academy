@@ -95,8 +95,8 @@ export default function SqlLab({ lab }) {
     : null;
 
   return (
-    <section className="rounded-2xl border border-emerald-500/20 bg-slate-950 overflow-hidden">
-      <div className="p-5 border-b border-slate-800 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+    <section className="learning-lab rounded-2xl border overflow-hidden">
+      <div className="p-5 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div>
           <p className="text-xs text-emerald-400 uppercase tracking-wider">SQL LAB</p>
           <h3 className="text-xl font-bold mt-1">{lab?.title || 'SQL Practice'}</h3>
@@ -106,14 +106,14 @@ export default function SqlLab({ lab }) {
         </div>
       </div>
 
-      <div className="border-b border-slate-800 px-5 pt-3 overflow-x-auto">
+      <div className="border-b px-5 pt-3 overflow-x-auto">
         <div className="flex gap-2 min-w-max">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               type="button"
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2.5 rounded-t-xl text-sm font-semibold border-b-2 ${activeTab === tab.key ? 'text-emerald-300 border-emerald-400 bg-emerald-500/5' : 'text-slate-400 border-transparent hover:text-white'}`}
+              className={`px-4 py-2.5 rounded-t-xl text-sm font-semibold border-b-2 ${activeTab === tab.key ? 'text-emerald-700 border-emerald-500 bg-emerald-50' : 'text-slate-500 border-transparent hover:text-slate-900'}`}
             >
               {tab.label}
             </button>
@@ -139,7 +139,7 @@ export default function SqlLab({ lab }) {
                   onSelect={(e) => setSelection(e.currentTarget.value.slice(e.currentTarget.selectionStart, e.currentTarget.selectionEnd))}
                   spellCheck="false"
                   placeholder="Enter SQL practice queries from Admin CMS."
-                  className="w-full min-h-72 rounded-xl border border-slate-700 bg-[#020617] p-4 font-mono text-sm text-emerald-200 outline-none focus:border-cyan-500"
+                  className="learning-code-editor w-full min-h-72 rounded-xl border p-4 font-mono text-sm outline-none focus:border-cyan-500"
                 />
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button type="button" onClick={run} disabled={running} className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 font-semibold disabled:opacity-50">
@@ -155,7 +155,7 @@ export default function SqlLab({ lab }) {
               </>
             ) : (sourceStatus === 'loading' ? <div className="rounded-xl border border-slate-700 bg-slate-900 p-6 text-sm text-slate-400">Loading executable SQL from the configured GitHub / Drive source…</div> : <FallbackPractice resource={fallback} />)}
           </div>
-          <aside className="border-l border-slate-800 p-5">
+          <aside className="learning-sidebar border-l p-5">
             <h4 className="font-semibold">Available Tables</h4>
             {schema?.tables?.length
               ? <ul className="mt-3 space-y-2">{schema.tables.map((t) => <li key={t} className="text-sm text-cyan-300 font-mono">{t}</li>)}</ul>
@@ -345,10 +345,10 @@ function GitHubEmbed({ url }) {
 
   if (status === 'loading') return <div className="p-5 text-sm text-slate-400">Loading embedded GitHub code…</div>;
   if (status === 'tree-loading') return <div className="p-5 text-sm text-slate-400">Loading embedded GitHub files…</div>;
-  if (status === 'ready') return <div className="rounded-xl border border-slate-800 overflow-hidden"><div className="px-4 py-3 bg-slate-900 text-sm font-semibold flex items-center justify-between gap-3"><span className="flex items-center gap-2"><FileCode2 size={16}/>Embedded Code</span>{selectedFile && <span className="text-xs text-slate-500 font-mono truncate">{selectedFile}</span>}</div><pre className="max-h-[720px] overflow-auto bg-[#020617] p-5 text-sm text-emerald-200 whitespace-pre-wrap"><code>{code}</code></pre></div>;
+  if (status === 'ready') return <div className="rounded-xl border border-slate-800 overflow-hidden"><div className="px-4 py-3 bg-slate-900 text-sm font-semibold flex items-center justify-between gap-3"><span className="flex items-center gap-2"><FileCode2 size={16}/>Embedded Code</span>{selectedFile && <span className="text-xs text-slate-500 font-mono truncate">{selectedFile}</span>}</div><pre className="learning-code max-h-[720px] overflow-auto p-5 text-sm whitespace-pre-wrap"><code>{code}</code></pre></div>;
   if (status === 'tree-ready' && tree) {
     const files = (tree.entries || []).filter((x) => x.type === 'blob');
-    return <div className="rounded-xl border border-slate-800 overflow-hidden"><div className="px-4 py-3 bg-slate-900"><div className="text-sm font-semibold flex items-center gap-2"><FileCode2 size={16}/>Embedded GitHub Files</div><div className="text-xs text-slate-500 mt-1">Browse code inside the Academy without leaving the lesson.</div></div><div className="max-h-[420px] overflow-auto divide-y divide-slate-800">{files.length ? files.map((f) => <button key={f.path} type="button" onClick={() => loadFile(f.path)} className="w-full text-left px-4 py-3 text-sm text-cyan-300 hover:bg-slate-900 font-mono">{f.path}</button>) : <div className="p-5 text-sm text-slate-500">No code files found in this embedded path.</div>}</div></div>;
+    return <div className="learning-file-browser rounded-xl border overflow-hidden"><div className="px-5 py-4 border-b"><div className="text-sm font-semibold flex items-center gap-2"><FileCode2 size={16} className="text-indigo-600"/>Embedded GitHub Files</div><div className="text-xs mt-1">Browse project files inside the Academy without leaving the lesson.</div></div><div className="max-h-[420px] overflow-auto divide-y">{files.length ? files.map((f) => <button key={f.path} type="button" onClick={() => loadFile(f.path)} className="learning-file-row w-full text-left px-4 py-3 text-sm font-mono">{f.path}</button>) : <div className="p-5 text-sm">No code files found in this embedded path.</div>}</div></div>;
   }
   if (status === 'unsupported') return <div className="rounded-xl border border-dashed border-slate-700 bg-slate-950 p-5 text-sm text-slate-400">GitHub resource could not be embedded.</div>;
   return <div className="rounded-xl border border-dashed border-red-500/20 bg-red-500/5 p-5 text-sm text-red-300">GitHub resource could not be embedded.</div>;

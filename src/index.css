@@ -22,3 +22,129 @@ a {
 button {
   cursor: pointer;
 }
+
+/* Infinity Learning Experience Theme
+   Scoped to student learning pages so the public/admin application keeps its
+   existing behavior while lessons become easier on the eyes for long sessions. */
+.learning-shell {
+  --learning-bg: #f6f8fb;
+  --learning-surface: #ffffff;
+  --learning-surface-soft: #f8fafc;
+  --learning-border: #e2e8f0;
+  --learning-border-strong: #cbd5e1;
+  --learning-text: #172033;
+  --learning-heading: #0f172a;
+  --learning-muted: #667085;
+  --learning-subtle: #98a2b3;
+  --learning-link: #2563eb;
+  --learning-code-bg: #f8fafc;
+  --learning-code-text: #1f2937;
+  background: var(--learning-bg) !important;
+  color: var(--learning-text) !important;
+  color-scheme: light;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.learning-shell .learning-header {
+  background: rgba(255,255,255,.94) !important;
+  border-color: var(--learning-border) !important;
+  color: var(--learning-heading) !important;
+  backdrop-filter: blur(14px);
+}
+
+.learning-shell .learning-header a { color: #475467 !important; }
+.learning-shell .learning-header a:hover { color: #111827 !important; }
+.learning-shell .text-white { color: var(--learning-heading) !important; }
+.learning-shell .text-slate-100,
+.learning-shell .text-slate-200 { color: #344054 !important; }
+.learning-shell .text-slate-300 { color: #475467 !important; }
+.learning-shell .text-slate-400 { color: #667085 !important; }
+.learning-shell .text-slate-500 { color: #667085 !important; }
+.learning-shell .text-slate-600 { color: #475467 !important; }
+.learning-shell .border-slate-800,
+.learning-shell .border-slate-700 { border-color: var(--learning-border) !important; }
+.learning-shell .bg-slate-950,
+.learning-shell .bg-slate-900 { background-color: var(--learning-surface) !important; }
+.learning-shell .bg-slate-800 { background-color: #eef2f7 !important; color: #344054 !important; }
+.learning-shell .bg-black { background-color: #f8fafc !important; }
+.learning-shell .bg-\[\#030712\] { background-color: var(--learning-bg) !important; }
+.learning-shell .bg-\[\#020617\] { background-color: var(--learning-code-bg) !important; }
+
+.learning-shell h1,
+.learning-shell h2,
+.learning-shell h3,
+.learning-shell h4 { color: var(--learning-heading); }
+.learning-shell a { color: var(--learning-link); }
+.learning-shell button { color: inherit; }
+
+.learning-shell .learning-lab {
+  background: var(--learning-surface) !important;
+  border-color: #dbe4ef !important;
+  box-shadow: 0 10px 30px rgba(15,23,42,.06);
+}
+
+.learning-shell .learning-lab .border-b,
+.learning-shell .learning-sidebar { border-color: var(--learning-border) !important; }
+.learning-shell .learning-sidebar { background: #fbfcfe; }
+.learning-shell .learning-code-editor,
+.learning-shell .learning-code {
+  background: var(--learning-code-bg) !important;
+  color: var(--learning-code-text) !important;
+  border-color: var(--learning-border-strong) !important;
+}
+.learning-shell .learning-code-editor::placeholder { color: #98a2b3; }
+.learning-shell .learning-code-editor:focus { box-shadow: 0 0 0 3px rgba(37,99,235,.10); }
+
+.learning-shell .learning-file-browser {
+  background: #fff;
+  border-color: var(--learning-border) !important;
+  box-shadow: 0 8px 24px rgba(15,23,42,.05);
+}
+.learning-shell .learning-file-browser > div:first-child { background: #f8fafc; border-color: var(--learning-border) !important; }
+.learning-shell .learning-file-browser .text-sm { color: #344054; }
+.learning-shell .learning-file-browser .text-xs { color: #667085; }
+.learning-shell .learning-file-row {
+  background: #fff;
+  color: #2563eb !important;
+  border-color: #eef2f6 !important;
+  transition: background-color .16s ease, color .16s ease, padding-left .16s ease;
+}
+.learning-shell .learning-file-row:hover {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  padding-left: 1.15rem;
+}
+.learning-shell .learning-file-row:focus-visible {
+  outline: 3px solid rgba(37,99,235,.18);
+  outline-offset: -3px;
+}
+
+.learning-shell .prose { color: #344054; }
+.learning-shell .prose strong,
+.learning-shell .prose h1,
+.learning-shell .prose h2,
+.learning-shell .prose h3,
+.learning-shell .prose h4 { color: #101828; }
+.learning-shell .prose a { color: #2563eb; }
+.learning-shell .prose code { color: #7c3aed; background: #f4f3ff; }
+
+/* Keep embeds functional, but give their frame a calm light surface. The
+   third-party document itself remains controlled by its provider. */
+.learning-shell iframe { background: #f8fafc; }
+
+@media (max-width: 768px) {
+  .learning-shell main { padding-left: 1rem !important; padding-right: 1rem !important; }
+  .learning-shell .learning-lab { border-radius: 1rem; }
+}
+
+/* Accent colors need slightly deeper tones on the light learning canvas. */
+.learning-shell .text-cyan-200 { color: #0e7490 !important; }
+.learning-shell .text-cyan-300 { color: #0891b2 !important; }
+.learning-shell .text-cyan-400 { color: #0e7490 !important; }
+.learning-shell .text-emerald-200 { color: #047857 !important; }
+.learning-shell .text-emerald-300 { color: #047857 !important; }
+.learning-shell .text-blue-300 { color: #1d4ed8 !important; }
+.learning-shell .text-purple-300 { color: #7e22ce !important; }
+.learning-shell .text-amber-100 { color: #92400e !important; }
+.learning-shell .text-amber-300 { color: #b45309 !important; }
+.learning-shell .text-red-300 { color: #b42318 !important; }
