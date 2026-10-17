@@ -148,3 +148,157 @@ button {
 .learning-shell .text-amber-100 { color: #92400e !important; }
 .learning-shell .text-amber-300 { color: #b45309 !important; }
 .learning-shell .text-red-300 { color: #b42318 !important; }
+
+
+/* ==========================================================================
+   INFINITY AI CLOUD ACADEMY — PROFESSIONAL LIGHT PUBLIC WEBSITE
+   Public marketing/content pages only. Admin and student learning routes
+   intentionally keep their existing styling and functionality.
+   ========================================================================== */
+
+body.public-site {
+  --site-bg: #f7f9fc;
+  --site-surface: #ffffff;
+  --site-border: #e2e8f0;
+  --site-border-strong: #cbd5e1;
+  --site-text: #0f172a;
+  --site-muted: #64748b;
+  --site-primary: #2563eb;
+  --site-cyan: #0891b2;
+  background: var(--site-bg) !important;
+  color: var(--site-text) !important;
+  color-scheme: light;
+}
+
+/* Replace dark page surfaces with clean light surfaces. */
+body.public-site .bg-\[\#030712\],
+body.public-site .bg-\[\#020617\],
+body.public-site .bg-\[\#07111f\],
+body.public-site .bg-\[\#08111F\],
+body.public-site .bg-\[\#050B18\],
+body.public-site .bg-\[\#0b1220\],
+body.public-site .bg-\[\#111827\],
+body.public-site .bg-slate-950,
+body.public-site .bg-slate-900 {
+  background-color: var(--site-bg) !important;
+}
+body.public-site .bg-slate-800 { background-color: #f1f5f9 !important; }
+body.public-site .bg-slate-700 { background-color: #e2e8f0 !important; }
+body.public-site .bg-black { background-color: #f8fafc !important; }
+
+body.public-site .text-white { color: var(--site-text) !important; }
+body.public-site .text-slate-100,
+body.public-site .text-slate-200 { color: #1e293b !important; }
+body.public-site .text-slate-300 { color: #334155 !important; }
+body.public-site .text-slate-400 { color: var(--site-muted) !important; }
+body.public-site .text-slate-500 { color: #64748b !important; }
+body.public-site .text-slate-600 { color: #475569 !important; }
+
+body.public-site .border-slate-800,
+body.public-site .border-slate-700,
+body.public-site .border-slate-600 {
+  border-color: var(--site-border) !important;
+}
+
+/* Preserve white text on primary action buttons and gradients. */
+body.public-site .bg-gradient-to-r,
+body.public-site .bg-gradient-to-br,
+body.public-site .bg-blue-600,
+body.public-site .bg-blue-700,
+body.public-site .bg-cyan-500,
+body.public-site .bg-cyan-600 {
+  color: #fff !important;
+}
+
+/* Dark translucent cards -> white elevated cards. */
+body.public-site .bg-slate-900\/60,
+body.public-site .bg-slate-900\/70,
+body.public-site .bg-slate-950\/80,
+body.public-site .bg-slate-950\/90,
+body.public-site .bg-slate-950\/95 {
+  background-color: rgba(255,255,255,.96) !important;
+  border-color: var(--site-border) !important;
+}
+
+/* Navbar */
+body.public-site header.fixed {
+  color: var(--site-text);
+  background: rgba(255,255,255,.88) !important;
+  backdrop-filter: blur(14px);
+}
+body.public-site header.fixed.scrolled {
+  background: rgba(255,255,255,.96) !important;
+  border-color: var(--site-border) !important;
+  box-shadow: 0 8px 30px rgba(15,23,42,.07) !important;
+}
+body.public-site header .border-cyan-500 {
+  border-color: var(--site-primary) !important;
+  color: var(--site-primary) !important;
+}
+body.public-site header .hover\:bg-cyan-500:hover {
+  background-color: var(--site-primary) !important;
+  color: #fff !important;
+}
+
+/* Hero */
+body.public-site #hero,
+body.public-site section#hero {
+  background:
+    radial-gradient(circle at 8% 15%, rgba(37,99,235,.10), transparent 32%),
+    radial-gradient(circle at 92% 78%, rgba(8,145,178,.10), transparent 30%),
+    linear-gradient(180deg,#fff 0%,#f7f9fc 100%) !important;
+}
+body.public-site #hero .bg-blue-600\/20 { background-color: rgba(37,99,235,.08) !important; }
+body.public-site #hero .bg-cyan-500\/20 { background-color: rgba(8,145,178,.08) !important; }
+body.public-site #hero .bg-sky-500\/10 { background-color: rgba(14,165,233,.06) !important; }
+
+/* Accent/readability */
+body.public-site .text-cyan-200,
+body.public-site .text-cyan-300 { color: #0e7490 !important; }
+body.public-site .text-cyan-400 { color: #0891b2 !important; }
+body.public-site .text-blue-300 { color: #1d4ed8 !important; }
+body.public-site .text-purple-300 { color: #7e22ce !important; }
+body.public-site .text-emerald-300 { color: #047857 !important; }
+body.public-site .bg-clip-text.text-transparent {
+  background-image: linear-gradient(90deg,#1d4ed8,#0891b2,#0284c7) !important;
+}
+
+/* Forms */
+body.public-site input,
+body.public-site textarea,
+body.public-site select {
+  background-color: #fff !important;
+  color: var(--site-text) !important;
+  border-color: var(--site-border-strong) !important;
+}
+body.public-site input::placeholder,
+body.public-site textarea::placeholder { color: #94a3b8 !important; }
+body.public-site input:focus,
+body.public-site textarea:focus,
+body.public-site select:focus {
+  border-color: var(--site-primary) !important;
+  box-shadow: 0 0 0 3px rgba(37,99,235,.10) !important;
+}
+
+/* Footer remains dark for visual balance and brand contrast. */
+body.public-site footer {
+  background: #0f172a !important;
+  color: #e2e8f0 !important;
+  border-color: #1e293b !important;
+}
+body.public-site footer .text-white { color: #fff !important; }
+body.public-site footer .text-slate-400,
+body.public-site footer .text-slate-500 { color: #94a3b8 !important; }
+body.public-site footer .bg-slate-800 { background-color: #1e293b !important; }
+body.public-site footer .border-slate-800,
+body.public-site footer .border-slate-700 { border-color: #334155 !important; }
+
+/* Accessible keyboard focus */
+body.public-site a:focus-visible,
+body.public-site button:focus-visible,
+body.public-site input:focus-visible,
+body.public-site textarea:focus-visible,
+body.public-site select:focus-visible {
+  outline: 3px solid rgba(37,99,235,.28);
+  outline-offset: 3px;
+}

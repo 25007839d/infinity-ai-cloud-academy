@@ -1,13 +1,7 @@
 export const theme = {
-
   primary: "#2563EB",
-
-  secondary: "#06B6D4",
-
-  background: "#020617",
-
-  card: "#0F172A",
-
-  border: "#1E293B"
-
+  secondary: "#0891B2",
+  background: "#F7F9FC",
+  card: "#FFFFFF",
+  border: "#E2E8F0"
 };
