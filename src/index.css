@@ -587,6 +587,26 @@ body.public-site #root .site-tab-underline,
   transform: translateY(-1px);
 }
 
+/* Primary action buttons/links in the light learning experience must keep
+   high-contrast white text. The scoped learning link rule above intentionally
+   makes normal links blue, but that rule must never override a blue/gradient
+   action surface. */
+.learning-shell a.bg-blue-600,
+.learning-shell button.bg-blue-600,
+.learning-shell a.bg-blue-700,
+.learning-shell button.bg-blue-700,
+.learning-shell a.bg-gradient-to-r,
+.learning-shell button.bg-gradient-to-r {
+  color: #fff !important;
+}
+
+.learning-shell a.bg-blue-600:hover,
+.learning-shell button.bg-blue-600:hover,
+.learning-shell a.bg-blue-700:hover,
+.learning-shell button.bg-blue-700:hover {
+  color: #fff !important;
+}
+
 /* Keep destructive actions semantically red. */
 body.public-site #root button.bg-red-600,
 body.public-site #root a.bg-red-600,
