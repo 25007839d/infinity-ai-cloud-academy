@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, ChevronDown, ChevronRight, Pencil, Plus, Save, Trash2 } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronRight, Pencil, Plus, Save, Trash2, GripVertical, ArrowUp, ArrowDown } from 'lucide-react';
 import AdminLayout from '../layouts/AdminLayout';
 import { cms } from '../services/cmsService';
 import { Input, Textarea, Select, SeoFields, EditorIntro, emptySeo } from '../components/CmsUI';
@@ -65,9 +65,32 @@ function cleanLessonHtml(html='') {
 function CourseEditor({editing,setEditing,save,error,openModule,setOpenModule}){
   const set=(key,val)=>setEditing({...editing,[key]:val});
   const modules=editing.curriculum||[];
+  const [draggedModuleIndex,setDraggedModuleIndex]=useState(null);
+  const [dragOverModuleIndex,setDragOverModuleIndex]=useState(null);
   const addModule=()=>{set('curriculum',[...modules,blankModule()]);setOpenModule(modules.length)};
   const updateModule=(i,val)=>{const a=[...modules];a[i]={...a[i],...val};set('curriculum',a)};
-  const removeModule=i=>set('curriculum',modules.filter((_,x)=>x!==i));
+  const removeModule=i=>{
+    const next=modules.filter((_,x)=>x!==i);
+    set('curriculum',next);
+    if(openModule===i) setOpenModule(next.length ? Math.min(i,next.length-1) : -1);
+    else if(openModule>i) setOpenModule(openModule-1);
+  };
+  const moveModule=(from,to)=>{
+    if(from===to || from<0 || to<0 || from>=modules.length || to>=modules.length) return;
+    const next=[...modules];
+    const [moved]=next.splice(from,1);
+    next.splice(to,0,moved);
+    set('curriculum',next);
+    if(openModule===from) setOpenModule(to);
+    else if(openModule>from && openModule<=to) setOpenModule(openModule-1);
+    else if(openModule<from && openModule>=to) setOpenModule(openModule+1);
+  };
+  const handleModuleDrop=to=>{
+    if(draggedModuleIndex===null) return;
+    moveModule(draggedModuleIndex,to);
+    setDraggedModuleIndex(null);
+    setDragOverModuleIndex(null);
+  };
   const addLesson=i=>{const a=[...modules];a[i]={...a[i],lessons:[...(a[i].lessons||[]),blankLesson()]};set('curriculum',a);setOpenModule(i)};
   const updateLesson=(i,j,val)=>{const a=[...modules];const lessons=[...(a[i].lessons||[])];lessons[j]={...lessons[j],...val};a[i]={...a[i],lessons};set('curriculum',a)};
   const removeLesson=(i,j)=>{const a=[...modules];a[i]={...a[i],lessons:a[i].lessons.filter((_,x)=>x!==j)};set('curriculum',a)};
@@ -99,8 +122,35 @@ function CourseEditor({editing,setEditing,save,error,openModule,setOpenModule}){
       </section>
 
       <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6"><div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3"><div><h2 className="text-2xl font-bold">2. Curriculum Builder</h2><p className="text-slate-400 mt-1">Create modules and real lessons. Old topic entries are retained for backward compatibility.</p></div><button type="button" onClick={addModule} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2"><Plus size={17}/> Add Module</button></div>
-        <div className="mt-5 space-y-4">{modules.map((m,i)=><div key={i} className="rounded-2xl border border-slate-700 overflow-hidden"><button type="button" onClick={()=>setOpenModule(openModule===i?-1:i)} className="w-full flex items-center justify-between p-5 bg-slate-950/60 text-left"><span className="flex items-center gap-3"><span className="text-cyan-400 font-bold">{String(i+1).padStart(2,'0')}</span><span className="font-bold">{m.module||'Untitled Module'}</span><span className="text-xs text-slate-500">{(m.lessons||[]).length} lessons</span></span>{openModule===i?<ChevronDown/>:<ChevronRight/>}</button>{openModule===i&&<div className="p-5 space-y-5"><div className="flex gap-3"><Input label="Module Name *" value={m.module} onChange={e=>updateModule(i,{module:e.target.value})}/><button type="button" onClick={()=>removeModule(i)} className="mt-7 p-3 text-red-400"><Trash2/></button></div><Textarea label="Module Description" rows={2} value={m.description||''} onChange={e=>updateModule(i,{description:e.target.value})}/><div className="flex justify-between items-center"><h3 className="text-lg font-semibold">Lessons</h3><button type="button" onClick={()=>addLesson(i)} className="inline-flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-2 text-cyan-300"><Plus size={16}/> Add Lesson</button></div>
-          {(m.lessons||[]).map((l,j)=><LessonEditor key={j} lesson={l} index={j} onChange={v=>updateLesson(i,j,v)} onRemove={()=>removeLesson(i,j)} addContent={()=>addContent(i,j)} updateContent={(k,v)=>updateContent(i,j,k,v)} removeContent={k=>removeContent(i,j,k)} cleanContent={k=>cleanContent(i,j,k)} setVideoEmbed={(url,type)=>setVideoEmbed(i,j,url,type)} setDriveEmbed={url=>setDriveEmbed(i,j,url)} uploadAssignmentText={file=>uploadAssignmentText(i,j,file)} setAssignment={v=>setAssignment(i,j,v)} addLab={()=>addLab(i,j)} updateLab={(k,v)=>updateLab(i,j,k,v)} removeLab={k=>removeLab(i,j,k)} addLabResource={()=>addLabResource(i,j)} updateLabResource={(labIndex,resIndex,v)=>updateLabResource(i,j,labIndex,resIndex,v)} removeLabResource={(labIndex,resIndex)=>removeLabResource(i,j,labIndex,resIndex)}/>)}</div>}</div>)}</div>
+        <div className="mt-5 space-y-4">
+          <p className="text-xs text-slate-500">Drag a module by the grip to change its sequence. You can also use the ↑ / ↓ buttons. The new order is saved when you click <span className="text-slate-300 font-medium">Save Course</span>.</p>
+          {modules.map((m,i)=><div
+            key={m.id || m._clientId || `module-${i}`}
+            onDragOver={e=>{e.preventDefault();setDragOverModuleIndex(i)}}
+            onDrop={e=>{e.preventDefault();handleModuleDrop(i)}}
+            className={`rounded-2xl border overflow-hidden transition-all ${dragOverModuleIndex===i && draggedModuleIndex!==i ? 'border-cyan-400 ring-2 ring-cyan-400/20' : 'border-slate-700'} ${draggedModuleIndex===i ? 'opacity-60' : ''}`}
+          >
+            <div className="flex items-stretch bg-slate-950/60">
+              <div
+                draggable
+                onDragStart={e=>{e.stopPropagation();setDraggedModuleIndex(i);setDragOverModuleIndex(i);e.dataTransfer.effectAllowed='move'}}
+                onDragEnd={()=>{setDraggedModuleIndex(null);setDragOverModuleIndex(null)}}
+                title="Drag to reorder module"
+                className="w-12 shrink-0 flex items-center justify-center cursor-grab active:cursor-grabbing text-slate-500 hover:text-cyan-300 hover:bg-slate-900 border-r border-slate-800"
+              ><GripVertical size={20}/></div>
+              <button type="button" onClick={()=>setOpenModule(openModule===i?-1:i)} className="flex-1 min-w-0 flex items-center justify-between p-5 text-left">
+                <span className="flex items-center gap-3 min-w-0"><span className="text-cyan-400 font-bold shrink-0">{String(i+1).padStart(2,'0')}</span><span className="font-bold truncate">{m.module||'Untitled Module'}</span><span className="text-xs text-slate-500 shrink-0">{(m.lessons||[]).length} lessons</span></span>
+                {openModule===i?<ChevronDown/>:<ChevronRight/>}
+              </button>
+              <div className="flex items-center gap-1 px-3 border-l border-slate-800">
+                <button type="button" disabled={i===0} onClick={()=>moveModule(i,i-1)} title="Move module up" className="rounded-lg p-2 text-slate-400 hover:text-cyan-300 hover:bg-slate-800 disabled:opacity-25 disabled:cursor-not-allowed"><ArrowUp size={16}/></button>
+                <button type="button" disabled={i===modules.length-1} onClick={()=>moveModule(i,i+1)} title="Move module down" className="rounded-lg p-2 text-slate-400 hover:text-cyan-300 hover:bg-slate-800 disabled:opacity-25 disabled:cursor-not-allowed"><ArrowDown size={16}/></button>
+              </div>
+            </div>
+            {openModule===i&&<div className="p-5 space-y-5"><div className="flex gap-3"><Input label="Module Name *" value={m.module} onChange={e=>updateModule(i,{module:e.target.value})}/><button type="button" onClick={()=>removeModule(i)} className="mt-7 p-3 text-red-400"><Trash2/></button></div><Textarea label="Module Description" rows={2} value={m.description||''} onChange={e=>updateModule(i,{description:e.target.value})}/><div className="flex justify-between items-center"><h3 className="text-lg font-semibold">Lessons</h3><button type="button" onClick={()=>addLesson(i)} className="inline-flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-2 text-cyan-300"><Plus size={16}/> Add Lesson</button></div>
+          {(m.lessons||[]).map((l,j)=><LessonEditor key={l.id || j} lesson={l} index={j} onChange={v=>updateLesson(i,j,v)} onRemove={()=>removeLesson(i,j)} addContent={()=>addContent(i,j)} updateContent={(k,v)=>updateContent(i,j,k,v)} removeContent={k=>removeContent(i,j,k)} cleanContent={k=>cleanContent(i,j,k)} setVideoEmbed={(url,type)=>setVideoEmbed(i,j,url,type)} setDriveEmbed={url=>setDriveEmbed(i,j,url)} uploadAssignmentText={file=>uploadAssignmentText(i,j,file)} setAssignment={v=>setAssignment(i,j,v)} addLab={()=>addLab(i,j)} updateLab={(k,v)=>updateLab(i,j,k,v)} removeLab={k=>removeLab(i,j,k)} addLabResource={()=>addLabResource(i,j)} updateLabResource={(labIndex,resIndex,v)=>updateLabResource(i,j,labIndex,resIndex,v)} removeLabResource={(labIndex,resIndex)=>removeLabResource(i,j,labIndex,resIndex)}/>)}</div>}
+          </div>)}
+        </div>
       </section>
 
       <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6"><h2 className="text-2xl font-bold">3. Technologies</h2><div className="mt-4 grid md:grid-cols-2 gap-3">{(editing.technologies||[]).map((t,i)=><div className="flex gap-2" key={i}><Input label={`Technology ${i+1}`} value={t} onChange={e=>{const a=[...editing.technologies];a[i]=e.target.value;set('technologies',a)}}/><button type="button" onClick={()=>set('technologies',editing.technologies.filter((_,x)=>x!==i))} className="mt-7 text-red-400"><Trash2/></button></div>)}</div><button type="button" onClick={()=>set('technologies',[...editing.technologies,''])} className="mt-4 rounded-lg bg-slate-800 px-4 py-2">+ Add Technology</button></section>
